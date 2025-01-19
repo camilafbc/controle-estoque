@@ -1,0 +1,105 @@
+import { userModel } from "../models/userModel.js";
+
+export async function listUsers(req, res){
+
+  try {
+    const users = await userModel.listUsers();
+    return res.status(200).json(users);
+  } catch (error){
+    return res.status(400).json({message: `Erro: ${error.message}`})
+  }
+  
+}
+
+export async function getUserById(req, res){
+  const { id } = req.params
+
+  try {
+    const user = await userModel.getUserById(id)
+    return res.status(200).json(user);
+  } catch (error){
+    return res.status(400).json({message: `Erro: ${error.message}`})
+  }
+}
+
+export async function insertUser(req, res){
+  const { user } = req.body
+  console.log("user: " + user)
+  console.log("req.body: " + req.body)
+
+  if(!user || !user.nome || !user.email || !user.senha || !user.idCurso){
+    return res.status(400).json({message: "Todos os campos são obrigatórios!"})
+  }
+
+  try {
+    await userModel.createUser(user)
+    res.status(201).json({message: "Usuário cadastrado!"})
+  } catch (error) {
+    res.status(404).json({message: `Erro: ${error.message}`})
+  }
+}
+
+// export async function updateUser(req, res){
+
+//   const { user } = req.body
+
+//   if(!user || !user.nome || !user.email || !user.senha || !user.idCurso){
+//     return res.status(400).json({message: "Todos os campos são obrigatórios!"})
+//   }
+
+//   try {
+//     const updateUser = await userModel.updateUser(user)
+//     if(updateUser > 0) res.status(200).json({message: "Usuário atualizado com sucesso!!"})
+//       else res.status(404).json({message: `Erro ao atualizar usuário`})
+//   } catch (error) {
+//     res.status(500).json({message: `Erro: ${error.message}`})
+//   };
+
+// };
+export async function updateUser(req, res) {
+  console.log("CHEGOU: ", req.body)
+  const user = req.body;
+  console.log("CHEGOU: ", user)
+
+  // Verifica se os campos obrigatórios estão presentes
+  if (!user || !user.nome || !user.email) {
+    return res.status(400).json({ message: "Nome, email e curso são obrigatórios!" });
+  }
+
+  // Verifica se a senha foi fornecida e se tem pelo menos 6 caracteres
+  if (user.senha && user.senha.length < 6) {
+    return res.status(400).json({ message: "A senha deve ter no mínimo 6 caracteres!" });
+  }
+
+  try {
+    // Se a senha foi fornecida, faz o hash, caso contrário, mantém a atual
+    let senhaHash = user.senha ? bcrypt.hashSync(user.senha, 10) : undefined;
+
+    // Atualiza o usuário no banco, passando o hash da senha se fornecida
+    const updateUser = await userModel.updateUser(user, senhaHash);
+    
+    if (updateUser > 0) {
+      res.status(200).json({ message: "Usuário atualizado com sucesso!" });
+    } else {
+      res.status(404).json({ message: "Erro ao atualizar usuário." });
+    }
+  } catch (error) {
+    res.status(500).json({ message: `Erro: ${error.message}` });
+  }
+}
+
+export async function deleteUser(req, res){
+  const { id } = req.params
+
+  try {
+    const delUser = await userModel.deleteUser(id)
+    // console.log("DelTurma: " + delCurso)
+    if(delUser > 0){
+      return res.status(200).json({message: "Usuário deletado com sucesso!"})
+    } else {
+      return res.status(500).json({message: "Erro ao deletar deletar usuário!"})
+    }
+  } catch (error) {
+    return res.status(400).json({message: `Erro: ${error.message}`})
+  }
+}
