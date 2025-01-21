@@ -19,11 +19,7 @@ import Link from "next/link";
 export default function UserMenu() {
   const { setTheme } = useTheme();
   const user = useSessionContext();
-  const router = useRouter();
-
-  const handleButtonProfile = () => {
-    router.replace("/profile");
-  };
+  // const router = useRouter();
 
   return (
     <Popover>

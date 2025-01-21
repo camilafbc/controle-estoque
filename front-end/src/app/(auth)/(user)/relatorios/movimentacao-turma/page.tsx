@@ -25,7 +25,6 @@ const validationSchema = yup.object().shape({
     .shape({
       from: yup.date().required("Data de início é obrigatória"),
       to: yup.date().notRequired().nullable().default(undefined),
-      // to: yup.date().required("Data de fim é obrigatória"),
     })
     .nullable()
     .required("Intervalo de datas é obrigatório"),
@@ -54,10 +53,7 @@ export default function Page() {
       dataFinal: dataFinal,
     };
 
-    // console.log("Dados formatados para o banco:", formattedData);
-
     const fetchRelatorio = await createRelatorioMovimentacoes(formattedData);
-    // console.log(fetchRelatorio);
 
     const blob = await pdf(<MyDocument teste={fetchRelatorio} />).toBlob();
     const fileURL = URL.createObjectURL(blob);
@@ -82,14 +78,13 @@ export default function Page() {
             <form
               onSubmit={handleSubmit(onSubmit)}
               className="flex w-full items-center gap-6 space-y-6"
-              //className="grid grid-cols-1 gap-4 md:grid-cols-3"
             >
               <div className="flex flex-wrap items-start gap-6">
                 <div>
-                  <Label>Turma</Label>
                   <TurmaSelect
                     control={control}
                     name="turma"
+                    required={true}
                     error={errors?.turma?.message}
                   />
                   <span className="min-h-[16px] text-xs font-semibold text-destructive">

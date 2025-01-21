@@ -13,12 +13,12 @@ export const getTurmaById = async (id: string) => {
 
 export const insertTurma = async (turma: Omit<Turma, "idTurma">) => {
   const response = await api.post("/turmas", turma);
-  return response.status;
+  return response;
 };
 
 export const updateTurma = async (turma: Turma) => {
   const response = await api.put("/turmas", turma);
-  return response.status;
+  return response;
 };
 
 export const deleteTurma = async (id: number) => {

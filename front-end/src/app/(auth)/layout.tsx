@@ -27,11 +27,8 @@ export default async function Layout({ children }: Props) {
     if (decodedToken.exp < currentTime) redirect("/");
   }
 
-  console.log("Layout protegidas montado.");
-
   return (
     <>
-      {/* <ProvidersWrapper> */}
       <Header />
       <div className="container mx-auto mb-8 mt-4">
         <ToastContainer
@@ -42,7 +39,6 @@ export default async function Layout({ children }: Props) {
         />
         {children}
       </div>
-      {/* </ProvidersWrapper> */}
     </>
   );
 }

@@ -2,10 +2,7 @@ import { turmasModel } from "../models/turmasModel.js";
 
 export async function listTurmas(req, res){
 
-  // const { idCurso }= req.body
-  // const {id} = req.params
   const idCurso = req.user.idCurso
-  console.log("Chamou o turmas e passou: " + idCurso)
 
   try {
     const turmas = await turmasModel.getTurmasByCurso(idCurso);
@@ -28,10 +25,9 @@ export async function getTurma(req, res){
 
 export async function inserTurma(req, res){
   const idCurso = req.user.idCurso;
-  console.log("idCurso = " + idCurso);
-  console.log("Chegando: ", req.body);
+  // console.log("idCurso = " + idCurso);
+  // console.log("Chegando: ", req.body);
 
-  // Inicializando a variável turma com os dados do body
   const { codigo, turno, status } = req.body;
   const turma = {
     codigo,

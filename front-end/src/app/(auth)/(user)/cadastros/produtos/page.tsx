@@ -15,6 +15,7 @@ import { useRouter } from "next/navigation";
 import { useProdutos } from "@/queries/produtos";
 import { useDeleteProductMutation } from "@/mutations/produtos";
 import { columns } from "./componentes/TableColumns";
+import { useTurmaStore } from "@/stores/useTurmaStore";
 
 export default function ProdutosPage() {
   const { control, setValue, watch } = useForm({
@@ -24,10 +25,11 @@ export default function ProdutosPage() {
   });
 
   const router = useRouter();
-  const selectedTurma = watch("turma");
+  // const selectedTurma = watch("turma");
   const [filterValue, setFilterValue] = useState("");
   const [isOpen, setIsOpen] = useState(false);
   const [editingId, setEditingId] = useState<number | null>(null);
+  const { selectedTurma, setSelectedTurma } = useTurmaStore();
 
   const produtos = useProdutos(+selectedTurma);
   const deleteMutation = useDeleteProductMutation();
@@ -78,10 +80,10 @@ export default function ProdutosPage() {
       />
       <h2 className="mt-4 text-lg font-bold md:text-2xl">Produtos</h2>
       <Separator orientation="horizontal" className="mb-4" />
-      <div className="my-8 flex w-full items-center justify-between gap-4">
-        <form className="my-4 flex w-full items-center gap-4">
+      <div className="my-8 flex w-full items-end justify-between gap-4">
+        <form className="my-4 flex w-full items-end gap-4">
           <div className="w-full md:w-1/4">
-            <TurmaSelect name="turma" control={control} setValue={setValue} />
+            <TurmaSelect name="turma" control={control} />
           </div>
           <Input
             placeholder="Filtrar produtos"

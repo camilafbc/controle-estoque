@@ -13,7 +13,7 @@ export const getProduto = async (id: number): Promise<Produto> => {
 
 export const insertProduto = async (product: Omit<Produto, "idProduto">) => {
   const response = await api.post("/produtos", { product });
-  return response.data;
+  return response;
 };
 
 export const updateProduto = async (product: Produto) => {

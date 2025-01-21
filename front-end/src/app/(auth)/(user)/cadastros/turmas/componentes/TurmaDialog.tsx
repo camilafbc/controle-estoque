@@ -23,12 +23,12 @@ import {
   useInsertTurmaMutation,
   useUpdateTurmaMutation,
 } from "@/mutations/turmas";
+import { AxiosError } from "axios";
 
 interface TurmaDialogProps {
   isOpen?: boolean;
   setIsOpen: (state: boolean) => void;
   editingId: number | null;
-  // children?: ReactNode;
 }
 
 const validationSchema = yup.object({
@@ -88,52 +88,41 @@ export function TurmaDialog({
       const upTurmaData = { ...turmaData, idTurma: +editingId };
       updateTurma.mutate(upTurmaData, {
         onSuccess: (response) => {
-          console.log(response);
-          if (response === 200) {
-            toast.success("Turma editada com sucesso!", {
-              position: "bottom-right",
-              theme: "colored",
-            });
+          //console.log(response);
+          if (response.status === 200) {
+            toast.success(response.data.message);
             reset();
           } else {
-            console.log(response);
-            toast.error("Erro ao editar turma!", {
-              position: "top-right",
-              theme: "colored",
-            });
+            toast.error(response.data.message);
           }
         },
-        onError: () => {
-          toast.error("Erro ao editar turma!", {
-            position: "top-right",
-            theme: "colored",
-          });
+        onError: (error) => {
+          const axiosError = error as AxiosError<Error>;
+          const errorMessage =
+            axiosError?.response?.data?.message ||
+            error.message ||
+            "Ocorreu um erro desconhecido";
+          toast.error(errorMessage);
         },
       });
     } else {
-      // Chamando a mutação com os dados da turma
       turma.mutate(turmaData, {
         onSuccess: (response) => {
-          console.log(response);
-          if (response === 201) {
-            toast.success("Turma cadastrada com sucesso!", {
-              position: "bottom-right",
-              theme: "colored",
-            });
+          // console.log("RESPONSE", response);
+          if (response.status === 201) {
+            toast.success(response.data.message);
             reset();
           } else {
-            console.log(response);
-            toast.error("Erro ao cadastrar turma!", {
-              position: "top-right",
-              theme: "colored",
-            });
+            toast.error(response.data.message);
           }
         },
-        onError: () => {
-          toast.error("Erro ao cadastrar turma!", {
-            position: "top-right",
-            theme: "colored",
-          });
+        onError: (error) => {
+          const axiosError = error as AxiosError<Error>;
+          const errorMessage =
+            axiosError?.response?.data?.message ||
+            error.message ||
+            "Ocorreu um erro desconhecido";
+          toast.error(errorMessage);
         },
       });
     }

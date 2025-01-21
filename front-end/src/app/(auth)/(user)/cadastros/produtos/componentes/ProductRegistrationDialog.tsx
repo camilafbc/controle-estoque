@@ -24,6 +24,7 @@ import {
   useInsertProductMutation,
   useUpdateProductMutation,
 } from "@/mutations/produtos";
+import { AxiosError } from "axios";
 
 interface ProductRegistrationDialogProps {
   editingId: number | null;
@@ -107,36 +108,41 @@ export function ProductRegistrationDialog({
     if (editingId) {
       const updatedProductData = { ...productData, idProduto: editingId };
       updateProduct.mutate(updatedProductData, {
-        onSuccess: (response: { status: number }) => {
+        onSuccess: (response) => {
+          // console.log("RESPONSE", response);
           if (response.status === 200) {
-            toast.success("Produto editado com sucesso!", {
-              position: "bottom-right",
-              theme: "colored",
-            });
+            toast.success(response.data.message);
             reset();
+          } else {
+            toast.error(response.data.message);
           }
         },
-        onError: () => {
-          toast.error("Erro ao editar produto!", {
-            position: "top-right",
-            theme: "colored",
-          });
+        onError: (error) => {
+          const axiosError = error as AxiosError<Error>;
+          const errorMessage =
+            axiosError?.response?.data?.message ||
+            error.message ||
+            "Ocorreu um erro desconhecido";
+          toast.error(errorMessage);
         },
       });
     } else {
       insertProduct.mutate(productData, {
         onSuccess: (response) => {
-          toast.success("Produto cadastrado com sucesso!", {
-            position: "bottom-right",
-            theme: "colored",
-          });
-          // reset();
+          if (response.status === 201) {
+            toast.success(response.data.message);
+            // reset();
+          } else {
+            toast.error(response.data.message);
+          }
         },
-        onError: () => {
-          toast.error("Erro ao cadastrar produto!", {
-            position: "top-right",
-            theme: "colored",
-          });
+        onError: (error) => {
+          const axiosError = error as AxiosError<Error>;
+          const errorMessage =
+            axiosError?.response?.data?.message ||
+            error.message ||
+            "Ocorreu um erro desconhecido";
+          toast.error(errorMessage);
         },
       });
     }
@@ -162,6 +168,7 @@ export function ProductRegistrationDialog({
               id="input-produto"
               label="Produto"
               placeholder="Informe a descrição do produto"
+              required={true}
               error={!!errors.produto}
               {...register("produto")}
             />
@@ -174,6 +181,7 @@ export function ProductRegistrationDialog({
               id="input-fabricante"
               label="Fabricante"
               placeholder="Informe o fabricante do produto"
+              required={true}
               error={!!errors.fabricante}
               {...register("fabricante")}
             />
@@ -187,6 +195,7 @@ export function ProductRegistrationDialog({
                 id="input-lote"
                 label="Lote"
                 placeholder="Informe o lote do produto"
+                required={true}
                 error={!!errors.lote}
                 {...register("lote")}
               />
@@ -199,6 +208,7 @@ export function ProductRegistrationDialog({
                 id="input-quantidade"
                 label="Quantidade"
                 placeholder="Informe as unidades do produto"
+                required={true}
                 error={!!errors.quantidade}
                 {...register("quantidade")}
                 onInput={(ev) => {
@@ -218,10 +228,11 @@ export function ProductRegistrationDialog({
               <Input
                 id="input-dataValidade"
                 label="Validade"
-                error={!!errors.dataValidade}
-                {...register("dataValidade")}
                 placeholder="DD/MM/YYYY"
                 maxLength={10}
+                required={true}
+                error={!!errors.dataValidade}
+                {...register("dataValidade")}
                 onInput={(ev) => {
                   ev.currentTarget.value = ev.currentTarget.value
                     .replace(/\D/g, "")
@@ -235,10 +246,11 @@ export function ProductRegistrationDialog({
               </span>
             </div>
             <div className="col-span-1">
-              <Label htmlFor="turma">Turma</Label>
+              {/* <Label htmlFor="turma">Turma</Label> */}
               <TurmaSelect
                 control={control}
                 name="turma"
+                required={true}
                 error={errors?.turma?.message}
               />
               <span className="min-h-4 text-xs font-semibold text-destructive">
