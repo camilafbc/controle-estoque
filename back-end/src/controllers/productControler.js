@@ -4,22 +4,11 @@ import { productModel } from "../models/productModel.js";
 // POST /produtos
 export async function insertProduct(req, res){
 
-  // console.log(req.body)
-  // console.log("User autenticado: " + req.user.idUser)
-
   const {product} = req.body
   const idUser = req.user.idUser;
   const idCurso = req.user.idCurso
   product.prodCurso = idCurso
-  // console.log("Testando user: " + teste)
 
-  // console.log('debugando product: ', product.prodDescricao)
-  // console.log('debugando product: ', product.prodFabricante)
-  // console.log('debugando product: ', product.prodQuantidade)
-  // console.log('debugando product: ', product.prodValidade)
-  // console.log('debugando product: ', product.prodLote)
-  // console.log('debugando product: ', product.prodCurso)
-  // console.log('debugando product: ', product.prodTurma)
 
   if(!product || !product.prodDescricao || !product.prodFabricante || !product.prodQuantidade || !product.prodValidade || !product.prodLote || !product.prodCurso || !product.prodTurma){
     return res.status(400).json({message: "Todos os campos são obrigatórios"})

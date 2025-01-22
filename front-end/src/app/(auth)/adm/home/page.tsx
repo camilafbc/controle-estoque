@@ -4,9 +4,16 @@ import { useSessionContext } from "@/context/SessionContext";
 import { GraduationCap, User } from "lucide-react";
 import MyBreadcrumb from "@/components/MyBreadcrumb";
 import DashCard from "@/components/DashCard";
+import { useGetCountCurso } from "@/queries/cursos";
+import { useGetCountUsers } from "@/queries/user";
 
 export default function Page() {
   const userTeste = useSessionContext();
+  const { data: countCursos, isLoading: countCursosLoading } =
+    useGetCountCurso();
+  const { data: countUsers, isLoading: countUsersLoading } = useGetCountUsers();
+
+  if (countCursosLoading || countUsersLoading) return <p>carregando</p>;
 
   return (
     <div className="space-y-6">
@@ -23,7 +30,7 @@ export default function Page() {
           className="bg-blue-400 text-white"
           title="Cursos"
           subtitle="Cursos ativos"
-          data={"2"}
+          data={countCursos.count}
         >
           <GraduationCap />
         </DashCard>
@@ -31,7 +38,7 @@ export default function Page() {
           className="bg-orange-400 text-white"
           title="Usuários"
           subtitle="Usuários ativos"
-          data={"2"}
+          data={countUsers.count}
         >
           <User />
         </DashCard>

@@ -1,3 +1,4 @@
+import { getCountUsers } from "@/api/dashboard";
 import { getUserById, getUsers } from "@/api/users";
 import { useQuery } from "@tanstack/react-query";
 
@@ -17,6 +18,15 @@ export const useGetUser = (id: number) => {
     queryKey: ["users", id],
     queryFn: () => getUserById(id),
     enabled: !!id,
+    staleTime: Infinity,
+  });
+  return query;
+};
+
+export const useGetCountUsers = () => {
+  const query = useQuery({
+    queryKey: ["users"],
+    queryFn: () => getCountUsers(),
     staleTime: Infinity,
   });
   return query;

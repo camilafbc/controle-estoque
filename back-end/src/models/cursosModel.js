@@ -6,8 +6,8 @@ export async function createCursosTable(){
     await db.execute(`
       CREATE TABLE IF NOT EXISTS cursos (
         idCurso INT AUTO_INCREMENT PRIMARY KEY,
-        nomeCurso VARCHAR(255) NOT NULL
-      );
+        nomeCurso VARCHAR(255) NOT NULL,
+        status BOOLEAN DEFAULT TRUE);
     `);
     console.log("Tabela 'cursos' criada com sucesso!");
   } catch (error) {
@@ -39,8 +39,8 @@ export class CursoModel {
     const db = await openDb();
 
     try {
-      const [rows] = await db.execute("SELECT COUNT(*) FROM cursos WHERE status = 1");
-      return rows;
+      const [rows] = await db.execute("SELECT COUNT(*) AS count FROM cursos WHERE status = 1");
+      return rows[0];
     } catch (error) {
       console.error("Erro ao buscar contagem de cursos:", error);
       throw error;

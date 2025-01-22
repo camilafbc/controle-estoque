@@ -29,3 +29,14 @@ export const getDashTotalEstoque = async () => {
   const response = await api.get("/dashboard/totalEstoque");
   return response.data;
 };
+
+export const getCountUsers = async () => {
+  const response = await api.get("/usersCount");
+  return response.data;
+};
+
+export const getCountCursos = async () => {
+  const response = await api.get("/cursosCount");
+  console.log("COUNT CURSOS: ", response.data.count);
+  return response.data;
+};

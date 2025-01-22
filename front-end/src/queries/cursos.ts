@@ -1,4 +1,5 @@
 import { getCursoById, getCursos } from "@/api/cursos";
+import { getCountCursos } from "@/api/dashboard";
 import { useQuery } from "@tanstack/react-query";
 
 export const useCursos = () => {
@@ -17,6 +18,15 @@ export const useGetCurso = (id: number) => {
     queryKey: ["cursos", id],
     queryFn: () => getCursoById(id),
     enabled: !!id,
+    staleTime: Infinity,
+  });
+  return query;
+};
+
+export const useGetCountCurso = () => {
+  const query = useQuery({
+    queryKey: ["cursos"],
+    queryFn: () => getCountCursos(),
     staleTime: Infinity,
   });
   return query;
