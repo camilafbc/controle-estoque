@@ -9,6 +9,16 @@ export async function listUsers(req, res){
     return res.status(400).json({message: `Erro: ${error.message}`})
   }
   
+};
+
+export async function countUsers(req, res){
+
+  try {
+    const result = await userModel.countUsers();
+    return res.status(200).json(result);
+  } catch (error){
+    return res.status(400).json({message: `Erro: ${error.message}`})
+  }
 }
 
 export async function getUserById(req, res){
@@ -20,46 +30,36 @@ export async function getUserById(req, res){
   } catch (error){
     return res.status(400).json({message: `Erro: ${error.message}`})
   }
-}
+};
 
 export async function insertUser(req, res){
+  const idUser = req.user.idUser;
+  const roleUser = req.user.role
   const { user } = req.body
-  console.log("user: " + user)
-  console.log("req.body: " + req.body)
+  
+  //console.log("user: " + user)
+  //console.log("req.body: " + req.body)
+
+  if (roleUser !== "admin"){
+    return res.status(403).json({message: "Usuário não tem autorização para acessar esse recurso!"})
+  }
 
   if(!user || !user.nome || !user.email || !user.senha || !user.idCurso){
     return res.status(400).json({message: "Todos os campos são obrigatórios!"})
   }
 
   try {
-    await userModel.createUser(user)
+    await userModel.createUser({...user, created_by: idUser})
     res.status(201).json({message: "Usuário cadastrado!"})
   } catch (error) {
     res.status(404).json({message: `Erro: ${error.message}`})
   }
-}
+};
 
-// export async function updateUser(req, res){
-
-//   const { user } = req.body
-
-//   if(!user || !user.nome || !user.email || !user.senha || !user.idCurso){
-//     return res.status(400).json({message: "Todos os campos são obrigatórios!"})
-//   }
-
-//   try {
-//     const updateUser = await userModel.updateUser(user)
-//     if(updateUser > 0) res.status(200).json({message: "Usuário atualizado com sucesso!!"})
-//       else res.status(404).json({message: `Erro ao atualizar usuário`})
-//   } catch (error) {
-//     res.status(500).json({message: `Erro: ${error.message}`})
-//   };
-
-// };
 export async function updateUser(req, res) {
-  console.log("CHEGOU: ", req.body)
+  //console.log("CHEGOU: ", req.body)
   const user = req.body;
-  console.log("CHEGOU: ", user)
+  //console.log("CHEGOU: ", user)
 
   // Verifica se os campos obrigatórios estão presentes
   if (!user || !user.nome || !user.email) {
@@ -86,7 +86,7 @@ export async function updateUser(req, res) {
   } catch (error) {
     res.status(500).json({ message: `Erro: ${error.message}` });
   }
-}
+};
 
 export async function deleteUser(req, res){
   const { id } = req.params
@@ -102,4 +102,4 @@ export async function deleteUser(req, res){
   } catch (error) {
     return res.status(400).json({message: `Erro: ${error.message}`})
   }
-}
+};

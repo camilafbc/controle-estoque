@@ -25,7 +25,24 @@ export class CursoModel {
       const [rows] = await db.execute("SELECT * FROM cursos");
       return rows;
     } catch (error) {
-      console.error("Erro ao criar produto:", error);
+      console.error("Erro ao listar cursos:", error);
+      throw error;
+    } finally {
+      if(db){
+        await db.end();
+      }
+    };
+
+  };
+
+  static async countCursos(){
+    const db = await openDb();
+
+    try {
+      const [rows] = await db.execute("SELECT COUNT(*) FROM cursos WHERE status = 1");
+      return rows;
+    } catch (error) {
+      console.error("Erro ao buscar contagem de cursos:", error);
       throw error;
     } finally {
       if(db){

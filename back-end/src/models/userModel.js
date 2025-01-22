@@ -30,7 +30,7 @@ export class userModel {
 
     try {
       
-      const [users] = await db.execute("SELECT u.idUser, u.nome, u.email, u.role, u.status, c.nomeCurso AS curso FROM user u LEFT JOIN cursos c ON u.idCurso = c.idCurso WHERE u.idUser != 1 AND u.role = 'user' ");
+      const [users] = await db.execute("SELECT u.idUser, u.nome, u.email, u.role, u.status, c.nomeCurso AS curso FROM user u LEFT JOIN cursos c ON u.idCurso = c.idCurso WHERE u.idUser != 1 AND u.role = 'user'");
       return users;
     } catch (error) {
       console.error("Erro ao listar usuários:", error);
@@ -41,6 +41,23 @@ export class userModel {
       }
     };
   };
+
+  static async countUsers(){
+    const db = await openDb();
+
+    try {
+      const [rows] = await db.execute("SELECT COUNT(*) FROM user WHERE status = 1");
+      return rows;
+    } catch (error) {
+      console.error("Erro ao buscar contagem de usuários:", error);
+      throw error;
+    } finally {
+      if(db){
+        await db.end();
+      }
+    };
+
+  };
   
   static async createUser(user) {
 
@@ -49,13 +66,15 @@ export class userModel {
     try {
       
       const [newUser] = await db.execute(
-        'INSERT INTO user (nome, email, senha, idCurso, role) VALUES (?, ?, ?, ?, ?)', 
+        'INSERT INTO user (nome, email, senha, idCurso, role, status, created_by) VALUES (?, ?, ?, ?, ?)', 
         [
           user.nome, 
           user.email, 
           bcrypt.hashSync(user.senha, 10), 
           user.idCurso,
-          user.role
+          user.role,
+          user.status,
+          user.created_by
         ]
       );
       return newUser;

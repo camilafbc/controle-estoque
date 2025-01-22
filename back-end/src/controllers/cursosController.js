@@ -13,6 +13,16 @@ export async function listCursos(req, res){
   }
 }
 
+export async function countCursos(req, res){
+
+  try {
+    const cursos = await CursoModel.countCursos();
+    return res.status(200).json(cursos);
+  } catch (error){
+    return res.status(400).json({message: `Erro: ${error.message}`})
+  }
+}
+
 export async function getCursoById(req, res){
   const { id } = req.params
 
