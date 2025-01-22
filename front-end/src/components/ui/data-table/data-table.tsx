@@ -118,7 +118,7 @@ export function DataTable<TData, TValue>({
               {table.getHeaderGroups().map((headerGroup) => (
                 <TableRow key={headerGroup.id}>
                   {headerGroup.headers.map((header) => (
-                    <TableHead key={header.id}>
+                    <TableHead key={header.id} className="py-5">
                       {flexRender(
                         header.column.columnDef.header,
                         header.getContext(),
@@ -150,7 +150,7 @@ export function DataTable<TData, TValue>({
                             "date" && "pe-4 text-right",
                           (cell.column.columnDef as any).meta?.type ===
                             "string" && "ps-4",
-                          "py-4 text-base uppercase",
+                          "py-2 text-base uppercase",
                         )}
                         key={cell.id}
                         style={{

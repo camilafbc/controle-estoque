@@ -26,6 +26,7 @@ import {
   useUpdateUserMutation,
 } from "@/mutations/users";
 import { Curso } from "@/types/Curso";
+import { AxiosError } from "axios";
 
 interface UserDialogProps {
   editingId: number | null;
@@ -33,22 +34,65 @@ interface UserDialogProps {
   setIsOpen: (state: boolean) => void;
 }
 
-const validationSchema = yup.object({
-  // codigo: yup.string().required("Campo obrigatório"),
-  nome: yup.string().required("Campo obrigatório"),
-  email: yup.string().required("Campo obrigatório"),
-  idCurso: yup.string().required("Campo obrigatório"),
-  status: yup.boolean().required("Campo obrigatório"),
-  senha: yup.string().required("Campo obrigatório"),
-  confirmaSenha: yup
-    .string()
-    .oneOf([yup.ref("senha")], "As senhas não coincidem")
-    .required("Campo obrigatório"),
-});
+// const validationSchema = yup.object({
+//   nome: yup.string().required("Campo obrigatório"),
+//   email: yup.string().email("E-mail inválido").required("Campo obrigatório"),
+//   idCurso: yup.string().required("Campo obrigatório"),
+//   status: yup.boolean().required("Campo obrigatório"),
+//   senha: yup
+//     .string()
+//     .test("senha-required", "Campo obrigatório", function (value) {
+//       // Para edição, a senha não é obrigatória
+//       if (!editingId && (!value || value.trim() === "")) {
+//         return false;
+//       }
+//       return true;
+//     })
+//     .test(
+//       "min-length",
+//       "A senha deve ter no mínimo 6 caracteres",
+//       (value) => !value || value.length >= 6
+//     ),
+//   confirmaSenha: yup
+//     .string()
+//     .test("confirmaSenha", "As senhas não coincidem", function (value) {
+//       const { senha } = this.parent;
+//       return !senha || senha === value;
+//     }),
+// });
 
-type FormData = yup.InferType<typeof validationSchema>;
+// type FormData = yup.InferType<typeof validationSchema>;
 
 export function UserDialog({ editingId, isOpen, setIsOpen }: UserDialogProps) {
+  const validationSchema = yup.object({
+    nome: yup.string().required("Campo obrigatório"),
+    email: yup.string().email("E-mail inválido").required("Campo obrigatório"),
+    idCurso: yup.string().required("Campo obrigatório"),
+    status: yup.boolean().required("Campo obrigatório"),
+    senha: yup
+      .string()
+      .test("senha-required", "Campo obrigatório", function (value) {
+        // Para edição, a senha não é obrigatória
+        if (!editingId && (!value || value.trim() === "")) {
+          return false;
+        }
+        return true;
+      })
+      .test(
+        "min-length",
+        "A senha deve ter no mínimo 6 caracteres",
+        (value) => !value || value.length >= 6,
+      ),
+    confirmaSenha: yup
+      .string()
+      .test("confirmaSenha", "As senhas não coincidem", function (value) {
+        const { senha } = this.parent;
+        return !senha || senha === value;
+      }),
+  });
+
+  type FormData = yup.InferType<typeof validationSchema>;
+
   const idUser = Number(editingId);
   // const [isOpen, setIsOpen] = useState(false);
   const { data: usersData, isLoading } = useGetUser(idUser);
@@ -91,61 +135,52 @@ export function UserDialog({ editingId, isOpen, setIsOpen }: UserDialogProps) {
     const payload = {
       nome: data.nome,
       email: data.email,
-      senha: data.senha,
+      // senha: data.senha,
       idCurso: Number(data.idCurso),
       role: "user",
       status: data.status,
+      ...(data.senha && { senha: data.senha }),
     };
     if (editingId) {
       const userData = { ...payload, idUser: idUser };
       updateUser.mutate(userData, {
         onSuccess: (response) => {
-          console.log(response);
-          if (response === 200) {
-            toast.success("Usuário editado com sucesso!", {
-              position: "bottom-right",
-              theme: "colored",
-            });
+          //console.log(response);
+          if (response.status === 200) {
+            toast.success(response.data.message);
             reset();
           } else {
-            console.log(response);
-            toast.error("Erro ao editar turma!", {
-              position: "top-right",
-              theme: "colored",
-            });
+            toast.error(response.data.message);
           }
         },
-        onError: () => {
-          toast.error("Erro ao editar turma!", {
-            position: "top-right",
-            theme: "colored",
-          });
+        onError: (error) => {
+          const axiosError = error as AxiosError<Error>;
+          const errorMessage =
+            axiosError?.response?.data?.message ||
+            error.message ||
+            "Ocorreu um erro desconhecido";
+          toast.error(errorMessage);
         },
       });
     } else {
       // Chamando a mutação com os dados da turma
       user.mutate(payload, {
         onSuccess: (response) => {
-          console.log(response);
-          if (response === 201) {
-            toast.success("Curso cadastrado com sucesso!", {
-              position: "bottom-right",
-              theme: "colored",
-            });
+          // console.log("RESPONSE", response);
+          if (response.status === 201) {
+            toast.success(response.data.message);
             reset();
           } else {
-            console.log(response);
-            toast.error("Erro ao cadastrar curso!", {
-              position: "top-right",
-              theme: "colored",
-            });
+            toast.error(response.data.message);
           }
         },
-        onError: () => {
-          toast.error("Erro ao cadastrar curso!", {
-            position: "top-right",
-            theme: "colored",
-          });
+        onError: (error) => {
+          const axiosError = error as AxiosError<Error>;
+          const errorMessage =
+            axiosError?.response?.data?.message ||
+            error.message ||
+            "Ocorreu um erro desconhecido";
+          toast.error(errorMessage);
         },
       });
     }

@@ -93,18 +93,12 @@ export default function FormUsuario() {
       };
       updateUser.mutate(payload, {
         onSuccess: (response) => {
-          if (response === 200) {
-            toast.success("Dados alterados com sucesso!", {
-              position: "bottom-right",
-              theme: "colored",
-            });
+          if (response.status === 200) {
+            toast.success("Dados alterados com sucesso!");
           }
 
-          if (response != 200) {
-            toast.error("Erro ao editar dados", {
-              position: "top-right",
-              theme: "colored",
-            });
+          if (response.status != 200) {
+            toast.error("Erro ao editar dados");
           }
         },
         onError: (error: Error) => {
@@ -115,10 +109,6 @@ export default function FormUsuario() {
           // console.log("Erro: " + axiosError.response);
           toast.error(
             "Erro ao editar dados: " + axiosError.response?.data.message,
-            {
-              position: "top-right",
-              theme: "colored",
-            },
           );
         },
       });

@@ -49,10 +49,15 @@ export async function updateCurso(req, res){
   // Inicializando a variável turma com os dados do body
   const { idCurso, nomeCurso, status } = req.body;
   const curso = { idCurso, nomeCurso, status };
+  console.log("CURSO: ", curso)
 
-  if(!curso || !curso.idCurso || !curso.nomeCurso || !curso.status){
-    return res.status(400).json({message: "Todos os campos são obrigatórios!"})
-  };
+  if (
+    typeof curso.idCurso !== "number" || 
+    typeof curso.nomeCurso !== "string" || 
+    typeof curso.status !== "boolean"
+  ) {
+    return res.status(400).json({ message: "Todos os campos são obrigatórios!" });
+  }
 
   try {
     const updateCurso = await CursoModel.updateCurso(curso)

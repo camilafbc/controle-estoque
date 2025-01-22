@@ -15,12 +15,12 @@ export const insertUser = async (user: Omit<User, "idUser">) => {
   const response = await api.post("/users", {
     user: user,
   });
-  return response.status;
+  return response;
 };
 
-export const updateUser = async (user: UpdateUser) => {
+export const updateUser = async (user: Partial<User>) => {
   const response = await api.put("/users", user);
-  return response.status;
+  return response;
 };
 
 export const deleteUser = async (id: number) => {

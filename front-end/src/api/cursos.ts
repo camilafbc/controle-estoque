@@ -13,12 +13,12 @@ export const getCursoById = async (id: number) => {
 
 export const insertCurso = async (curso: Omit<Curso, "idCurso">) => {
   const response = await api.post("/cursos", curso);
-  return response.status;
+  return response;
 };
 
 export const updateCurso = async (curso: Curso) => {
   const response = await api.put("/cursos", curso);
-  return response.status;
+  return response;
 };
 
 export const deleteCurso = async (id: number) => {

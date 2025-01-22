@@ -69,6 +69,12 @@ export default function Page() {
         </Button>
       </div>
 
+      <DataTable
+        columns={columns(handleEdit, handleDelete)}
+        data={filteredData || []}
+        isLoading={isLoading}
+      />
+
       {isOpenModal && (
         <TurmaDialog
           isOpen={isOpenModal}
@@ -76,12 +82,6 @@ export default function Page() {
           editingId={editingId}
         />
       )}
-
-      <DataTable
-        columns={columns(handleEdit, handleDelete)}
-        data={filteredData || []}
-        isLoading={isLoading}
-      />
     </div>
   );
 }

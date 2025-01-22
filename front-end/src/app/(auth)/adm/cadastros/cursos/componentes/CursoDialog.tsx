@@ -21,6 +21,7 @@ import {
   useUpdateCursoMutation,
 } from "@/mutations/cursos";
 import { useGetCurso } from "@/queries/cursos";
+import { AxiosError } from "axios";
 
 interface TurmaDialogProps {
   editingId: number | null;
@@ -62,16 +63,14 @@ export function TurmaDialog({
   useEffect(() => {
     if (isOpen) {
       if (editingId != null && cursoData) {
-        // Preenche o formulário com os dados ao editar
         reset({
           nomeCurso: cursoData.nomeCurso,
           status: cursoData.status,
         });
       } else {
-        // Reseta o formulário ao cadastrar
         reset({
           nomeCurso: "",
-          status: true, // Valor padrão
+          status: true,
         });
       }
     }
@@ -87,55 +86,46 @@ export function TurmaDialog({
       nomeCurso: data.nomeCurso,
       status: data.status,
     };
+    console.log(payload);
     if (editingId) {
       const cursoData = { ...payload, idCurso: idCurso };
       updateCurso.mutate(cursoData, {
         onSuccess: (response) => {
-          console.log(response);
-          if (response === 200) {
-            toast.success("Turma editada com sucesso!", {
-              position: "bottom-right",
-              theme: "colored",
-            });
+          //console.log(response);
+          if (response.status === 200) {
+            toast.success(response.data.message);
             reset();
           } else {
-            console.log(response);
-            toast.error("Erro ao editar turma!", {
-              position: "top-right",
-              theme: "colored",
-            });
+            toast.error(response.data.message);
           }
         },
-        onError: () => {
-          toast.error("Erro ao editar turma!", {
-            position: "top-right",
-            theme: "colored",
-          });
+        onError: (error) => {
+          const axiosError = error as AxiosError<Error>;
+          const errorMessage =
+            axiosError?.response?.data?.message ||
+            error.message ||
+            "Ocorreu um erro desconhecido";
+          toast.error(errorMessage);
         },
       });
     } else {
       curso.mutate(payload, {
         onSuccess: (response) => {
-          console.log(response);
-          if (response === 201) {
-            toast.success("Curso cadastrado com sucesso!", {
-              position: "bottom-right",
-              theme: "colored",
-            });
+          // console.log("RESPONSE", response);
+          if (response.status === 201) {
+            toast.success(response.data.message);
             reset();
           } else {
-            console.log(response);
-            toast.error("Erro ao cadastrar curso!", {
-              position: "top-right",
-              theme: "colored",
-            });
+            toast.error(response.data.message);
           }
         },
-        onError: () => {
-          toast.error("Erro ao cadastrar curso!", {
-            position: "top-right",
-            theme: "colored",
-          });
+        onError: (error) => {
+          const axiosError = error as AxiosError<Error>;
+          const errorMessage =
+            axiosError?.response?.data?.message ||
+            error.message ||
+            "Ocorreu um erro desconhecido";
+          toast.error(errorMessage);
         },
       });
     }

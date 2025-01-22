@@ -104,10 +104,11 @@ export class CursoModel {
 
     try {
       const [result] = await db.execute(
-        'UPDATE cursos SET nomeCurso = ?, status = ?', 
+        'UPDATE cursos SET nomeCurso = ?, status = ? WHERE idCurso = ?', 
         [
           curso.nomeCurso,
-          curso.status
+          curso.status,
+          curso.idCurso
         ]
       );
       return result.affectedRows;
