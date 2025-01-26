@@ -8,7 +8,6 @@ import {
   NavigationMenuList,
   NavigationMenuTrigger,
 } from "@/components/ui/navigation-menu";
-import { useSessionContext } from "@/context/SessionContext";
 import Link from "next/link";
 
 interface NavbarProps {
@@ -16,8 +15,6 @@ interface NavbarProps {
 }
 
 export default function Navbar({ role }: NavbarProps) {
-  // const user = useSessionContext();
-
   if (role === "admin") {
     return (
       <NavigationMenu className="hidden sm:block">

@@ -32,10 +32,7 @@ export default function HeaderContent() {
               </Button>
             </SheetTrigger>
             <SheetContent side="left" className="w-[85%]">
-              {/* <SheetClose asChild>
-                <Button className="mb-4">Close</Button>
-              </SheetClose> */}
-              <MobileMenu />
+              <MobileMenu role={user?.role} />
             </SheetContent>
           </Sheet>
         </div>
