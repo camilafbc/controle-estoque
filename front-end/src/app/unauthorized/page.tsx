@@ -7,7 +7,6 @@ export default function Page() {
     <div className="flex h-screen w-full flex-col items-center justify-center gap-10">
       <div className="relative h-64 w-full max-w-lg">
         {" "}
-        {/* Definindo uma altura fixa */}
         <Image
           src="/undraw_cancel.svg"
           alt="Imagem 404"
