@@ -23,7 +23,7 @@ export default function Page() {
   const [editingId, setEditingId] = useState<number | null>(null);
 
   const filteredData = cursos
-    ? cursos.filter((curso: { nomeCurso: string }) =>
+    ? cursos?.filter((curso: { nomeCurso: string }) =>
         curso.nomeCurso.toLowerCase().includes(filterValue.toLowerCase()),
       )
     : [];

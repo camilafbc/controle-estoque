@@ -34,40 +34,12 @@ interface UserDialogProps {
   setIsOpen: (state: boolean) => void;
 }
 
-// const validationSchema = yup.object({
-//   nome: yup.string().required("Campo obrigatório"),
-//   email: yup.string().email("E-mail inválido").required("Campo obrigatório"),
-//   idCurso: yup.string().required("Campo obrigatório"),
-//   status: yup.boolean().required("Campo obrigatório"),
-//   senha: yup
-//     .string()
-//     .test("senha-required", "Campo obrigatório", function (value) {
-//       // Para edição, a senha não é obrigatória
-//       if (!editingId && (!value || value.trim() === "")) {
-//         return false;
-//       }
-//       return true;
-//     })
-//     .test(
-//       "min-length",
-//       "A senha deve ter no mínimo 6 caracteres",
-//       (value) => !value || value.length >= 6
-//     ),
-//   confirmaSenha: yup
-//     .string()
-//     .test("confirmaSenha", "As senhas não coincidem", function (value) {
-//       const { senha } = this.parent;
-//       return !senha || senha === value;
-//     }),
-// });
-
-// type FormData = yup.InferType<typeof validationSchema>;
-
 export function UserDialog({ editingId, isOpen, setIsOpen }: UserDialogProps) {
   const validationSchema = yup.object({
     nome: yup.string().required("Campo obrigatório"),
     email: yup.string().email("E-mail inválido").required("Campo obrigatório"),
-    idCurso: yup.string().required("Campo obrigatório"),
+    role: yup.string().required("Campo obrigatório"),
+    idCurso: yup.string().nullable(),
     status: yup.boolean().required("Campo obrigatório"),
     senha: yup
       .string()
@@ -94,10 +66,9 @@ export function UserDialog({ editingId, isOpen, setIsOpen }: UserDialogProps) {
   type FormData = yup.InferType<typeof validationSchema>;
 
   const idUser = Number(editingId);
-  // const [isOpen, setIsOpen] = useState(false);
   const { data: usersData, isLoading } = useGetUser(idUser);
   const { data: cursosData, isLoading: cursosLoading } = useCursos();
-  // console.log("Turma data: " + turmaData);
+  const [userRole, setUserRole] = useState("");
 
   const {
     control,
@@ -117,6 +88,7 @@ export function UserDialog({ editingId, isOpen, setIsOpen }: UserDialogProps) {
       reset({
         nome: usersData.nome,
         email: usersData.email,
+        role: usersData.role,
         idCurso: String(usersData.idCurso) || "",
         status: usersData.status,
       });
@@ -204,15 +176,15 @@ export function UserDialog({ editingId, isOpen, setIsOpen }: UserDialogProps) {
 
         <form onSubmit={handleSubmit(handleForm)} className="space-y-6">
           <div className="grid gap-4">
-            {/* Linha 1: Usuário e E-mail */}
             <div className="grid w-full grid-cols-1 gap-4 md:grid-cols-2">
               <div className="p-1">
                 <Input
+                  autoFocus
                   id="input-usuario"
                   label="Usuário"
                   placeholder="Informe o nome do usuário"
+                  required={true}
                   error={!!errors.nome}
-                  autoFocus
                   {...register("nome")}
                 />
                 <span className="min-h-[16px] text-xs font-semibold text-destructive">
@@ -225,6 +197,7 @@ export function UserDialog({ editingId, isOpen, setIsOpen }: UserDialogProps) {
                   type="email"
                   label="E-mail"
                   placeholder="Informe o e-mail do usuário"
+                  required={true}
                   error={!!errors.email}
                   {...register("email")}
                 />
@@ -233,31 +206,67 @@ export function UserDialog({ editingId, isOpen, setIsOpen }: UserDialogProps) {
                 </span>
               </div>
             </div>
-
-            {/* Linha 2: Curso e Ativo */}
             <div className="grid w-full grid-cols-1 gap-4 md:grid-cols-2">
               <div className="p-1">
                 <Controller
                   control={control}
-                  name="idCurso"
+                  name="role"
                   render={({ field }) => (
                     <MySelect
                       {...field}
-                      label="Curso:"
+                      label="Tipo:"
                       id="select-option"
-                      options={
-                        cursosData?.map((curso: Curso) => ({
-                          value: curso.idCurso.toString(),
-                          label: curso.nomeCurso,
-                        })) || []
-                      }
                       placeholder="Selecione uma opção"
+                      options={[
+                        {
+                          value: "admin",
+                          label: "Administrador",
+                        },
+                        {
+                          value: "user",
+                          label: "Usuário",
+                        },
+                      ]}
+                      required={true}
                       error={!!errors.idCurso}
-                      value={field.value}
-                      onValueChange={(value) => field.onChange(value)}
+                      // value={field.value}
+                      // onValueChange={(value) => field.onChange(value)}
+                      value={userRole}
+                      onValueChange={(value) => {
+                        field.onChange(value);
+                        setUserRole(value);
+                      }}
                     />
                   )}
                 />
+                <span className="min-h-[16px] text-xs font-semibold text-destructive">
+                  {errors.idCurso?.message || ""}
+                </span>
+              </div>
+              <div className="p-1">
+                {userRole === "user" && (
+                  <Controller
+                    control={control}
+                    name="idCurso"
+                    render={({ field }) => (
+                      <MySelect
+                        {...field}
+                        label="Curso:"
+                        id="select-option"
+                        options={
+                          cursosData?.map((curso: Curso) => ({
+                            value: curso.idCurso.toString(),
+                            label: curso.nomeCurso,
+                          })) || []
+                        }
+                        placeholder="Selecione uma opção"
+                        error={!!errors.idCurso}
+                        value={field.value || ""}
+                        onValueChange={(value) => field.onChange(value)}
+                      />
+                    )}
+                  />
+                )}
                 <span className="min-h-[16px] text-xs font-semibold text-destructive">
                   {errors.idCurso?.message || ""}
                 </span>
@@ -273,12 +282,11 @@ export function UserDialog({ editingId, isOpen, setIsOpen }: UserDialogProps) {
                     />
                   )}
                 />
-                <Label>Ativo</Label>
+                <Label>Usuário Ativo</Label>
               </div>
             </div>
-
-            {/* Linha 3: Senha e Confirmar Senha */}
-            <div className="grid w-full grid-cols-1 gap-4 md:grid-cols-2">
+            <fieldset className="grid w-full grid-cols-1 gap-4 md:grid-cols-2">
+              <legend className="mb-4 font-bold">Dados de Acesso</legend>
               <div className="p-1">
                 <Input
                   required
@@ -307,7 +315,10 @@ export function UserDialog({ editingId, isOpen, setIsOpen }: UserDialogProps) {
                   {errors.confirmaSenha?.message || ""}
                 </span>
               </div>
-            </div>
+              <span className="text-sm text-muted-foreground">
+                - A senha deve conter no mínimo 6 caracteres
+              </span>
+            </fieldset>
           </div>
 
           <div className="flex justify-end gap-4">

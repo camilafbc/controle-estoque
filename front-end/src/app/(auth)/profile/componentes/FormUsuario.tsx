@@ -133,7 +133,7 @@ export default function FormUsuario() {
         </Avatar>
         <div className="flex flex-col justify-start">
           <p className="font-bold capitalize">{user?.name}</p>
-          <p className="text-sm font-semibold">{user?.curso}</p>
+          <p className="text-sm font-semibold">{user?.curso ?? "Adm"}</p>
           <p className="text-sm text-muted-foreground">{user?.email}</p>
         </div>
       </div>
