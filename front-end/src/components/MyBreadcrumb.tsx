@@ -42,7 +42,7 @@ export default function MyBreadcrumb({
               {item.href ? (
                 <Link
                   href={item.href}
-                  className="text-orange-500 hover:text-orange-500/90"
+                  className="text-muted-foreground hover:text-orange-500/90"
                 >
                   {item.label}
                 </Link>
