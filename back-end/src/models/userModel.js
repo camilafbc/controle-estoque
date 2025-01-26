@@ -60,13 +60,11 @@ export class userModel {
   };
   
   static async createUser(user) {
-
     const db = await openDb();
-
+  
     try {
-      
       const [newUser] = await db.execute(
-        'INSERT INTO user (nome, email, senha, idCurso, role, status, created_by) VALUES (?, ?, ?, ?, ?)', 
+        'INSERT INTO user (nome, email, senha, idCurso, role, status, created_by) VALUES (?, ?, ?, ?, ?, ?, ?)',
         [
           user.nome, 
           user.email, 

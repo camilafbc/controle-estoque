@@ -32,27 +32,33 @@ export async function getUserById(req, res){
   }
 };
 
-export async function insertUser(req, res){
-  const idUser = req.user.idUser;
-  const roleUser = req.user.role
-  const { user } = req.body
-  
-  //console.log("user: " + user)
-  //console.log("req.body: " + req.body)
+export async function insertUser(req, res) {
+  const idUser = req.user.idUser; // Usuário logado, criando o novo usuário
+  const roleUser = req.user.role; // Verificando o role do usuário logado
+  const { user } = req.body; // Obtendo os dados do usuário do corpo da requisição
 
-  if (roleUser !== "admin"){
-    return res.status(403).json({message: "Usuário não tem autorização para acessar esse recurso!"})
+  console.log("req.body:", JSON.stringify(req.body, null, 2)); 
+
+  // Checando se o usuário tem permissão para cadastrar
+  if (roleUser !== "admin") {
+    return res.status(403).json({ message: "Usuário não tem autorização para acessar esse recurso!" });
   }
 
-  if(!user || !user.nome || !user.email || !user.senha || !user.idCurso){
-    return res.status(400).json({message: "Todos os campos são obrigatórios!"})
+  // Validando se todos os campos necessários foram preenchidos
+  if (!user || !user.nome || !user.email || !user.senha || !user.idCurso) {
+    return res.status(400).json({ message: "Todos os campos são obrigatórios!" });
   }
 
   try {
-    await userModel.createUser({...user, created_by: idUser})
-    res.status(201).json({message: "Usuário cadastrado!"})
+    // Passando todos os dados corretamente para a função createUser
+    await userModel.createUser({
+      ...user, // Dados do usuário
+      created_by: idUser // ID do usuário que está criando
+    });
+    res.status(201).json({ message: "Usuário cadastrado!" });
   } catch (error) {
-    res.status(404).json({message: `Erro: ${error.message}`})
+    console.error(error);
+    res.status(404).json({ message: `Erro: ${error.message}` });
   }
 };
 
