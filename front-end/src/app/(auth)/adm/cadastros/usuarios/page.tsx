@@ -23,7 +23,7 @@ export default function Page() {
   const [editingId, setEditingId] = useState<number | null>(null);
 
   const filteredData =
-    !isLoading && usuarios
+    !isLoading && usuarios && usuarios.length > 0
       ? usuarios?.filter((user: { nome: string }) =>
           user.nome.toLowerCase().includes(filterValue.toLowerCase()),
         )

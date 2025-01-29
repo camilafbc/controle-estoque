@@ -85,10 +85,11 @@ export function UserDialog({ editingId, isOpen, setIsOpen }: UserDialogProps) {
 
   useEffect(() => {
     if (isOpen && usersData) {
+      setUserRole(usersData.role);
       reset({
         nome: usersData.nome,
         email: usersData.email,
-        role: usersData.role,
+        // role: usersData.role,
         idCurso: String(usersData.idCurso) || "",
         status: usersData.status,
       });
