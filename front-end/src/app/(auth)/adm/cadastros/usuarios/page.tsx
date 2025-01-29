@@ -22,11 +22,12 @@ export default function Page() {
   const [isOpen, setIsOpen] = useState(false);
   const [editingId, setEditingId] = useState<number | null>(null);
 
-  const filteredData = usuarios
-    ? usuarios?.filter((user: { nome: string }) =>
-        user.nome.toLowerCase().includes(filterValue.toLowerCase()),
-      )
-    : [];
+  const filteredData =
+    !isLoading && usuarios
+      ? usuarios?.filter((user: { nome: string }) =>
+          user.nome.toLowerCase().includes(filterValue.toLowerCase()),
+        )
+      : [];
 
   const handleEdit = (id: number) => {
     setEditingId(id);

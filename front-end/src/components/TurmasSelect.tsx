@@ -20,14 +20,29 @@ export function TurmaSelect({ name, control, setValue }: TurmaSelectProps) {
   const { selectedTurma, setSelectedTurma } = useTurmaStore();
 
   // Define o valor inicial de forma síncrona quando as turmas são carregadas
+  // useEffect(() => {
+  //   if (turmas?.length > 0) {
+  //     const defaultValue = turmas[0].idTurma.toString();
+  //     if (!selectedTurma) {
+  //       setSelectedTurma(defaultValue);
+  //     }
+  //     if (setValue) {
+  //       setValue(name, defaultValue);
+  //     }
+  //   }
+  // }, [turmas, setValue, name, selectedTurma, setSelectedTurma]);
+
   useEffect(() => {
     if (turmas?.length > 0) {
       const defaultValue = turmas[0].idTurma.toString();
       if (!selectedTurma) {
         setSelectedTurma(defaultValue);
       }
+
+      // Verifica se o formulário já tem um valor definido, senão, define o valor inicial
       if (setValue) {
-        setValue(name, defaultValue);
+        // Aqui verificamos se o valor de turma já está sendo preenchido, se não, usamos o defaultValue
+        setValue(name, selectedTurma || defaultValue);
       }
     }
   }, [turmas, setValue, name, selectedTurma, setSelectedTurma]);

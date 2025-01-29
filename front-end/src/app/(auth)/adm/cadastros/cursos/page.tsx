@@ -22,11 +22,12 @@ export default function Page() {
   const [isOpen, setIsOpen] = useState(false);
   const [editingId, setEditingId] = useState<number | null>(null);
 
-  const filteredData = cursos
-    ? cursos?.filter((curso: { nomeCurso: string }) =>
-        curso.nomeCurso.toLowerCase().includes(filterValue.toLowerCase()),
-      )
-    : [];
+  const filteredData =
+    !isLoading && cursos
+      ? cursos?.filter((curso: { nomeCurso: string }) =>
+          curso.nomeCurso.toLowerCase().includes(filterValue.toLowerCase()),
+        )
+      : [];
 
   const handleEdit = (id: number) => {
     setEditingId(id);
