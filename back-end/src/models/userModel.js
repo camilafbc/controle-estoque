@@ -17,7 +17,7 @@ export async function createUserTable(){
       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, 
       updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP)`);
     console.log("Tablea 'User' criada com sucesso!");
-    await db.execute("INSERT INTO user (nome, email, senha, role, idCurso, created_by) VALUES ('MASTER', 'user@email.com', '$2b$10$KmMBfIkGH2Rwb0KI6k5WYeII8Lr1IfKSHyW30WE5vwxtyapk/0KWm', 'admin', NULL, 1)")
+    // await db.execute("INSERT INTO user (nome, email, senha, role, idCurso, created_by) VALUES ('MASTER', 'user@email.com', '$2b$10$KmMBfIkGH2Rwb0KI6k5WYeII8Lr1IfKSHyW30WE5vwxtyapk/0KWm', 'admin', NULL, 1)")
   } catch (error) {
     console.error("Erro ao criar tabela 'user'", error)
   };
