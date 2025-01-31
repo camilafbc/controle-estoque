@@ -3,7 +3,6 @@
 import { toast } from "react-toastify";
 import { DataTable } from "@/components/ui/data-table/data-table";
 import { useEffect, useState } from "react";
-import { TurmaSelect } from "@/components/TurmasSelect";
 import { Input } from "@/components/ui/input";
 import { Controller, useForm } from "react-hook-form";
 import { ProductRegistrationDialog } from "./componentes/ProductRegistrationDialog";
