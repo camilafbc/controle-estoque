@@ -11,6 +11,7 @@ import { Input } from "../ui/input";
 import { Checkbox } from "../ui/checkbox";
 import { Button } from "../ui/button";
 import { Eye, EyeOff, Loader2, LogIn } from "lucide-react";
+import Link from "next/link";
 
 interface FormInputs {
   email: string;
@@ -99,20 +100,22 @@ export default function LoginForm() {
           {errors?.password && errors?.password?.message}
         </span>
       </div>
-      <div className="flex items-center justify-between">
+      {/* <div className="flex items-center justify-between">
         <div className="flex gap-1">
           <Checkbox />
           <Label className="text-sm font-normal text-zinc-500 dark:text-zinc-500">
             Manter conectado
           </Label>
         </div>
-        <Button
-          variant={"link"}
-          className="p-0 text-sm font-normal text-zinc-500 hover:text-zinc-400 dark:text-zinc-500"
-        >
-          Esqueci minha senha
-        </Button>
-      </div>
+        <Link href={"/recuperacao-senha"}>
+          <Button
+            variant={"link"}
+            className="p-0 text-sm font-normal text-zinc-500 hover:text-zinc-400 dark:text-zinc-500"
+          >
+            Esqueci minha senha
+          </Button>
+        </Link>
+      </div> */}
       <Button
         type="submit"
         className="h-11 w-full bg-blue-senac hover:bg-blue-950"
