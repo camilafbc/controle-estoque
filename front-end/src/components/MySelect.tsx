@@ -1,6 +1,6 @@
 import React, { forwardRef } from "react";
 import { SelectItemProps, SelectProps } from "@radix-ui/react-select";
-import { Info } from "lucide-react";
+import { Info, Loader2 } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 
@@ -33,6 +33,7 @@ export interface MySelectProps extends SelectProps {
   placeholder?: string;
   required?: boolean;
   size?: "default" | "lg" | "sm";
+  loading?: boolean;
 }
 
 const MySelect = forwardRef<HTMLDivElement, MySelectProps>(
@@ -47,6 +48,7 @@ const MySelect = forwardRef<HTMLDivElement, MySelectProps>(
       placeholder = "Selecione uma opção...",
       required = false,
       size,
+      loading = false,
       ...rest
     },
     ref,
@@ -67,6 +69,7 @@ const MySelect = forwardRef<HTMLDivElement, MySelectProps>(
               <Label
                 className={cn(
                   error && "text-destructive",
+                  required && "font-bold",
                   "text-sm font-semibold",
                 )}
                 htmlFor={id}
@@ -77,16 +80,29 @@ const MySelect = forwardRef<HTMLDivElement, MySelectProps>(
             </div>
           )}
 
-          <SelectTrigger className={className} id={id} size={size || "default"}>
-            {rest.value ? (
-              <SelectValue />
+          <SelectTrigger
+            className={cn(
+              className,
+              error && "border-destructive",
+              "flex min-w-[200px] items-center justify-between",
+            )}
+            id={id}
+            size={size || "default"}
+          >
+            {loading ? (
+              <>
+                <Loader2 className="animate-spin text-muted-foreground" />
+                <>Aguarde...</>
+              </>
+            ) : rest.value ? (
+              <SelectValue className="whitespace-nowrap" />
             ) : (
               <span className="text-muted-foreground">{placeholder}</span>
             )}
           </SelectTrigger>
         </div>
 
-        <SelectContent>
+        <SelectContent className="scrollbar-class pointer-events-auto h-[120px] overflow-y-scroll">
           {options.map((option) => (
             <SelectItem
               defaultValue={
