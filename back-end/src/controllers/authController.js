@@ -35,4 +35,4 @@ export async function login(req, res){
     console.log("Usuário não encontrado!")
   }
 
-}
+};
