@@ -7,7 +7,6 @@ import { Button } from "@/components/ui/button";
 import { FileText } from "lucide-react";
 import { DatePickerWithRange } from "@/components/DatePickerWithRange";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
-import { TurmaSelect } from "@/components/TurmasSelect";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import dayjs from "dayjs";
@@ -16,6 +15,9 @@ import { Separator } from "@/components/ui/separator";
 import MyDocument from "./componentes/relatorioTeste";
 import { addDays } from "date-fns";
 import { createRelatorioMovimentacoes } from "@/api/relatorio";
+import { MySelect } from "@/components/MySelect";
+import { useTurmas } from "@/queries/turmas";
+import { Turma } from "@/types/Turma";
 
 // Esquema de validação usando Yup
 const validationSchema = yup.object().shape({
@@ -40,6 +42,8 @@ export default function Page() {
   } = useForm({
     resolver: yupResolver(validationSchema),
   });
+
+  const { data: turmas, isLoading: turmasLoading } = useTurmas();
 
   const onSubmit: SubmitHandler<FormData> = async (data) => {
     // Garantir que `to` seja `undefined` se não for fornecido
@@ -81,11 +85,26 @@ export default function Page() {
             >
               <div className="flex flex-wrap items-start gap-6">
                 <div>
-                  <TurmaSelect
-                    control={control}
+                  <Controller
                     name="turma"
-                    required={true}
-                    error={errors?.turma?.message}
+                    control={control}
+                    render={({ field }) => (
+                      <MySelect
+                        {...field}
+                        label="Turma"
+                        id="select-turma"
+                        required={true}
+                        loading={turmasLoading}
+                        options={turmas?.map((turma: Turma) => ({
+                          label: `${turma.codigoTurma} - ${turma.turnoTurma}`,
+                          value: String(turma.idTurma),
+                        }))}
+                        value={field.value}
+                        onValueChange={(value) => {
+                          field.onChange(value);
+                        }}
+                      />
+                    )}
                   />
                   <span className="min-h-[16px] text-xs font-semibold text-destructive">
                     {errors.turma && errors.turma.message}

@@ -1,8 +1,8 @@
 "use client";
 
 import * as yup from "yup";
-import { ReactNode, useEffect, useState } from "react";
-import { SubmitHandler, useForm } from "react-hook-form";
+import { useEffect } from "react";
+import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -12,12 +12,9 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
-import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { TurmaSelect } from "@/components/TurmasSelect";
 import dayjs from "dayjs";
 import { useProduto } from "@/queries/produtos";
 import {
@@ -25,6 +22,9 @@ import {
   useUpdateProductMutation,
 } from "@/mutations/produtos";
 import { AxiosError } from "axios";
+import { useTurmas } from "@/queries/turmas";
+import { Turma } from "@/types/Turma";
+import { MySelect } from "@/components/MySelect";
 
 interface ProductRegistrationDialogProps {
   editingId: number | null;
@@ -54,6 +54,8 @@ export function ProductRegistrationDialog({
   setIsOpen,
 }: ProductRegistrationDialogProps) {
   const { data: produtoData, isLoading } = useProduto(editingId || 0);
+  const { data: turmas, isLoading: turmasLoading } = useTurmas();
+  // const [selectedTurma, setSelectedTurma] = useState("");
 
   const {
     control,
@@ -95,6 +97,8 @@ export function ProductRegistrationDialog({
   };
 
   const onSubmit: SubmitHandler<FormData> = (data) => {
+    console.log(data);
+
     const formattedDate = data.dataValidade.split("/").reverse().join("-");
     const productData = {
       prodDescricao: data.produto,
@@ -103,6 +107,7 @@ export function ProductRegistrationDialog({
       prodQuantidade: +data.quantidade,
       prodValidade: formattedDate,
       prodTurma: +data.turma,
+      // prodTurma: +selectedTurma,
     };
 
     if (editingId) {
@@ -148,6 +153,8 @@ export function ProductRegistrationDialog({
     }
   };
 
+  console.log(errors);
+
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogContent
@@ -161,8 +168,8 @@ export function ProductRegistrationDialog({
           <DialogDescription></DialogDescription>
         </DialogHeader>
         <hr />
-        <form className="space-y-4" onSubmit={handleSubmit(onSubmit)}>
-          <div>
+        <form className="flex flex-col gap-6" onSubmit={handleSubmit(onSubmit)}>
+          <div className="mt-6">
             <Input
               autoFocus
               id="input-produto"
@@ -246,20 +253,34 @@ export function ProductRegistrationDialog({
               </span>
             </div>
             <div className="col-span-1">
-              {/* <Label htmlFor="turma">Turma</Label> */}
-              <TurmaSelect
-                control={control}
+              <Controller
                 name="turma"
-                required={true}
-                error={errors?.turma?.message}
+                control={control}
+                render={({ field }) => (
+                  <MySelect
+                    {...field}
+                    label="Turma"
+                    id="select-turma"
+                    required={true}
+                    loading={turmasLoading}
+                    options={turmas?.map((turma: Turma) => ({
+                      label: `${turma.codigoTurma} - ${turma.turnoTurma}`,
+                      value: String(turma.idTurma),
+                    }))}
+                    value={field.value}
+                    onValueChange={(value) => {
+                      field.onChange(value);
+                    }}
+                  />
+                )}
               />
               <span className="min-h-4 text-xs font-semibold text-destructive">
                 {errors.turma && errors.turma.message}
               </span>
             </div>
           </div>
-          <hr />
-          <div className="flex items-center justify-end gap-2">
+          {/* <Separator className="my-6" /> */}
+          <div className="mt-10 flex items-center justify-end gap-2">
             <Button
               type="button"
               variant={"ghost"}

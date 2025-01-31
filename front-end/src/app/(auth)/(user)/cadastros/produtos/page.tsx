@@ -5,7 +5,7 @@ import { DataTable } from "@/components/ui/data-table/data-table";
 import { useEffect, useState } from "react";
 import { TurmaSelect } from "@/components/TurmasSelect";
 import { Input } from "@/components/ui/input";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { ProductRegistrationDialog } from "./componentes/ProductRegistrationDialog";
 import { Button } from "@/components/ui/button";
 import { PlusCircle } from "lucide-react";
@@ -16,6 +16,9 @@ import { useProdutos } from "@/queries/produtos";
 import { useDeleteProductMutation } from "@/mutations/produtos";
 import { columns } from "./componentes/TableColumns";
 import { useTurmaStore } from "@/stores/useTurmaStore";
+import { MySelect } from "@/components/MySelect";
+import { useTurmas } from "@/queries/turmas";
+import { Turma } from "@/types/Turma";
 
 export default function ProdutosPage() {
   const { control, setValue, watch } = useForm({
@@ -30,7 +33,7 @@ export default function ProdutosPage() {
   const [isOpen, setIsOpen] = useState(false);
   const [editingId, setEditingId] = useState<number | null>(null);
   const { selectedTurma, setSelectedTurma } = useTurmaStore();
-
+  const { data: turmas, isLoading: turmasLoading } = useTurmas();
   const produtos = useProdutos(+selectedTurma);
   const deleteMutation = useDeleteProductMutation();
 
@@ -63,6 +66,19 @@ export default function ProdutosPage() {
     produtos.refetch();
   }, [selectedTurma, produtos]);
 
+  useEffect(() => {
+    if (turmas?.length > 0) {
+      const defaultValue = turmas[0].idTurma.toString();
+      if (!selectedTurma) {
+        setSelectedTurma(defaultValue);
+      }
+      // Verifica se o formulário já tem um valor definido, senão, define o valor inicial
+      if (setValue) {
+        setValue("turma", selectedTurma || defaultValue);
+      }
+    }
+  }, [turmas, setValue, selectedTurma, setSelectedTurma]);
+
   // Função para aplicar o filtro nos dados
   const filteredData = produtos?.data?.filter((produto) => {
     return produto.prodDescricao
@@ -83,7 +99,27 @@ export default function ProdutosPage() {
       <div className="my-8 flex w-full items-end justify-between gap-4">
         <form className="my-4 flex w-full items-end gap-4">
           <div className="w-full md:w-1/4">
-            <TurmaSelect name="turma" control={control} />
+            <Controller
+              name="turma"
+              control={control}
+              render={({ field }) => (
+                <MySelect
+                  {...field}
+                  label="Turma"
+                  id="select-turma"
+                  loading={turmasLoading}
+                  options={turmas?.map((turma: Turma) => ({
+                    label: `${turma.codigoTurma} - ${turma.turnoTurma}`,
+                    value: String(turma.idTurma),
+                  }))}
+                  value={selectedTurma}
+                  onValueChange={(value) => {
+                    field.onChange(value);
+                    setSelectedTurma(value);
+                  }}
+                />
+              )}
+            />
           </div>
           <Input
             placeholder="Filtrar produtos"
