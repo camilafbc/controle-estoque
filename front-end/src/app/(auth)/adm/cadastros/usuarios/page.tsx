@@ -14,42 +14,9 @@ import { useUsers } from "@/queries/user";
 import { useDeleteUserMutation } from "@/mutations/users";
 import { UserDialog } from "./componentes/UserDialog";
 import BadgePageTitle from "@/components/BadgePageTitle";
+import UsersContainer from "./componentes/UsersContainer";
 
 export default function Page() {
-  const deleteMutation = useDeleteUserMutation();
-  const { data: usuarios, isLoading, isError } = useUsers();
-  const [filterValue, setFilterValue] = useState("");
-  const [isOpen, setIsOpen] = useState(false);
-  const [editingId, setEditingId] = useState<number | null>(null);
-
-  const filteredData =
-    usuarios && usuarios.length > 0
-      ? usuarios?.filter((user: { nome: string }) =>
-          user.nome.toLowerCase().includes(filterValue.toLowerCase()),
-        )
-      : [];
-
-  const handleEdit = (id: number) => {
-    setEditingId(id);
-    setIsOpen(true);
-  };
-
-  const handleDelete = (id: number) => {
-    deleteMutation.mutate(id, {
-      onSuccess: () => {
-        toast.success("Turma removida com sucesso!");
-      },
-      onError: () => {
-        toast.error("Erro ao remover turma!");
-      },
-    });
-  };
-
-  const handleNew = () => {
-    setEditingId(null);
-    setIsOpen(true);
-  };
-
   return (
     <>
       <MyBreadcrumb
@@ -61,7 +28,8 @@ export default function Page() {
       />
       <BadgePageTitle title="Usuários" />
       <Separator orientation="horizontal" className="mb-4" />
-      <div className="my-8 flex flex-col items-start justify-between gap-2 md:flex-row md:items-center">
+      <UsersContainer />
+      {/* <div className="my-8 flex flex-col items-start justify-between gap-2 md:flex-row md:items-center">
         <Input
           placeholder="Buscar Usuário"
           value={filterValue}
@@ -87,7 +55,7 @@ export default function Page() {
           isOpen={isOpen}
           setIsOpen={setIsOpen}
         />
-      )}
+      )} */}
     </>
   );
 }

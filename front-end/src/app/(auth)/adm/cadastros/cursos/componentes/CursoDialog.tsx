@@ -138,7 +138,7 @@ export function TurmaDialog({
         className="m-2 w-[300px] max-w-lg bg-card sm:m-0 sm:w-full md:max-w-2xl lg:max-w-3xl"
       >
         <DialogHeader>
-          <DialogTitle className="text-zinc-700">
+          <DialogTitle className="text-zinc-700 dark:text-white">
             {editingId
               ? `Editando Curso ${cursoData?.codigoTurma || ""}`
               : "Cadastro de Curso"}
@@ -147,8 +147,8 @@ export function TurmaDialog({
         </DialogHeader>
         <hr />
 
-        <form onSubmit={handleSubmit(handleForm)} className="space-y-4">
-          <div className="grid grid-cols-2 gap-4">
+        <form onSubmit={handleSubmit(handleForm)} className="mt-4 space-y-4">
+          <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
             <div className="flex flex-col p-1">
               <Input
                 id="input-curso"
@@ -173,10 +173,10 @@ export function TurmaDialog({
                   />
                 )}
               />
-              <Label>Ativo</Label>
+              <Label>Curso Ativo</Label>
             </div>
           </div>
-          <div className="flex justify-end gap-4">
+          <div className="mt-4 flex justify-end gap-4">
             <Button variant={"outline"} onClick={handleClose}>
               Fechar
             </Button>

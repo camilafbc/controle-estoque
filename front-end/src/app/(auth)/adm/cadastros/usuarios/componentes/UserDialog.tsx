@@ -1,7 +1,7 @@
 "use client";
 
 import * as yup from "yup";
-import { ReactNode, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { toast } from "react-toastify";
@@ -12,14 +12,13 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { MySelect } from "@/components/MySelect";
 import { Switch } from "@/components/ui/switch";
-import { useCursos, useGetCurso } from "@/queries/cursos";
+import { useCursos } from "@/queries/cursos";
 import { useGetUser } from "@/queries/user";
 import {
   useInsertUserMutation,
@@ -108,7 +107,6 @@ export function UserDialog({ editingId, isOpen, setIsOpen }: UserDialogProps) {
     const payload = {
       nome: data.nome,
       email: data.email,
-      // senha: data.senha,
       idCurso: Number(data.idCurso),
       role: "user",
       status: data.status,
@@ -163,7 +161,7 @@ export function UserDialog({ editingId, isOpen, setIsOpen }: UserDialogProps) {
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogContent
         aria-describedby="#dialog-description"
-        className="m-2 w-[300px] max-w-lg bg-card sm:m-0 sm:w-full md:max-w-2xl lg:max-w-3xl"
+        className="m-2 w-[98%] max-w-5xl bg-card sm:m-0"
       >
         <DialogHeader>
           <DialogTitle className="text-zinc-700">
@@ -317,12 +315,11 @@ export function UserDialog({ editingId, isOpen, setIsOpen }: UserDialogProps) {
                 </span>
               </div>
               <span className="text-sm text-muted-foreground">
-                - A senha deve conter no mínimo 6 caracteres
+                - A senha deve conter ao menos 6 caracteres
               </span>
             </fieldset>
           </div>
-
-          <div className="flex justify-end gap-4">
+          <div className="mt-4 flex justify-end gap-4">
             <Button variant={"outline"} onClick={handleClose}>
               Fechar
             </Button>

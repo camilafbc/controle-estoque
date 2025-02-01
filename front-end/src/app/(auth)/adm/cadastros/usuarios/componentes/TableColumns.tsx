@@ -8,6 +8,7 @@ import {
   DataTableDeleteAction,
   DataTableEditAction,
 } from "@/components/ui/data-table/data-table-action-buttons";
+import { min } from "date-fns";
 
 export const columns = (
   handleEdit: (id: number) => void,
@@ -45,13 +46,17 @@ export const columns = (
     meta: { type: "number" },
     size: 5,
   },
-  // {
-  //   accessorKey: "idCurso",
-  //   header: ({ column }) => (
-  //     <DataTableColumnHeader column={column} title="Código" />
-  //   ),
-  //   enableSorting: true,
-  // },
+  {
+    accessorKey: "role",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Tipo" />
+    ),
+    cell: ({ row }) =>
+      row.getValue("role") === "admin" ? "Administrador" : "Usuário",
+    enableSorting: true,
+    meta: { type: "string", minWidth: "20" },
+    size: 5,
+  },
   {
     accessorKey: "status",
     header: ({ column }) => (
@@ -69,6 +74,15 @@ export const columns = (
     accessorKey: "nome",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Usuário" />
+    ),
+    enableSorting: true,
+    meta: { type: "string", minWidth: "20" },
+    size: 10,
+  },
+  {
+    accessorKey: "email",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="E-mail" />
     ),
     enableSorting: true,
     meta: { type: "string" },
