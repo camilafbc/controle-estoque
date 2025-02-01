@@ -47,7 +47,7 @@ export default function LoginForm() {
         password: data.password,
       });
 
-      console.log("RESULT LOGIN: ", result);
+      // console.log("RESULT LOGIN: ", result);
 
       if (result?.ok) {
         // router.push("/home");
@@ -66,8 +66,8 @@ export default function LoginForm() {
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
-      <div>
+    <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-5">
+      <div className="flex flex-col gap-1">
         <Input
           autoFocus
           type="email"
@@ -83,19 +83,17 @@ export default function LoginForm() {
           {errors?.email && errors?.email?.message}
         </span>
       </div>
-      <div>
-        <div className="group flex">
-          <Input
-            id="input-password"
-            label="Senha"
-            placeholder="Informe sua senha"
-            disabled={loading}
-            type={!showPassword ? "password" : "text"}
-            error={!!errors.password}
-            className="text-zinc-900 focus:bg-white dark:bg-white"
-            {...register("password")}
-          />
-        </div>
+      <div className="flex flex-col gap-1">
+        <Input
+          id="input-password"
+          label="Senha"
+          placeholder="Informe sua senha"
+          disabled={loading}
+          type={!showPassword ? "password" : "text"}
+          error={!!errors.password}
+          className="text-zinc-900 focus:bg-white dark:bg-white"
+          {...register("password")}
+        />
         <span className="text-xs font-semibold text-destructive">
           {errors?.password && errors?.password?.message}
         </span>
@@ -118,8 +116,9 @@ export default function LoginForm() {
       </div> */}
       <Button
         type="submit"
-        className="h-11 w-full bg-blue-senac hover:bg-blue-950"
+        size="lg"
         disabled={loading}
+        className="mt-2 w-full bg-blue-senac hover:bg-blue-950"
       >
         {!loading ? (
           <>
