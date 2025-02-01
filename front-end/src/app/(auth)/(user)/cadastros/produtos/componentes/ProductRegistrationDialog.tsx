@@ -83,8 +83,9 @@ export function ProductRegistrationDialog({
         lote: produtoData.prodLote,
         quantidade: String(produtoData.prodQuantidade),
         dataValidade: dayjs(produtoData.prodValidade).format("DD/MM/YYYY"),
-        turma: String(produtoData.prodTurma),
+        turma: produtoData.prodTurma.toString(),
       });
+      console.log("PRODUTO DATA: ", produtoData);
     }
   }, [editingId, produtoData, reset]);
 
@@ -97,7 +98,7 @@ export function ProductRegistrationDialog({
   };
 
   const onSubmit: SubmitHandler<FormData> = (data) => {
-    console.log(data);
+    //console.log(data);
 
     const formattedDate = data.dataValidade.split("/").reverse().join("-");
     const productData = {

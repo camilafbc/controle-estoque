@@ -14,12 +14,18 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { useDashLastOperacoes } from "@/queries/dashboard";
+import { ReloadIcon } from "@radix-ui/react-icons";
 import dayjs from "dayjs";
 
 export default function TabelaOperacoes() {
   const { data: dados, isLoading } = useDashLastOperacoes();
 
-  if (isLoading) return <p>Carregando...</p>;
+  if (isLoading)
+    return (
+      <div>
+        <ReloadIcon className="mr-2 size-4 animate-spin" />
+      </div>
+    );
 
   return (
     <Card className="shadow-md">

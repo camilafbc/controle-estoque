@@ -1,7 +1,7 @@
 "use client";
 
 import * as yup from "yup";
-import { ReactNode, useEffect, useState } from "react";
+import { useEffect } from "react";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { toast } from "react-toastify";
@@ -11,7 +11,6 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
@@ -132,7 +131,7 @@ export function TurmaDialog({
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogContent
         aria-describedby="#dialog-description"
-        className="m-2 w-[300px] max-w-lg sm:m-0 sm:w-full md:max-w-2xl lg:max-w-3xl"
+        className="m-2 w-full min-w-[300px] max-w-3xl sm:m-0"
       >
         <DialogHeader>
           <DialogTitle className="text-zinc-700">
@@ -144,7 +143,10 @@ export function TurmaDialog({
         </DialogHeader>
         <hr />
 
-        <form onSubmit={handleSubmit(handleForm)} className="space-y-4">
+        <form
+          onSubmit={handleSubmit(handleForm)}
+          className="mt-4 flex flex-col gap-4"
+        >
           <div className="flex flex-wrap gap-8">
             <div>
               <Input
@@ -152,6 +154,7 @@ export function TurmaDialog({
                 label="Código"
                 placeholder="Informe o código da turma"
                 infoText="Dígitos que identificam a turma"
+                required={true}
                 error={!!errors.codigo}
                 {...register("codigo")}
               />
@@ -168,12 +171,13 @@ export function TurmaDialog({
                     {...field}
                     label="Turno:"
                     id="select-option"
+                    placeholder="Selecione uma opção"
+                    required={true}
                     options={[
                       { label: "Manhã", value: "Manhã" },
                       { label: "Tarde", value: "Tarde" },
                       { label: "Noite", value: "Noite" },
                     ]}
-                    placeholder="Selecione uma opção"
                     error={!!errors.turno}
                     value={field.value}
                     onValueChange={(value) => field.onChange(value)}
@@ -195,7 +199,7 @@ export function TurmaDialog({
                   />
                 )}
               />
-              <Label className="mb-1">Ativa</Label>
+              <Label className="mb-1">Turma Ativa</Label>
             </div>
           </div>
 

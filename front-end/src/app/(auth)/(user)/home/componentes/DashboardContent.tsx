@@ -38,8 +38,8 @@ export default function DashboardContent() {
   )
     return <LoaderComponent />;
 
-  if (error || totalEstoqueError || totalTurmasErro || totalVencimentoError)
-    return <p>Erro ao carregar Dashboard</p>;
+  // if (error || totalEstoqueError || totalTurmasErro || totalVencimentoError)
+  //   return <p>Erro ao carregar Dashboard</p>;
 
   return (
     <div className="grid gap-4">
@@ -48,7 +48,8 @@ export default function DashboardContent() {
           className="bg-green-500 text-white"
           title="Produtos"
           subtitle="Produtos cadastrados"
-          data={totalProdutos.count}
+          data={totalProdutos?.count}
+          loading={isLoading}
         >
           <Package />
         </DashCard>
@@ -56,7 +57,8 @@ export default function DashboardContent() {
           className="bg-blue-400 text-white"
           title="Turmas"
           subtitle="Turmas ativas"
-          data={totalTurmas.count}
+          data={totalTurmas?.count}
+          loading={isTotalTurmasLoading}
         >
           <GraduationCap />
         </DashCard>
@@ -64,7 +66,8 @@ export default function DashboardContent() {
           className="bg-yellow-400 text-white"
           title="Validade"
           subtitle="Produtos expiram em 30 dias"
-          data={totalVencimento.length}
+          data={totalVencimento?.length}
+          loading={isTotalVencimentoLoading}
         >
           <CalendarDays />
         </DashCard>
@@ -72,7 +75,8 @@ export default function DashboardContent() {
           className="bg-orange-400 text-white"
           title="Estoque"
           subtitle="Unidades em estoque"
-          data={totalEstoque.totalEstoque}
+          data={totalEstoque?.totalEstoque || 0}
+          loading={isTotalEstoqueLoading}
         >
           <Boxes />
         </DashCard>

@@ -32,7 +32,7 @@ export const columns = (
         <MyTooltip content="Movimentações">
           <ListPlus
             onClick={() => handleMovimentacoes(row.original.idProduto)}
-            className="size-4 cursor-pointer text-orange-500 hover:text-orange-500/90 dark:text-yellow-600"
+            className="size-5 cursor-pointer hover:text-orange-500/90 dark:text-yellow-600"
           />
         </MyTooltip>
         <DataTableEditAction
@@ -64,7 +64,7 @@ export const columns = (
     ),
     enableSorting: true,
     meta: { type: "date", minWidth: "20" },
-    size: 10,
+    size: 8,
   },
   {
     accessorKey: "prodFabricante",

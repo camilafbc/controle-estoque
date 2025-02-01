@@ -88,7 +88,7 @@ export function UserDialog({ editingId, isOpen, setIsOpen }: UserDialogProps) {
       reset({
         nome: usersData.nome,
         email: usersData.email,
-        // role: usersData.role,
+        role: usersData.role,
         idCurso: String(usersData.idCurso) || "",
         status: usersData.status,
       });
@@ -102,16 +102,17 @@ export function UserDialog({ editingId, isOpen, setIsOpen }: UserDialogProps) {
     reset();
     setIsOpen(false);
   };
-
+  console.log(errors);
   const handleForm: SubmitHandler<FormData> = (data) => {
     const payload = {
       nome: data.nome,
       email: data.email,
       idCurso: Number(data.idCurso),
-      role: "user",
+      role: data.role,
       status: data.status,
       ...(data.senha && { senha: data.senha }),
     };
+    console.log("PAYLOAD: ", payload);
     if (editingId) {
       const userData = { ...payload, idUser: idUser };
       updateUser.mutate(userData, {
@@ -134,7 +135,6 @@ export function UserDialog({ editingId, isOpen, setIsOpen }: UserDialogProps) {
         },
       });
     } else {
-      // Chamando a mutação com os dados da turma
       user.mutate(payload, {
         onSuccess: (response) => {
           // console.log("RESPONSE", response);
@@ -228,7 +228,7 @@ export function UserDialog({ editingId, isOpen, setIsOpen }: UserDialogProps) {
                       ]}
                       required={true}
                       error={!!errors.idCurso}
-                      value={userRole}
+                      value={field.value}
                       onValueChange={(value) => {
                         field.onChange(value);
                         setUserRole(value);

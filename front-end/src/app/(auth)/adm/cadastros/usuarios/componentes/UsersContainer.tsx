@@ -28,7 +28,7 @@ export default function UsersContainer() {
   useEffect(() => {
     if (usuarios) {
       setFilteredData(
-        usuarios.filter((user: { nome: string }) =>
+        usuarios?.filter((user: { nome: string }) =>
           user.nome.toLowerCase().includes(filterValue.toLowerCase()),
         ),
       );

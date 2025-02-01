@@ -17,6 +17,7 @@ import {
   ChartTooltipContent,
 } from "@/components/ui/chart";
 import { useDashRelatorioDozeMeses } from "@/queries/dashboard";
+import { ReloadIcon } from "@radix-ui/react-icons";
 
 const processarDadosUltimosDozeMeses = (dados: any[]) => {
   const meses = [
@@ -36,13 +37,13 @@ const processarDadosUltimosDozeMeses = (dados: any[]) => {
 
   // Obter o mês atual
   const dataAtual = new Date();
-  const mesAtual = dataAtual.getMonth(); // retorna de 0 (Janeiro) a 11 (Dezembro)
+  const mesAtual = dataAtual.getMonth();
   const anoAtual = dataAtual.getFullYear();
 
   // Criar um array com os últimos 12 meses
   let ultimosDozeMeses = [];
   for (let i = 11; i >= 0; i--) {
-    let data = new Date(anoAtual, mesAtual - i, 1); // Recuar mês por mês
+    let data = new Date(anoAtual, mesAtual - i, 1);
     let mes = data.getMonth(); // de 0 a 11
     let ano = data.getFullYear();
     ultimosDozeMeses.push({
@@ -89,7 +90,7 @@ export default function GraficoDozeMeses({}) {
   useEffect(() => {
     async function fetchData() {
       try {
-        const dados = relatorioDozeMeses; // Use o idCurso apropriado
+        const dados = relatorioDozeMeses;
         const dataFormatada = processarDadosUltimosDozeMeses(dados);
         setChartData(dataFormatada);
       } catch (error) {
@@ -98,7 +99,7 @@ export default function GraficoDozeMeses({}) {
     }
 
     fetchData();
-  }, [relatorioDozeMeses]); // Recarregar sempre que idCurso mudar
+  }, [relatorioDozeMeses]); // Recarrega sempre que idCurso mudar
 
   const chartConfig = {
     entradas: {
@@ -111,7 +112,12 @@ export default function GraficoDozeMeses({}) {
     },
   };
 
-  if (isLoading) return <p>Carregando...</p>;
+  if (isLoading)
+    return (
+      <div>
+        <ReloadIcon className="mr-2 size-4 animate-spin" />
+      </div>
+    );
 
   return (
     <Card className="shadow-md">
@@ -149,11 +155,6 @@ export default function GraficoDozeMeses({}) {
           </BarChart>
         </ChartContainer>
       </CardContent>
-      {/* <CardFooter className="flex-col items-start gap-2 text-sm">
-        <div className="leading-none text-muted-foreground">
-          Comparação das entradas e saídas de produtos nos últimos 12 meses
-        </div>
-      </CardFooter> */}
     </Card>
   );
 }
