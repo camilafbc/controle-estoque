@@ -230,8 +230,6 @@ export function UserDialog({ editingId, isOpen, setIsOpen }: UserDialogProps) {
                       ]}
                       required={true}
                       error={!!errors.idCurso}
-                      // value={field.value}
-                      // onValueChange={(value) => field.onChange(value)}
                       value={userRole}
                       onValueChange={(value) => {
                         field.onChange(value);
@@ -254,13 +252,15 @@ export function UserDialog({ editingId, isOpen, setIsOpen }: UserDialogProps) {
                         {...field}
                         label="Curso:"
                         id="select-option"
+                        placeholder="Selecione uma opção"
                         options={
                           cursosData?.map((curso: Curso) => ({
                             value: curso.idCurso.toString(),
                             label: curso.nomeCurso,
                           })) || []
                         }
-                        placeholder="Selecione uma opção"
+                        required={true}
+                        loading={cursosLoading}
                         error={!!errors.idCurso}
                         value={field.value || ""}
                         onValueChange={(value) => field.onChange(value)}
