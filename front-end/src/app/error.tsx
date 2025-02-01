@@ -9,15 +9,18 @@ export default function Page() {
       <div className="relative h-64 w-full max-w-lg">
         {" "}
         <Image
-          src="/undraw_fixing-bug.svg"
+          src="/undraw_fixing-bugs.svg"
           alt="Imagem Fixing Bug"
           fill
           style={{ objectFit: "contain" }}
         />
       </div>
-      <div className="flex flex-col items-center justify-center">
+      <div className="flex flex-col items-center justify-center gap-4">
         <h2> Ops! Ocorreu um erro!</h2>
-        <Button onClick={() => window.location.reload()}>
+        <Button
+          onClick={() => window.location.reload()}
+          className="hover:bg-orange-500/90"
+        >
           Tentar novamente
         </Button>
       </div>
