@@ -1,5 +1,6 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
+import { ReloadIcon } from "@radix-ui/react-icons";
 import { ReactNode } from "react";
 
 interface DashCardProps {
@@ -7,6 +8,7 @@ interface DashCardProps {
   title: string;
   subtitle: string;
   data: string;
+  loading?: boolean;
   children: ReactNode;
 }
 
@@ -15,6 +17,7 @@ export default function DashCard({
   title,
   subtitle,
   data,
+  loading,
   children,
 }: DashCardProps) {
   return (
@@ -25,7 +28,13 @@ export default function DashCard({
           {children}
         </div>
         <div className="space-y-2">
-          <p className="text-4xl font-extrabold">{data || 0}</p>
+          {loading ? (
+            <div className="pulse flex h-8 w-20 items-center justify-center rounded-md bg-white/10">
+              {/* <ReloadIcon className="mr-2 size-4 animate-spin" /> */}
+            </div>
+          ) : (
+            <p className="text-4xl font-extrabold">{data}</p>
+          )}
           <p className="text-xs">{subtitle}</p>
         </div>
       </CardContent>
