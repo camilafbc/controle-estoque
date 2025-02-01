@@ -13,7 +13,7 @@ export default function Page() {
     useGetCountCurso();
   const { data: countUsers, isLoading: countUsersLoading } = useGetCountUsers();
 
-  if (countCursosLoading || countUsersLoading) return <p>carregando</p>;
+  // if (countCursosLoading || countUsersLoading) return <p>carregando</p>;
 
   return (
     <div className="space-y-6">
@@ -30,7 +30,8 @@ export default function Page() {
           className="bg-blue-400 text-white"
           title="Cursos"
           subtitle="Cursos ativos"
-          data={countCursos.count}
+          data={countCursos?.count}
+          loading={countCursosLoading}
         >
           <GraduationCap />
         </DashCard>
@@ -38,7 +39,8 @@ export default function Page() {
           className="bg-orange-400 text-white"
           title="Usuários"
           subtitle="Usuários ativos"
-          data={countUsers.count}
+          data={countUsers?.count}
+          loading={countUsersLoading}
         >
           <User />
         </DashCard>
