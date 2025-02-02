@@ -9,7 +9,7 @@ export const useCursos = () => {
     queryFn: () => getCursos(),
     staleTime: Infinity,
   });
-  // console.log("Resultado da Query: " + query);
+  console.log("Resultado da Query: ", query);
   return query;
 };
 
@@ -25,7 +25,7 @@ export const useGetCurso = (id: number) => {
 
 export const useGetCountCurso = () => {
   const query = useQuery({
-    queryKey: ["cursos"],
+    queryKey: ["cursosCount"],
     queryFn: () => getCountCursos(),
     staleTime: Infinity,
   });

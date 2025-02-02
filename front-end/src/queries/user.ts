@@ -25,7 +25,7 @@ export const useGetUser = (id: number) => {
 
 export const useGetCountUsers = () => {
   const query = useQuery({
-    queryKey: ["users"],
+    queryKey: ["usersCount"],
     queryFn: () => getCountUsers(),
     staleTime: Infinity,
   });

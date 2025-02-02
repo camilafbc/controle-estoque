@@ -37,6 +37,5 @@ export const getCountUsers = async () => {
 
 export const getCountCursos = async () => {
   const response = await api.get("/cursosCount");
-  console.log("COUNT CURSOS: ", response.data.count);
   return response.data;
 };

@@ -1,5 +1,5 @@
 import api from "@/lib/axios";
-import { UpdateUser, User } from "@/types/User";
+import { User } from "@/types/User";
 
 export const getUsers = async () => {
   const response = await api.get(`/users`);

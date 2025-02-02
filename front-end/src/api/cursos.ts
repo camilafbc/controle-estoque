@@ -1,7 +1,7 @@
 import api from "@/lib/axios";
 import { Curso } from "@/types/Curso";
 
-export const getCursos = async () => {
+export const getCursos = async (): Promise<Curso[]> => {
   const response = await api.get(`/cursos`);
   return response.data;
 };

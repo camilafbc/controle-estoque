@@ -10,12 +10,13 @@ import { useCursos } from "@/queries/cursos";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { columns } from "./TableColumns";
+import { Curso } from "@/types/Curso";
 
 export default function CursosContainer() {
   const deleteMutation = useDeleteCursoMutation();
   const { data: cursos, isLoading, isError } = useCursos();
   const [filterValue, setFilterValue] = useState("");
-  const [filteredData, setFilteredData] = useState([]);
+  const [filteredData, setFilteredData] = useState<Curso[]>([]);
   const [isOpen, setIsOpen] = useState(false);
   const [editingId, setEditingId] = useState<number | null>(null);
 
@@ -26,14 +27,14 @@ export default function CursosContainer() {
   //       )
   //     : [];
   useEffect(() => {
-    if (cursos) {
+    if (!isLoading && cursos && cursos.length > 0) {
       setFilteredData(
         cursos?.filter((curso: { nomeCurso: string }) =>
           curso.nomeCurso.toLowerCase().includes(filterValue.toLowerCase()),
         ),
       );
     }
-  }, [filterValue, cursos]);
+  }, [cursos, filterValue, isLoading]);
 
   const handleEdit = (id: number) => {
     setEditingId(id);
