@@ -13,7 +13,7 @@ export async function login(req, res){
    return res.status(400).json({message: "Todos os campos são obrigatórios!"})
   };
 
-  const userExist = await userModel.findUserByEmail(email)
+  const userExist = await userModel.findUserByEmail(email.trim())
 
   if(!userExist){
     return res.status(401).json({message: "Usuário não encontrado ou senha inválida."})
@@ -21,7 +21,7 @@ export async function login(req, res){
 
   
   const user = await userModel.getUserById(userExist.idUser)
-  const isValidPassword = bcrypt.compareSync(senha, user.senha)
+  const isValidPassword = bcrypt.compareSync(senha, user.senha.trim())
   if (!isValidPassword){
     return res.status(401).json({message: "Usuário não encontrado ou senha inválida."})
   };
