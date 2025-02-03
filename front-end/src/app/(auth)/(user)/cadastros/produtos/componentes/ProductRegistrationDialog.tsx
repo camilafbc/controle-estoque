@@ -102,10 +102,10 @@ export function ProductRegistrationDialog({
 
     const formattedDate = data.dataValidade.split("/").reverse().join("-");
     const productData = {
-      prodDescricao: data.produto,
-      prodFabricante: data.fabricante,
-      prodLote: data.lote,
-      prodQuantidade: +data.quantidade,
+      prodDescricao: data.produto.trim(),
+      prodFabricante: data.fabricante.trim(),
+      prodLote: data.lote.trim(),
+      prodQuantidade: +data.quantidade.trim(),
       prodValidade: formattedDate,
       prodTurma: +data.turma,
       // prodTurma: +selectedTurma,
