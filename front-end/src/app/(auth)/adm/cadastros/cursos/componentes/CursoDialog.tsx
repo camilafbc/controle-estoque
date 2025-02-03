@@ -83,7 +83,7 @@ export function TurmaDialog({
 
   const handleForm: SubmitHandler<FormData> = (data) => {
     const payload = {
-      nomeCurso: data.nomeCurso,
+      nomeCurso: data.nomeCurso.trim(),
       status: data.status,
     };
     console.log(payload);

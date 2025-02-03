@@ -102,17 +102,16 @@ export function UserDialog({ editingId, isOpen, setIsOpen }: UserDialogProps) {
     reset();
     setIsOpen(false);
   };
-  console.log(errors);
+  // console.log(errors);
   const handleForm: SubmitHandler<FormData> = (data) => {
     const payload = {
-      nome: data.nome,
-      email: data.email,
+      nome: data.nome.trim(),
+      email: data.email.trim(),
       idCurso: Number(data.idCurso),
       role: data.role,
       status: data.status,
-      ...(data.senha && { senha: data.senha }),
+      ...(data.senha && { senha: data.senha.trim() }),
     };
-    console.log("PAYLOAD: ", payload);
     if (editingId) {
       const userData = { ...payload, idUser: idUser };
       updateUser.mutate(userData, {

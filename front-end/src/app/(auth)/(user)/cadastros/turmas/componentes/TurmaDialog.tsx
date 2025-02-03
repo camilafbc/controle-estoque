@@ -79,7 +79,7 @@ export function TurmaDialog({
 
   const handleForm: SubmitHandler<FormData> = (data) => {
     const turmaData = {
-      codigo: data.codigo,
+      codigo: data.codigo.trim(),
       turno: data.turno,
       status: data.status,
     };

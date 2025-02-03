@@ -43,8 +43,8 @@ export default function LoginForm() {
 
       const result = await signIn("credentials", {
         redirect: false,
-        email: data.email,
-        password: data.password,
+        email: data.email.trim(),
+        password: data.password.trim(),
       });
 
       // console.log("RESULT LOGIN: ", result);
