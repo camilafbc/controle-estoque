@@ -98,8 +98,8 @@ export default function ProductContainer() {
 
   return (
     <>
-      <div className="my-8 flex w-full flex-wrap items-end justify-between gap-4">
-        <form className="my-4 flex w-full flex-wrap items-end gap-4">
+      <div className="my-8 flex w-full flex-wrap items-end justify-between gap-4 md:flex-row md:flex-nowrap">
+        <form className="my-4 flex w-full flex-wrap items-end gap-4 md:flex-row md:flex-nowrap">
           <div className="w-full md:w-1/4">
             <Controller
               name="turma"

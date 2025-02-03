@@ -163,7 +163,7 @@ export default function FormMovimentacoes({ idProduto }: FormProps) {
         <Button variant={"outline"} type="button" onClick={handleBack}>
           Voltar
         </Button>
-        <Button type="submit" className="hover:bg-orange-700">
+        <Button type="submit" className="hover:bg-orange-500/90">
           Registrar
         </Button>
       </div>
