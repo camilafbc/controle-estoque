@@ -30,13 +30,13 @@ export default function DashboardContent() {
     error: totalEstoqueError,
   } = useDashTotalEstoque();
 
-  if (
-    isLoading ||
-    isTotalVencimentoLoading ||
-    isTotalTurmasLoading ||
-    isTotalEstoqueLoading
-  )
-    return <LoaderComponent />;
+  // if (
+  //   isLoading ||
+  //   isTotalVencimentoLoading ||
+  //   isTotalTurmasLoading ||
+  //   isTotalEstoqueLoading
+  // )
+  //   return <LoaderComponent />;
 
   // if (error || totalEstoqueError || totalTurmasErro || totalVencimentoError)
   //   return <p>Erro ao carregar Dashboard</p>;

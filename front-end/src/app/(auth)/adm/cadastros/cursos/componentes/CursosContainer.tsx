@@ -70,7 +70,7 @@ export default function CursosContainer() {
           onClick={handleNew}
           className="flex items-center gap-2 hover:bg-orange-500/90"
         >
-          <PlusCircle className="size-8" />
+          <PlusCircle className="size-4 md:size-8" />
           Novo Curso
         </Button>
       </div>

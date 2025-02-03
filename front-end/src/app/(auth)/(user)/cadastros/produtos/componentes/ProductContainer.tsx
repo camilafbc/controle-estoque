@@ -98,8 +98,8 @@ export default function ProductContainer() {
 
   return (
     <>
-      <div className="my-8 flex w-full items-end justify-between gap-4">
-        <form className="my-4 flex w-full items-end gap-4">
+      <div className="my-8 flex w-full flex-wrap items-end justify-between gap-4">
+        <form className="my-4 flex w-full flex-wrap items-end gap-4">
           <div className="w-full md:w-1/4">
             <Controller
               name="turma"
@@ -134,7 +134,7 @@ export default function ProductContainer() {
           className="flex items-center gap-2 hover:bg-orange-500/90"
           onClick={handleNew}
         >
-          <PlusCircle className="size-8" />
+          <PlusCircle className="size-4 md:size-8" />
           Novo Produto
         </Button>
       </div>

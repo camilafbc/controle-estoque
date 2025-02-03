@@ -69,7 +69,7 @@ export default function UsersContainer() {
           onClick={handleNew}
           className="flex items-center gap-2 hover:bg-orange-500/90"
         >
-          <PlusCircle className="size-8" />
+          <PlusCircle className="size-4 md:size-8" />
           Novo Usuário
         </Button>
       </div>
