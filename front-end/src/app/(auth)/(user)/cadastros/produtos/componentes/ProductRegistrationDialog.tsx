@@ -83,9 +83,9 @@ export function ProductRegistrationDialog({
         lote: produtoData.prodLote,
         quantidade: String(produtoData.prodQuantidade),
         dataValidade: dayjs(produtoData.prodValidade).format("DD/MM/YYYY"),
-        turma: produtoData.prodTurma.toString(),
+        turma: String(produtoData.prodTurma),
       });
-      console.log("PRODUTO DATA: ", produtoData);
+      // console.log("PRODUTO DATA: ", produtoData);
     }
   }, [editingId, produtoData, reset]);
 
@@ -290,7 +290,10 @@ export function ProductRegistrationDialog({
             >
               Fechar
             </Button>
-            <Button type="submit" className="align-bottom hover:bg-orange-700">
+            <Button
+              type="submit"
+              className="align-bottom hover:bg-orange-500/90"
+            >
               Salvar
             </Button>
           </div>
