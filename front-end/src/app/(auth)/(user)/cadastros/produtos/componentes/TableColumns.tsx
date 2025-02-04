@@ -73,20 +73,20 @@ export const columns = (
     ),
     enableSorting: true,
     meta: { type: "string", minWidth: "20" },
-    size: 15,
+    size: 10,
   },
 
   {
     accessorKey: "prodQuantidade",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Quantidade" />
+      <DataTableColumnHeader column={column} title="Qtd." />
     ),
     // cell: ({ row }) => (
     //   <p className="pe-4 text-end">{row.getValue("prodQuantidade")}</p>
     // ),
     enableSorting: true,
     meta: { type: "number", minWidth: "20" },
-    size: 10,
+    size: 7,
   },
   {
     accessorKey: "prodDescricao",
