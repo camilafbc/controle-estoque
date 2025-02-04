@@ -28,7 +28,7 @@ export default function MovimentacoesContainer() {
         <>
           <Card className="mb-8">
             <CardHeader>
-              <CardTitle className="text-lg">
+              <CardTitle className="text-lg uppercase">
                 {produtoData?.prodDescricao}
               </CardTitle>
               <Separator orientation="horizontal" />
