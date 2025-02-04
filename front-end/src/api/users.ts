@@ -25,5 +25,5 @@ export const updateUser = async (user: Partial<User>) => {
 
 export const deleteUser = async (id: number) => {
   const response = await api.delete(`/users/${id}`);
-  return response.status;
+  return response;
 };
