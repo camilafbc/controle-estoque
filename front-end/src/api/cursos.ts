@@ -23,5 +23,5 @@ export const updateCurso = async (curso: Curso) => {
 
 export const deleteCurso = async (id: number) => {
   const response = await api.delete(`/cursos/${id}`);
-  return response.status;
+  return response;
 };
