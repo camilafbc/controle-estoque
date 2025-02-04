@@ -30,7 +30,7 @@ export class userModel {
 
     try {
       
-      const [users] = await db.execute("SELECT u.idUser, u.nome, u.email, u.role, u.status, c.nomeCurso AS curso FROM user u LEFT JOIN cursos c ON u.idCurso = c.idCurso WHERE u.idUser != 1 AND u.role = 'user'");
+      const [users] = await db.execute("SELECT u.idUser, u.nome, u.email, u.role, u.status, c.nomeCurso AS curso FROM user u LEFT JOIN cursos c ON u.idCurso = c.idCurso WHERE u.idUser != 1");
       return users;
     } catch (error) {
       console.error("Erro ao listar usuários:", error);
@@ -154,6 +154,8 @@ export class userModel {
       const sqlParams = [
         user.nome,
         user.email,
+        user.status,
+        user.role
       ];
   
       let result = { affectedRows: 0 };
@@ -163,14 +165,14 @@ export class userModel {
         sqlParams.push(senhaHash);
         sqlParams.push(user.idUser); 
         const [rows] = await db.execute(
-          'UPDATE user SET nome = ?, email = ?, senha = ? WHERE idUser = ?',
+          'UPDATE user SET nome = ?, email = ?, senha = ?, status = ?, role = ? WHERE idUser = ?',
           sqlParams
         );
         result = rows; 
       } else {
         sqlParams.push(user.idUser); 
         const [rows] = await db.execute(
-          'UPDATE user SET nome = ?, email = ? WHERE idUser = ?',
+          'UPDATE user SET nome = ?, email = ?, status = ?, role = ? WHERE idUser = ?',
           sqlParams
         );
         result = rows; 
