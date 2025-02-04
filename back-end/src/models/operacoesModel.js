@@ -12,9 +12,9 @@ export async function createOperacoesTable(){
         idProduto INT NOT NULL,
         data DATETIME NOT NULL,
         quantidade INT NOT NULL,
-        FOREIGN KEY (idUsuario) REFERENCES user(idUser),
-        FOREIGN KEY (idProduto) REFERENCES produtos(idProduto)
-      );
+        FOREIGN KEY (idUsuario) REFERENCES user(idUser) ON DELETE CASCADE,
+        FOREIGN KEY (idProduto) REFERENCES produtos(idProduto) ON DELETE CASCADE
+    );
     `);
     console.log("Tabela 'operações' criada com sucesso!");
   } catch (error) {

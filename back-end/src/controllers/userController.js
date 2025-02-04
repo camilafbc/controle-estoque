@@ -33,9 +33,9 @@ export async function getUserById(req, res){
 };
 
 export async function insertUser(req, res) {
-  const idUser = req.user.idUser; // Usuário logado, criando o novo usuário
-  const roleUser = req.user.role; // Verificando o role do usuário logado
-  const { user } = req.body; // Obtendo os dados do usuário do corpo da requisição
+  const idUser = req.user.idUser; 
+  const roleUser = req.user.role;
+  const { user } = req.body; 
 
   console.log("req.body:", JSON.stringify(req.body, null, 2)); 
 
@@ -45,8 +45,13 @@ export async function insertUser(req, res) {
   }
 
   // Validando se todos os campos necessários foram preenchidos
-  if (!user || !user.nome || !user.email || !user.senha || !user.idCurso) {
+  if (!user || !user.nome || !user.email || !user.senha || !user.role) {
     return res.status(400).json({ message: "Todos os campos são obrigatórios!" });
+  }
+
+  // Validando se todos os campos necessários foram preenchidos
+  if (user.role === "user" && !user.idCurso) {
+    return res.status(400).json({ message: "Campo 'curso' é obrigatório para tipo 'usuário'!" });
   }
 
   try {

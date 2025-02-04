@@ -6,9 +6,9 @@ import { createOperacoesTable } from "../models/operacoesModel.js";
 
 export async function createTables(){
   
-  // await createCursosTable(); 
-  // await createUserTable();
-  // await createTurmasTable();
-  // await createProdutosTable();
-  // await createOperacoesTable();
+  await createCursosTable(); 
+  await createUserTable();
+  await createTurmasTable();
+  await createProdutosTable();
+  await createOperacoesTable();
 };
