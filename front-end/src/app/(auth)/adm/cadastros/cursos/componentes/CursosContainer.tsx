@@ -11,6 +11,7 @@ import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { columns } from "./TableColumns";
 import { Curso } from "@/types/Curso";
+import { AxiosError } from "axios";
 
 export default function CursosContainer() {
   const deleteMutation = useDeleteCursoMutation();
@@ -43,11 +44,16 @@ export default function CursosContainer() {
 
   const handleDelete = (id: number) => {
     deleteMutation.mutate(id, {
-      onSuccess: () => {
-        toast.success("Turma removida com sucesso!");
+      onSuccess: (response) => {
+        toast.success(response.data.message);
       },
-      onError: () => {
-        toast.error("Erro ao remover turma!");
+      onError: (error) => {
+        const axiosError = error as AxiosError<Error>;
+        const errorMessage =
+          axiosError?.response?.data?.message ||
+          error.message ||
+          "Ocorreu um erro desconhecido";
+        toast.error(errorMessage);
       },
     });
   };
