@@ -2,7 +2,7 @@
 
 Este projeto é uma aplicação de controle de estoque desenvolvida como parte do projeto integrador do curso Técnico em Desenvolvimento de Sistemas do SENAC MG, unidade Lavras. A aplicação foi criada para atender a uma demanda dos cursos de Estética e Cabeleireiro da instituição, que precisavam de um sistema para registrar a entrada e saída de produtos por turma, visando o controle de estoque e o acompanhamento do consumo de produtos por turma e por período.
 
-<img width="100%" src="#"/>
+<img width="100%" src="https://raw.githubusercontent.com/camilafbc/controle-estoque/refs/heads/main/toreadme.jpeg"/>
 
 # Visão Geral
 
@@ -17,6 +17,9 @@ A aplicação conta com uma área administrativa para o cadastro de usuários e 
     - Cadastro de turmas e produtos.
     - Registro de movimentações de entrada e saída de produtos por turma.
     - Geração de relatório de movimentação por turma, com controle de consumo de produtos por período.
+* Geral:
+    - Edição de dados de perfil
+    - Escolha de tema (Claro, Escuro ou Sistema)
  
 # Tecnologias Utilizadas
 
