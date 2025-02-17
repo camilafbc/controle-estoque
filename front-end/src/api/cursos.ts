@@ -16,7 +16,7 @@ export const insertCurso = async (curso: Omit<Curso, "idCurso">) => {
   return response;
 };
 
-export const updateCurso = async (curso: Curso) => {
+export const updateCurso = async (curso: Partial<Curso>) => {
   const response = await api.put("/cursos", curso);
   return response;
 };
