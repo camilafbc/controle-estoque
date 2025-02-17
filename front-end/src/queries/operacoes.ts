@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 
 export const useOperacoes = (id: number) => {
   const query = useQuery({
-    queryKey: ["operacoes"],
+    queryKey: ["operacoes", id],
     queryFn: () => getOperacoes(id),
     enabled: !!id,
     staleTime: Infinity,
