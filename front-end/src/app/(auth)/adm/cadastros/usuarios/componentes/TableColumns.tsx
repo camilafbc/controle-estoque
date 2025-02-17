@@ -71,6 +71,15 @@ export const columns = (
     size: 5,
   },
   {
+    accessorKey: "nomeCurso",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Curso" />
+    ),
+    enableSorting: true,
+    meta: { type: "string", minWidth: "20" },
+    size: 10,
+  },
+  {
     accessorKey: "nome",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Usuário" />
