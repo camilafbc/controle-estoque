@@ -29,7 +29,9 @@ export default function Page({
       </div>
       <div className="flex flex-col items-center justify-center gap-4">
         <h2> Ops! Ocorreu um erro!</h2>
-        <p className="mt-2 text-sm">Detalhes: {error.message}</p>
+        <p className="mt-2 px-8 text-center text-sm text-gray-500">
+          Detalhes: {error.message}
+        </p>
         <Button
           onClick={() => window.location.reload()}
           className="hover:bg-orange-500/90"
