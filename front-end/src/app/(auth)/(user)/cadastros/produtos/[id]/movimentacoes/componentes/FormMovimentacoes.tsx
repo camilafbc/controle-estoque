@@ -149,7 +149,7 @@ export default function FormMovimentacoes({ idProduto }: FormProps) {
             <Button
               onClick={handleIncrease}
               type="button"
-              className={`rounded-s-none hover:bg-orange-700 group-focus-within:ring-1`}
+              className={`rounded-s-none hover:bg-orange-500/90 group-focus-within:ring-1`}
             >
               <Plus />
             </Button>
