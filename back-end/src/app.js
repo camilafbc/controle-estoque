@@ -12,6 +12,7 @@ import { operacoesRouter } from './routes/operacoesRoute.js';
 import { dashboardRouter } from './routes/dashboardRoute.js';
 import { cursosRouter } from './routes/cursosRoute.js';
 import { usersRouter } from './routes/usersRoute.js';
+import { errorMiddleware } from './middlewares/error-middleware.js';
 
 const app = express();
 app.use(express.json());
@@ -23,6 +24,7 @@ app.use(productRouter);
 app.use(operacoesRouter);
 app.use(turmasRouter);
 app.use(dashboardRouter);
+app.use(errorMiddleware);
 
 const PORT = process.env.PORT
 
