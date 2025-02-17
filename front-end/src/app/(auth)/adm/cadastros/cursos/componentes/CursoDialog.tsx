@@ -52,6 +52,7 @@ export function TurmaDialog({
     handleSubmit,
     register,
     reset,
+    setFocus,
     formState: { errors },
   } = useForm({
     resolver: yupResolver(validationSchema),
@@ -115,6 +116,7 @@ export function TurmaDialog({
           if (response.status === 201) {
             toast.success(response.data.message);
             reset();
+            setTimeout(() => setFocus("nomeCurso"), 100);
           } else {
             toast.error(response.data.message);
           }

@@ -51,6 +51,7 @@ export function TurmaDialog({
     handleSubmit,
     register,
     reset,
+    setFocus,
     formState: { errors },
   } = useForm({
     resolver: yupResolver(validationSchema),
@@ -111,6 +112,7 @@ export function TurmaDialog({
           if (response.status === 201) {
             toast.success(response.data.message);
             reset();
+            setTimeout(() => setFocus("codigo"), 100);
           } else {
             toast.error(response.data.message);
           }
@@ -134,7 +136,7 @@ export function TurmaDialog({
         className="m-2 w-full min-w-[300px] max-w-3xl sm:m-0"
       >
         <DialogHeader>
-          <DialogTitle className="text-zinc-700">
+          <DialogTitle className="text-zinc-700 dark:text-zinc-50">
             {editingId
               ? `Editando Turma ${turmaData?.codigoTurma || ""}`
               : "Cadastro de Turma"}

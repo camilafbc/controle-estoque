@@ -26,6 +26,7 @@ import {
 } from "@/mutations/users";
 import { Curso } from "@/types/Curso";
 import { AxiosError } from "axios";
+import { Key } from "lucide-react";
 
 interface UserDialogProps {
   editingId: number | null;
@@ -65,8 +66,11 @@ export function UserDialog({ editingId, isOpen, setIsOpen }: UserDialogProps) {
   type FormData = yup.InferType<typeof validationSchema>;
 
   const idUser = Number(editingId);
-  const { data: usersData, isLoading } = useGetUser(idUser);
+  const { data: usersData, isLoading: userLoading } = useGetUser(idUser);
   const { data: cursosData, isLoading: cursosLoading } = useCursos();
+  const [showPasswordContainer, setShowPasswordContainer] = useState(
+    editingId === null ? true : false,
+  );
   const [userRole, setUserRole] = useState("");
 
   const {
@@ -74,16 +78,20 @@ export function UserDialog({ editingId, isOpen, setIsOpen }: UserDialogProps) {
     handleSubmit,
     register,
     reset,
+    setFocus,
     formState: { errors },
   } = useForm({
     resolver: yupResolver(validationSchema),
     defaultValues: {
       status: true,
+      senha: "",
+      confirmaSenha: "",
     },
   });
 
   useEffect(() => {
-    if (isOpen && usersData) {
+    if (isOpen && !userLoading && usersData) {
+      console.log("DATA: ", usersData);
       setUserRole(usersData.role);
       reset({
         nome: usersData.nome,
@@ -93,7 +101,7 @@ export function UserDialog({ editingId, isOpen, setIsOpen }: UserDialogProps) {
         status: usersData.status,
       });
     }
-  }, [isOpen, reset, usersData]);
+  }, [isOpen, reset, userLoading, usersData]);
 
   const user = useInsertUserMutation();
   const updateUser = useUpdateUserMutation();
@@ -140,6 +148,7 @@ export function UserDialog({ editingId, isOpen, setIsOpen }: UserDialogProps) {
           if (response.status === 201) {
             toast.success(response.data.message);
             reset();
+            setTimeout(() => setFocus("nome"), 100);
           } else {
             toast.error(response.data.message);
           }
@@ -165,7 +174,7 @@ export function UserDialog({ editingId, isOpen, setIsOpen }: UserDialogProps) {
         <DialogHeader>
           <DialogTitle className="text-zinc-700">
             {editingId
-              ? `Editando Usuário ${usersData?.nome.split(" ")[0] || ""}`
+              ? `Editando Usuário ${usersData?.nome?.split(" ")[0] || ""}`
               : "Cadastro de Usuário"}
           </DialogTitle>
           <DialogDescription></DialogDescription>
@@ -285,37 +294,51 @@ export function UserDialog({ editingId, isOpen, setIsOpen }: UserDialogProps) {
             </div>
             <fieldset className="grid w-full grid-cols-1 gap-4 md:grid-cols-2">
               <legend className="mb-4 font-bold">Dados de Acesso</legend>
-              <div className="p-1">
-                <Input
-                  required
-                  id="input-senha"
-                  type="password"
-                  label="Senha"
-                  placeholder="Informe uma senha"
-                  {...register("senha")}
-                  error={!!errors.senha}
-                />
-                <span className="min-h-[16px] text-xs font-semibold text-destructive">
-                  {errors.senha?.message || ""}
-                </span>
-              </div>
-              <div className="p-1">
-                <Input
-                  required
-                  type="password"
-                  id="input-confirma-senha"
-                  label="Confirmar Senha"
-                  placeholder="Confirme a senha informada"
-                  error={!!errors.confirmaSenha}
-                  {...register("confirmaSenha")}
-                />
-                <span className="min-h-[16px] text-xs font-semibold text-destructive">
-                  {errors.confirmaSenha?.message || ""}
-                </span>
-              </div>
-              <span className="text-sm text-muted-foreground">
-                - A senha deve conter ao menos 6 caracteres
-              </span>
+              {!showPasswordContainer && (
+                <Button
+                  variant={"secondary"}
+                  onClick={() => setShowPasswordContainer(true)}
+                  className="flex items-center gap-2"
+                >
+                  <Key className="size-4" />
+                  Alterar Senha
+                </Button>
+              )}
+              {showPasswordContainer && (
+                <>
+                  <div className="p-1">
+                    <Input
+                      required
+                      id="input-senha"
+                      type="password"
+                      label="Senha"
+                      placeholder="Informe uma senha"
+                      {...register("senha")}
+                      error={!!errors.senha}
+                    />
+                    <span className="min-h-[16px] text-xs font-semibold text-destructive">
+                      {errors.senha?.message || ""}
+                    </span>
+                  </div>
+                  <div className="p-1">
+                    <Input
+                      required
+                      type="password"
+                      id="input-confirma-senha"
+                      label="Confirmar Senha"
+                      placeholder="Confirme a senha informada"
+                      error={!!errors.confirmaSenha}
+                      {...register("confirmaSenha")}
+                    />
+                    <span className="min-h-[16px] text-xs font-semibold text-destructive">
+                      {errors.confirmaSenha?.message || ""}
+                    </span>
+                  </div>
+                  <span className="text-sm text-muted-foreground">
+                    - A senha deve conter ao menos 6 caracteres
+                  </span>
+                </>
+              )}
             </fieldset>
           </div>
           <div className="mt-4 flex justify-end gap-4">

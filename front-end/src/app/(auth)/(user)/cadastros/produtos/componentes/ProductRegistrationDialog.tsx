@@ -1,7 +1,7 @@
 "use client";
 
 import * as yup from "yup";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { toast } from "react-toastify";
@@ -55,13 +55,14 @@ export function ProductRegistrationDialog({
 }: ProductRegistrationDialogProps) {
   const { data: produtoData, isLoading } = useProduto(editingId || 0);
   const { data: turmas, isLoading: turmasLoading } = useTurmas();
-  // const [selectedTurma, setSelectedTurma] = useState("");
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const {
     control,
     register,
     handleSubmit,
     reset,
+    setFocus,
     formState: { errors },
   } = useForm<FormData>({
     resolver: yupResolver(validationSchema),
@@ -137,7 +138,9 @@ export function ProductRegistrationDialog({
         onSuccess: (response) => {
           if (response.status === 201) {
             toast.success(response.data.message);
-            // reset();
+            reset();
+            // resetar o focus para o campo de descrição do produto após inserção
+            setTimeout(() => setFocus("produto"), 100);
           } else {
             toast.error(response.data.message);
           }
@@ -154,7 +157,7 @@ export function ProductRegistrationDialog({
     }
   };
 
-  console.log(errors);
+  // console.log(errors);
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
