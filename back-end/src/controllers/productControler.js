@@ -1,54 +1,47 @@
 import { operacoesModel } from "../models/operacoesModel.js";
 import { productModel } from "../models/productModel.js";
 
-// POST /produtos
-export async function insertProduct(req, res){
+export async function insertProduct(req, res, next){
 
-  const {product} = req.body
+  const { product } = req.body;
   const idUser = req.user.idUser;
-  const idCurso = req.user.idCurso
-  product.prodCurso = idCurso
+  const idCurso = req.user.idCurso;
+  product.prodCurso = idCurso;
 
 
   if(!product || !product.prodDescricao || !product.prodFabricante || !product.prodQuantidade || !product.prodValidade || !product.prodLote || !product.prodCurso || !product.prodTurma){
-    return res.status(400).json({message: "Todos os campos são obrigatórios"})
+    return res.status(400).json({message: "Todos os campos são obrigatórios"});
   }
 
   try {
-
     const newProductId = await productModel.createProduct(product);
-    console.log("Pegando Id: " + newProductId)
     await operacoesModel.createOperacao(idUser, newProductId.idProduto, 1, product.prodQuantidade);
-    return res.status(201).json({message: "Dados criados com sucesso!"})
-
-  } catch (error) {
-    return res.status(400).json({message: `Erro no catch: ${error.message}`})
+    return res.status(201).json({message: "Produto inserido com sucesso!"});
+  } catch (error) {;
+    next(error);
   }
 
-}
+};
 
-// GET /produtos/list/:turma
-export async function listProducts(req, res){
-  const { turma } = req.params
-  // res.status(200).json({message: `Chegou: ${curso} e ${turma}`})
-  const curso = req.user.idCurso
+export async function listProducts(req, res, next){
+  const { turma } = req.params;
+  const curso = req.user.idCurso;
 
   if(!curso || !turma){
-    return res.status(400).json({message: "Parâmetros curso e turma ausentes."})
+    return res.status(400).json({message: "Parâmetros curso e turma ausentes."});
   }
 
   try {
-    const list = await productModel.listAllProducts(curso, turma)
-    return res.status(200).json(list)
+    const list = await productModel.listAllProducts(curso, turma);
+    return res.status(200).json(list);
   } catch (error) {
-    return res.status(400).json({message: `Erro: ${error.message}`})
-  }
-}
+    next(error);
+  };
+};
 
-// GET /produtos/:id
-export async function selectProduct(req, res){
-  const { id } = req.params
-  console.log("QUer o produto: " + id)
+export async function selectProduct(req, res, next){
+  const { id } = req.params;
+
   if(!id){
     return res.status(400).json({message: "Parâmetro 'id' ausente."})
   }
@@ -57,24 +50,22 @@ export async function selectProduct(req, res){
     const product = await productModel.getProductById(id)
     return res.status(200).json(product)
   } catch (error) {
-    return res.status(400).json({message: `Erro: ${error.message}`})
+    next(error);
   }
-} 
+};
 
-//GET /produtos/count/
-export async function countProducts(req, res){
+export async function countProducts(req, res, next){
   const curso = req.user.idCurso;
   
   try {
     const count = await productModel.countProducts(curso);
-    return res.status(200).json(count)
+    return res.status(200).json(count);
   } catch (error) {
-    return res.status(400).json({message: `Erro: ${error.message}`})
+    next(error);
   }
 };
 
-//PUT /produtos
-export async function updateProduct(req, res){
+export async function updateProduct(req, res, next){
   const {product} = req.body
   const idCurso = req.user.idCurso
   product.prodCurso = idCurso
@@ -86,28 +77,28 @@ export async function updateProduct(req, res){
   try {
     const update = await productModel.updateProduct(product)
     if(update > 0){
-      return res.status(200).json({message: "Produto Atualizado!"})
+      return res.status(200).json({message: "Produto Atualizado!"});
     } else {
-      return res.status(500).json({message: "Erro ao atualizar produto!"})
+      return res.status(500).json({message: "Erro ao atualizar produto!"});
     }
   } catch(error){
-    return res.status(400).json({message: `Erro: ${error.message}`})
+    next(error);
   }
   
-}
+};
 
-//DELETE /produtos/:id
-export async function deleteProduct(req, res){
-  const { id } = req.params
+export async function deleteProduct(req, res, next){
+  const { id } = req.params;
 
   try {
-    const delProduct = await productModel.deleteProduct(id)
+    const delProduct = await productModel.deleteProduct(id);
+
     if(delProduct > 0){
-      return res.status(200).json({message: "Produto deletado!"})
+      return res.status(200).json({message: "Produto deletado!"});
     } else {
-      return res.status(500).json({message: "Erro ao deletar produto!"})
+      return res.status(500).json({message: "Erro ao deletar produto!"});
     }
   } catch (error) {
-    return res.status(400).json({message: `Erro: ${error.message}`})
+    next(error);
   }
-}
+};

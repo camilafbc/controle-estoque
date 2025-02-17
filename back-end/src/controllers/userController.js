@@ -1,43 +1,42 @@
 import { userModel } from "../models/userModel.js";
+import bcrypt from 'bcrypt';
 
-export async function listUsers(req, res){
+export async function listUsers(req, res, next){
 
   try {
     const users = await userModel.listUsers();
     return res.status(200).json(users);
   } catch (error){
-    return res.status(400).json({message: `Erro: ${error.message}`})
+    next(error);
   }
   
 };
 
-export async function countUsers(req, res){
+export async function countUsers(req, res, next){
 
   try {
     const result = await userModel.countUsers();
     return res.status(200).json(result);
   } catch (error){
-    return res.status(400).json({message: `Erro: ${error.message}`})
+    next(error);
   }
-}
+};
 
-export async function getUserById(req, res){
-  const { id } = req.params
+export async function getUserById(req, res, next){
+  const { id } = req.params;
 
   try {
     const user = await userModel.getUserById(id)
     return res.status(200).json(user);
   } catch (error){
-    return res.status(400).json({message: `Erro: ${error.message}`})
+    next(error);
   }
 };
 
-export async function insertUser(req, res) {
+export async function insertUser(req, res, next) {
   const idUser = req.user.idUser; 
   const roleUser = req.user.role;
   const { user } = req.body; 
-
-  console.log("req.body:", JSON.stringify(req.body, null, 2)); 
 
   // Checando se o usuário tem permissão para cadastrar
   if (roleUser !== "admin") {
@@ -55,24 +54,20 @@ export async function insertUser(req, res) {
   }
 
   try {
-    // Passando todos os dados corretamente para a função createUser
     await userModel.createUser({
-      ...user, // Dados do usuário
-      created_by: idUser // ID do usuário que está criando
+      ...user, 
+      created_by: idUser
     });
     res.status(201).json({ message: "Usuário cadastrado!" });
   } catch (error) {
-    console.error(error);
-    res.status(404).json({ message: `Erro: ${error.message}` });
+    next(error);
   }
 };
 
-export async function updateUser(req, res) {
-  //console.log("CHEGOU: ", req.body)
+export async function updateUser(req, res, next) {
+  
   const user = req.body;
-  //console.log("CHEGOU: ", user)
 
-  // Verifica se os campos obrigatórios estão presentes
   if (!user || !user.nome || !user.email) {
     return res.status(400).json({ message: "Nome, email e curso são obrigatórios!" });
   }
@@ -86,7 +81,7 @@ export async function updateUser(req, res) {
     // Se a senha foi fornecida, faz o hash, caso contrário, mantém a atual
     let senhaHash = user.senha ? bcrypt.hashSync(user.senha, 10) : undefined;
 
-    // Atualiza o usuário no banco, passando o hash da senha se fornecida
+    // Atualiza o usuário no banco, passando o hash da senha, se fornecida
     const updateUser = await userModel.updateUser(user, senhaHash);
     
     if (updateUser > 0) {
@@ -95,22 +90,24 @@ export async function updateUser(req, res) {
       res.status(404).json({ message: "Erro ao atualizar usuário." });
     }
   } catch (error) {
-    res.status(500).json({ message: `Erro: ${error.message}` });
+    next(error);
   }
 };
 
-export async function deleteUser(req, res){
-  const { id } = req.params
+export async function deleteUser(req, res, next){
+
+  const { id } = req.params;
 
   try {
-    const delUser = await userModel.deleteUser(id)
-    // console.log("DelTurma: " + delCurso)
+
+    const delUser = await userModel.deleteUser(id);
+    
     if(delUser > 0){
-      return res.status(200).json({message: "Usuário deletado com sucesso!"})
+      return res.status(200).json({message: "Usuário deletado com sucesso!"});
     } else {
-      return res.status(500).json({message: "Erro ao deletar deletar usuário!"})
+      return res.status(500).json({message: "Erro ao deletar deletar usuário!"});
     }
   } catch (error) {
-    return res.status(400).json({message: `Erro: ${error.message}`})
+    next(error);
   }
 };
