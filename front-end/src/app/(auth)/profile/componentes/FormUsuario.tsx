@@ -251,6 +251,9 @@ export default function FormUsuario() {
                     </FormItem>
                   )}
                 />
+                <span className="mt-4 text-sm text-muted-foreground">
+                  - A senha deve conter ao menos 6 caracteres
+                </span>
               </div>
             </div>
           </fieldset>
