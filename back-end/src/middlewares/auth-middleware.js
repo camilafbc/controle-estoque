@@ -10,11 +10,11 @@ export async function ensureAuth(req, res, next) {
 
   const token = authHeader.split(' ')[1];
 
-  console.log('Pegou o token: ', token)
+  // console.log('Pegou o token: ', token)
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_KEY);
-    console.log('Decodificou o token: ', decoded)
+    // console.log('Decodificou o token: ', decoded)
     const user = await userModel.getUserById(decoded.id); 
     if (!user) {
       return res.status(404).json({ message: 'Usuário não encontrado' });

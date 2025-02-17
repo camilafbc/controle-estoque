@@ -7,7 +7,7 @@ import { userModel } from "../models/userModel.js";
 export async function login(req, res){
   const { email, senha } = req.body
 
-  console.log("Chegando pra logar: ", req.body)
+  // console.log("Chegando pra logar: ", req.body)
 
   if(typeof email !== 'string' || typeof senha !== 'string'){
    return res.status(400).json({message: "Todos os campos são obrigatórios!"})
