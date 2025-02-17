@@ -6,7 +6,7 @@ export async function createProdutosTable(){
     await db.execute(`
       CREATE TABLE IF NOT EXISTS produtos (
         idProduto INT AUTO_INCREMENT PRIMARY KEY,
-        prodDescricao VARCHAR(255) NOT NULL,
+        prodDescricao VARCHAR(255) NOT NULL UNIQUE,
         prodFabricante VARCHAR(255) NOT NULL,
         prodQuantidade INT NOT NULL,
         prodValidade DATE NOT NULL,

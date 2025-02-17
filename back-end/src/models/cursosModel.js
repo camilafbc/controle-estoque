@@ -6,7 +6,7 @@ export async function createCursosTable(){
     await db.execute(`
       CREATE TABLE IF NOT EXISTS cursos (
         idCurso INT AUTO_INCREMENT PRIMARY KEY,
-        nomeCurso VARCHAR(255) NOT NULL,
+        nomeCurso VARCHAR(255) NOT NULL UNIQUE,
         status BOOLEAN DEFAULT TRUE);
     `);
     console.log("Tabela 'cursos' criada com sucesso!");
@@ -138,6 +138,6 @@ export class CursoModel {
       }
     };
 
-  }
+  };
 
 }

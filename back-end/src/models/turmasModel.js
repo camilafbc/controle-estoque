@@ -6,7 +6,7 @@ export async function createTurmasTable(){
     await db.execute(`
       CREATE TABLE IF NOT EXISTS turmas (
         idTurma INT AUTO_INCREMENT PRIMARY KEY,
-        codigoTurma VARCHAR(50) NOT NULL,
+        codigoTurma VARCHAR(50) NOT NULL UNIQUE,
         turnoTurma VARCHAR(50) NOT NULL,
         idCurso INT NOT NULL,
         status TINYINT NOT NULL,

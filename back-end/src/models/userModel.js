@@ -30,7 +30,7 @@ export class userModel {
 
     try {
       
-      const [users] = await db.execute("SELECT u.idUser, u.nome, u.email, u.role, u.status, c.nomeCurso AS curso FROM user u LEFT JOIN cursos c ON u.idCurso = c.idCurso WHERE u.idUser != 1");
+      const [users] = await db.execute("SELECT u.idUser, u.nome, u.email, u.role, u.status, c.idCurso, c.nomeCurso FROM user u LEFT JOIN cursos c ON u.idCurso = c.idCurso WHERE u.idUser != 1");
       return users;
     } catch (error) {
       console.error("Erro ao listar usuários:", error);
@@ -93,7 +93,7 @@ export class userModel {
     try {
       
       const [user] = await db.execute(
-        'SELECT * FROM user u LEFT JOIN cursos c ON u.idCurso = c.idCurso WHERE u.idUser = ?',
+        'SELECT u.idUser, u.nome, u.email, u.senha, u.role, u.status, u.idCurso, c.nomeCurso FROM user u LEFT JOIN cursos c ON u.idCurso = c.idCurso WHERE u.idUser = ?',
         [id]
       );
       return user[0];
@@ -149,45 +149,46 @@ export class userModel {
 
   static async updateUser(user, senhaHash) {
     const db = await openDb();
-  
+
     try {
-      const sqlParams = [
-        user.nome,
-        user.email,
-        user.status,
-        user.role
-      ];
-  
-      let result = { affectedRows: 0 };
-  
-      // Se a senha for fornecida, inclui no SQL
-      if (senhaHash) {
-        sqlParams.push(senhaHash);
-        sqlParams.push(user.idUser); 
-        const [rows] = await db.execute(
-          'UPDATE user SET nome = ?, email = ?, senha = ?, status = ?, role = ? WHERE idUser = ?',
-          sqlParams
-        );
-        result = rows; 
-      } else {
-        sqlParams.push(user.idUser); 
-        const [rows] = await db.execute(
-          'UPDATE user SET nome = ?, email = ?, status = ?, role = ? WHERE idUser = ?',
-          sqlParams
-        );
-        result = rows; 
-      }
-  
-      return result.affectedRows; 
+        const sqlParams = [
+            user.nome,
+            user.email,
+            user.status,
+            user.role
+        ];
+        
+        let sqlQuery = 'UPDATE user SET nome = ?, email = ?, status = ?, role = ?';
+
+        // Se a senha for fornecida, adiciona ao SQL
+        if (senhaHash) {
+            sqlQuery += ', senha = ?';
+            sqlParams.push(senhaHash);
+        }
+
+        // Se o usuário NÃO for admin, adiciona o idCurso
+        if (user.role === "user" && user.idCurso) {
+            sqlQuery += ', idCurso = ?';
+            sqlParams.push(user.idCurso);
+        }
+
+        // Adiciona a cláusula WHERE e o idUser
+        sqlQuery += ' WHERE idUser = ?';
+        sqlParams.push(user.idUser);
+
+        // Executa a query
+        const [rows] = await db.execute(sqlQuery, sqlParams);
+        return rows.affectedRows;
+
     } catch (error) {
-      console.error("Erro ao atualizar usuário:", error);
-      throw error;
+        console.error("Erro ao atualizar usuário:", error);
+        throw error;
     } finally {
-      if (db) {
-        await db.end();
-      }
+        if (db) {
+            await db.end();
+        }
     }
-  }
+  };
   
 
 };
