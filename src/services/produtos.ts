@@ -1,0 +1,116 @@
+import prisma from "@/lib/prisma";
+import { Produto } from "@/types/Produto";
+
+export const getProdutos = async (idCurso: number, idTurma: number) => {
+  const produtos = await prisma.produto.findMany({
+    where: {
+      prodCurso: Number(idCurso),
+      prodTurma: Number(idTurma),
+    },
+  });
+  return produtos;
+};
+
+export const getProdutoById = async (idProduto: number) => {
+  const produto = await prisma.produto.findUnique({
+    where: {
+      idProduto: Number(idProduto),
+    },
+  });
+  return produto;
+};
+
+export const countProdutosPorCurso = async (idCurso: number) => {
+  const produtos = await prisma.produto.count({
+    where: {
+      prodCurso: Number(idCurso),
+    },
+  });
+  return produtos;
+};
+
+export const deleteProduto = async (idProduto: number) => {
+  const produto = await prisma.produto.delete({
+    where: {
+      idProduto: Number(idProduto),
+    },
+  });
+  return produto;
+};
+
+export const createProduto = async (produto: Omit<Produto, "idProduto">) => {
+  const produtoCreated = await prisma.produto.create({
+    data: {
+      prodDescricao: produto.prodDescricao.trim(),
+      prodFabricante: produto.prodFabricante.trim(),
+      prodLote: produto.prodLote.trim(),
+      prodQuantidade: produto.prodQuantidade,
+      prodValidade: produto.prodValidade,
+      prodCurso: produto.prodCurso,
+      prodTurma: produto.prodTurma,
+    },
+  });
+  return produtoCreated;
+};
+
+export const updateProduto = async (produto: Produto) => {
+  const produtoUpdated = await prisma.produto.update({
+    where: {
+      idProduto: produto.idProduto,
+    },
+    data: {
+      prodDescricao: produto.prodDescricao.trim(),
+      prodFabricante: produto.prodFabricante.trim(),
+      prodLote: produto.prodLote.trim(),
+      prodQuantidade: produto.prodQuantidade,
+      prodValidade: produto.prodValidade,
+      prodCurso: produto.prodCurso,
+      prodTurma: produto.prodTurma,
+    },
+  });
+  return produtoUpdated;
+};
+
+export const updateQuantidadeProduto = async (
+  idProduto: number,
+  quantidade: number,
+) => {
+  const produto = await prisma.produto.update({
+    where: {
+      idProduto: Number(idProduto),
+    },
+    data: {
+      prodQuantidade: Number(quantidade),
+    },
+  });
+  return produto;
+};
+
+export const countProdutos = async (idCurso: number) => {
+  const produtos = await prisma.produto.count({
+    where: {
+      prodCurso: Number(idCurso),
+    },
+  });
+  return produtos;
+};
+
+export const getProdutosExpirando = async (cursoId: number) => {
+  const today = new Date();
+  const limitDate = new Date();
+  limitDate.setDate(today.getDate() + 30);
+
+  const produtos = await prisma.produto.findMany({
+    where: {
+      prodCurso: cursoId,
+      prodValidade: {
+        lte: limitDate,
+      },
+    },
+    orderBy: {
+      prodValidade: "asc",
+    },
+  });
+
+  return produtos;
+};

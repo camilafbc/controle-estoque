@@ -1,0 +1,90 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Modelos para criar as tabelas no banco
+model Curso {
+  idCurso   Int     @id @default(autoincrement())
+  nomeCurso String  @unique @db.VarChar(255)
+  status    Boolean @default(true)
+
+  // Relacionamentos
+  turmas   Turma[]
+  produtos Produto[]
+  users    User[]    @relation("CursoUsers")
+}
+
+model User {
+  idUser     Int      @id @default(autoincrement())
+  nome       String   @db.VarChar(100)
+  email      String   @unique @db.VarChar(100)
+  password   String   @db.VarChar(255)
+  role       Role     @default(user)
+  idCurso    Int?
+  status     Boolean  @default(true)
+  created_by Int
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  // Relacionamentos
+  curso     Curso?     @relation("CursoUsers", fields: [idCurso], references: [idCurso])
+  operacoes Operacao[]
+}
+
+model Turma {
+  idTurma     Int     @id @default(autoincrement())
+  codigoTurma String  @unique @db.VarChar(50)
+  turnoTurma  String  @db.VarChar(50)
+  idCurso     Int
+  status      Boolean
+
+  // Relacionamento
+  curso    Curso     @relation(fields: [idCurso], references: [idCurso])
+  produtos Produto[]
+}
+
+model Produto {
+  idProduto      Int      @id @default(autoincrement())
+  prodDescricao  String   @unique @db.VarChar(255)
+  prodFabricante String   @db.VarChar(255)
+  prodQuantidade Int
+  prodValidade   DateTime
+  prodLote       String   @db.VarChar(255)
+  prodCurso      Int
+  prodTurma      Int
+
+  // Relacionamentos
+  curso     Curso      @relation(fields: [prodCurso], references: [idCurso])
+  turma     Turma      @relation(fields: [prodTurma], references: [idTurma])
+  operacoes Operacao[]
+}
+
+model Operacao {
+  idOperacao   Int      @id @default(autoincrement())
+  tipoOperacao Int
+  idUsuario    Int
+  idProduto    Int
+  data         DateTime
+  quantidade   Int
+
+  // Relacionamentos
+  usuario User    @relation(fields: [idUsuario], references: [idUser], onDelete: Cascade)
+  produto Produto @relation(fields: [idProduto], references: [idProduto], onDelete: Cascade)
+}
+
+enum Role {
+  admin
+  user
+}
