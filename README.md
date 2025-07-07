@@ -1,10 +1,10 @@
-# 📋 Controle de Estoque - Projeto Integrador
+# 📋 Controle de Estoque - Projeto Integrador - EM REFATORAÇÃO
 
 Este projeto é uma aplicação de controle de estoque desenvolvida como parte do projeto integrador do curso Técnico em Desenvolvimento de Sistemas do SENAC MG, unidade Lavras. A aplicação foi criada para atender a uma demanda dos cursos de Estética e Cabeleireiro da instituição, que precisavam de um sistema para registrar a entrada e saída de produtos por turma, visando o controle de estoque e o acompanhamento do consumo de produtos por turma e por período.
 
 <img width="100%" src="https://raw.githubusercontent.com/camilafbc/controle-estoque/refs/heads/main/toreadme.jpeg"/>
 
-# Visão Geral
+<!-- # Visão Geral
 
 A aplicação conta com uma área administrativa para o cadastro de usuários e cursos, permitindo que o sistema seja usado por outros cursos. A área comum do sistema possibilita o cadastro de turmas e produtos, além de registrar entradas e saídas de produtos, gerando relatórios de movimentação.
 
@@ -94,4 +94,4 @@ A SQL presente logo após a criação da tabela 'user' em UserModel deve criar u
 
 # Licença
 
-Este projeto está licenciado sob a Licença [MIT](https://choosealicense.com/licenses/mit/)
+Este projeto está licenciado sob a Licença [MIT](https://choosealicense.com/licenses/mit/) -->
