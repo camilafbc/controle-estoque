@@ -1,5 +1,6 @@
-import { hasEmail } from "@/services/auth";
 import { NextResponse } from "next/server";
+
+import { hasEmail } from "@/services/auth";
 
 export async function POST(request: Request) {
   const { email } = await request.json();
