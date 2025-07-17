@@ -1,11 +1,11 @@
 import { create } from "zustand";
 
 type TurmaState = {
-  selectedTurma: string;
-  setSelectedTurma: (turma: string) => void;
+  selectedTurma: number;
+  setSelectedTurma: (turma: number) => void;
 };
 
 export const useTurmaStore = create<TurmaState>((set) => ({
-  selectedTurma: "",
-  setSelectedTurma: (turma: string) => set({ selectedTurma: turma }),
+  selectedTurma: 0,
+  setSelectedTurma: (turma: number) => set({ selectedTurma: turma }),
 }));
