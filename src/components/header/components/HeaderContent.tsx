@@ -1,6 +1,6 @@
 "use client";
 
-import { CircleUserRound, MenuIcon, X } from "lucide-react";
+import { CircleUserRound, MenuIcon, UserCircle, X } from "lucide-react";
 import { useSession } from "next-auth/react";
 import { useState } from "react";
 
@@ -12,36 +12,15 @@ import {
   SheetContent,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { useSessionContext } from "@/context/AuthContext";
-
-import UserMenu from "../user-menu/UserMenu";
+import { useAuthContext } from "@/context/AuthContext";
 
 import LogoContainer from "./LogoContainer";
 import MobileMenu from "./MobileMenu";
 import Navbar from "./Navbar";
+import UserMenu from "./UserMenu";
 
 export default function HeaderContent() {
-  const { data: session } = useSession();
-
-  const buttons = [
-    {
-      title: "Meu Perfil",
-      icon: <CircleUserRound className="size-5" />,
-      href: session?.user.role === "admin" ? "/admin/perfil" : "/perfil",
-    },
-  ];
-
-  const userInfo = () => {
-    return (
-      <div>
-        <p className="text-lg font-bold">{session?.user?.name}</p>
-        <p className="text-sm font-semibold capitalize">
-          {session?.user?.curso ?? session?.user?.role}
-        </p>
-        <p className="text-sm text-muted-foreground">{session?.user?.email}</p>
-      </div>
-    );
-  };
+  const { user, loading } = useAuthContext();
 
   return (
     <>
@@ -57,15 +36,33 @@ export default function HeaderContent() {
               </Button>
             </SheetTrigger>
             <SheetContent side="left" className="w-[85%]">
-              <MobileMenu role={session?.user.role} />
+              <MobileMenu role={user?.role} />
             </SheetContent>
           </Sheet>
         </div>
         <div className="flex items-end justify-center gap-6">
           <LogoContainer />
-          <Navbar role={session?.user.role} />
+          <Navbar role={user?.role} />
         </div>
-        <UserMenu userInfo={userInfo()} buttons={buttons} />
+        {/* <UserMenu userInfo={userInfo()} buttons={buttons} /> */}
+        <UserMenu
+          name={user?.nome}
+          role={user?.role}
+          email={user?.email}
+          buttons={
+            [
+              {
+                icon: <CircleUserRound size={18} />,
+                title: "Meu Perfil",
+                href: user?.role === "admin" ? "/admin/profile" : "/profile",
+              },
+            ].filter(Boolean) as unknown as {
+              icon: React.ReactNode;
+              title: string;
+              href: string;
+            }[]
+          }
+        />
       </div>
     </>
   );

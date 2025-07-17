@@ -1,83 +1,129 @@
 "use client";
 
+import { Laptop, LogOut, Moon, Sun } from "lucide-react";
+import Link from "next/link";
 import { signOut } from "next-auth/react";
+import { useTheme } from "next-themes";
+import { ReactNode, useState } from "react";
+import React from "react";
 
-import UserAvatar from "./UserAvatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { Button } from "@/components/ui/button";
-import { CircleUserRound, Laptop, LogOut, Moon, Sun } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
-import { useTheme } from "next-themes";
-import { useSessionContext } from "@/context/AuthContext";
-import { useRouter } from "next/navigation";
-import Link from "next/link";
 
-export default function UserMenu() {
+type button = {
+  title: string;
+  icon: ReactNode;
+  href: string;
+};
+
+interface UserMenuProps {
+  avatarImage?: string;
+  // avatarFalback?: string;
+  userInfo?: boolean;
+  name?: string;
+  role?: string;
+  email?: string;
+  buttons?: button[];
+  signOutCallbackUrl?: string;
+}
+
+const icons = {
+  light: Sun,
+  dark: Moon,
+  system: Laptop,
+};
+
+export const ThemeSwitcher = ({
+  setTheme,
+}: {
+  setTheme: (theme: string) => void;
+}) => (
+  <div>
+    <p className="mb-1 text-sm font-semibold">Modo:</p>
+    {[
+      { theme: "light", icon: "light", label: "Claro" },
+      { theme: "dark", icon: "dark", label: "Escuro" },
+      { theme: "system", icon: "system", label: "Sistema" },
+    ].map((item) => {
+      const Icon = icons[item.icon as keyof typeof icons];
+      return (
+        <Button
+          key={item.theme}
+          variant="ghost"
+          onClick={() => setTheme(item.theme)}
+          className="flex w-full justify-start gap-1 p-1 hover:bg-primary/80 hover:text-white"
+        >
+          <Icon className="size-4" />
+          {item.label}
+        </Button>
+      );
+    })}
+  </div>
+);
+
+export default function UserMenu({
+  userInfo = true,
+  buttons,
+  avatarImage,
+  // avatarFalback,
+  name,
+  role,
+  email,
+  signOutCallbackUrl = "/",
+}: UserMenuProps) {
   const { setTheme } = useTheme();
-  const user = useSessionContext();
-  // const router = useRouter();
+  const [open, setOpen] = useState(false);
 
   return (
-    <Popover>
+    <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger>
-        <UserAvatar />
+        {/* <UserAvatar /> */}
+        <Avatar className="h-[50px] w-[50px]">
+          {avatarImage && <AvatarImage src={avatarImage} alt="profile-image" />}
+          <AvatarFallback className="bg-primary text-center text-lg font-semibold text-white">
+            {name?.slice(0, 2).toUpperCase() ?? ""}
+          </AvatarFallback>
+        </Avatar>
       </PopoverTrigger>
-      <PopoverContent className="absolute right-0 w-[280px] translate-x-4 transform space-y-2">
-        <div>
-          <p className="text-lg font-bold">{user?.user?.name}</p>
-          <p className="text-sm font-semibold capitalize">
-            {user?.user?.curso ?? user.user?.role}
-          </p>
-          <p className="text-sm text-muted-foreground">{user?.user?.email}</p>
-        </div>
-        <Separator orientation="horizontal" />
-        <Link href={"/profile"}>
-          <Button
-            variant={"ghost"}
-            // onClick={handleButtonProfile}
-            className="mt-2 flex w-full justify-start gap-2 ps-0 text-base"
-          >
-            <CircleUserRound className="size-5" />
-            Meu Perfil
-          </Button>
-        </Link>
-        <div>
-          <Button
-            variant={"ghost"}
-            onClick={() => setTheme("light")}
-            className="w-full justify-start ps-0"
-          >
-            <Sun className="me-0.5 h-4" />
-            Claro
-          </Button>
-          <Button
-            variant={"ghost"}
-            onClick={() => setTheme("dark")}
-            className="w-full justify-start ps-0"
-          >
-            <Moon className="me-0.5 h-4" />
-            Escuro
-          </Button>
-          <Button
-            variant={"ghost"}
-            onClick={() => setTheme("system")}
-            className="w-full justify-start ps-0"
-          >
-            <Laptop className="me-0.5 h-4" />
-            Sistema
-          </Button>
-        </div>
-        <Separator orientation="horizontal" />
+      <PopoverContent className="absolute right-0 w-[280px] translate-x-4 space-y-2">
+        {userInfo && (
+          <div key={"user-info"} className="flex flex-col gap-0">
+            <p className="text-sm font-bold">{name}</p>
+            <p className="text-xs font-semibold capitalize">{role}</p>
+            <p className="text-xs text-muted-foreground">{email}</p>
+          </div>
+        )}
+        <Separator />
+        {buttons &&
+          buttons.map((btn, index) => (
+            <React.Fragment key={index}>
+              <Link href={btn.href}>
+                <Button
+                  variant="ghost"
+                  onClick={() => setOpen(false)}
+                  className="mt-2 flex w-full justify-start gap-1 p-1 hover:bg-primary/80 hover:text-white"
+                >
+                  {btn.icon}
+                  {btn.title}
+                </Button>
+              </Link>
+            </React.Fragment>
+          ))}
+        <Separator />
+        <ThemeSwitcher setTheme={setTheme} />
+        <Separator />
         <Button
-          variant={"ghost"}
-          onClick={() => signOut({ callbackUrl: "/" })}
-          className="w-full justify-start ps-0"
+          variant="ghost"
+          onClick={() => signOut({ callbackUrl: signOutCallbackUrl })}
+          className="flex w-full justify-start gap-1 p-1 hover:bg-primary/80 hover:text-white"
         >
-          <LogOut className="me-0.5 h-4" />
+          <LogOut className="size-4" />
           Sair
         </Button>
       </PopoverContent>
