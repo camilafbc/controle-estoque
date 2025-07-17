@@ -1,3 +1,5 @@
+import dayjs from "dayjs";
+
 import prisma from "@/lib/prisma";
 import { Produto } from "@/types/Produto";
 
@@ -45,7 +47,7 @@ export const createProduto = async (produto: Omit<Produto, "idProduto">) => {
       prodFabricante: produto.prodFabricante.trim(),
       prodLote: produto.prodLote.trim(),
       prodQuantidade: produto.prodQuantidade,
-      prodValidade: produto.prodValidade,
+      prodValidade: dayjs(produto.prodValidade, "DD/MM/YYYY").toISOString(),
       prodCurso: produto.prodCurso,
       prodTurma: produto.prodTurma,
     },
@@ -74,16 +76,32 @@ export const updateProduto = async (produto: Produto) => {
 export const updateQuantidadeProduto = async (
   idProduto: number,
   quantidade: number,
+  tipo: "increment" | "decrement",
 ) => {
-  const produto = await prisma.produto.update({
+  const produto = await prisma.produto.findUnique({
     where: {
-      idProduto: Number(idProduto),
-    },
-    data: {
-      prodQuantidade: Number(quantidade),
+      idProduto: idProduto,
     },
   });
-  return produto;
+
+  if (!produto) throw new Error("Produto não encontrado.");
+
+  // impedir valores negativos
+  if (tipo === "decrement" && produto.prodQuantidade < quantidade) {
+    throw new Error("Quantidade insuficiente para retirada.");
+  }
+
+  const produtoUpdated = await prisma.produto.update({
+    where: {
+      idProduto: produto.idProduto,
+    },
+    data: {
+      prodQuantidade: {
+        [tipo]: Number(quantidade),
+      },
+    },
+  });
+  return produtoUpdated;
 };
 
 export const countProdutos = async (idCurso: number) => {
