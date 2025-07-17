@@ -1,9 +1,10 @@
 "use client";
 
-import AuthProvider from "@/providers/auth";
+import { SessionProvider } from "next-auth/react";
 import { ReactNode } from "react";
-import { SessionProvider } from "@/context/SessionContext";
+
 import { TooltipProvider } from "@/components/ui/tooltip";
+
 import { QueryProvider } from "./QueryProvider";
 
 interface ProvidersWrapperProps {
@@ -12,12 +13,10 @@ interface ProvidersWrapperProps {
 
 export function ProvidersWrapper({ children }: ProvidersWrapperProps) {
   return (
-    <AuthProvider>
-      <SessionProvider>
-        <QueryProvider>
-          <TooltipProvider>{children}</TooltipProvider>
-        </QueryProvider>
-      </SessionProvider>
-    </AuthProvider>
+    <SessionProvider>
+      <QueryProvider>
+        <TooltipProvider>{children}</TooltipProvider>
+      </QueryProvider>
+    </SessionProvider>
   );
 }
