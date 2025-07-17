@@ -14,12 +14,14 @@ export const useDeleteProductMutation = () => {
   return mutation;
 };
 
-export const useCreateProdutoMutation = (turma: number) => {
+export const useCreateProdutoMutation = () => {
   const queryClient = useQueryClient();
   const mutation = useMutation({
     mutationFn: (produto: Omit<Produto, "idProduto">) => createProduto(produto),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["produtos", turma] });
+    onSuccess: (retorno) => {
+      queryClient.invalidateQueries({
+        queryKey: ["produtos", retorno.produto.turma],
+      });
     },
   });
   return mutation;
