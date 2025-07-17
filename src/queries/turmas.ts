@@ -10,7 +10,6 @@ export const useTurmas = (idCurso: number) => {
     enabled: !!idCurso,
     staleTime: Infinity,
   });
-  // console.log("Resultado da Query: " + query);
   return query;
 };
 
@@ -31,7 +30,7 @@ export const useGetCountTurmas = (idCurso: number) => {
   const query = useQuery({
     queryKey: ["turmas-count", idCurso],
     queryFn: () => getCountTurmas(idCurso),
-    enabled: !!idCurso,
+    enabled: !!idCurso && !isNaN(idCurso),
     staleTime: Infinity,
   });
   return query;

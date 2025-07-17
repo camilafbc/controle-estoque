@@ -1,3 +1,5 @@
+import { useQuery } from "@tanstack/react-query";
+
 import {
   getDashLastOperacoes,
   getDashTotalEstoque,
@@ -6,7 +8,6 @@ import {
   getDashTotalVencimento,
   getRelatorioDozeMeses,
 } from "@/api/dashboard";
-import { useQuery } from "@tanstack/react-query";
 
 export const useDashTotal = () => {
   const query = useQuery({
