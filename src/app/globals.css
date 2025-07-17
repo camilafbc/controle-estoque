@@ -78,7 +78,7 @@
     --popover: 0 0% 100%;
     --popover-foreground: 222.2 84% 4.9%;
     /* --primary: 222.2 47.4% 11.2%; */
-    --primary: 25, 95%, 53%;
+    --primary: 25 95% 53%;
     --primary-foreground: 210 40% 98%;
     --secondary: 210 40% 96.1%;
     /* --secondary: 33, 93%, 54%; */
@@ -104,36 +104,36 @@
   }
 
   .dark {
-    --background: 222.2 84% 4.9%; /* Preto azulado escuro */
-    --foreground: 0 0% 95%; /* Branco acinzentado */
+    --background: 222.2 84% 4.9%;
+    --foreground: 0 0% 95%;
 
-    --card: 222.2 84% 7%; /* Mais claro que o background */
+    --card: 222.2 84% 7%;
     --card-foreground: 0 0% 95%;
 
     --popover: 222.2 84% 7%;
     --popover-foreground: 0 0% 95%;
 
-    --primary: 25, 95%, 53%; /* Laranja mais claro (mais legível no escuro) */
-    --primary-foreground: 222.2 84% 4.9%; /* Texto escuro sobre laranja */
+    --primary: 25 95% 53%;
+    --primary-foreground: 222.2 84% 4.9%;
 
-    --secondary: 33 93% 60%; /* Amarelo secundário mais vibrante */
+    --secondary: 33 93% 60%;
     --secondary-foreground: 222.2 84% 4.9%;
 
-    --muted: 222.2 84% 15%; /* Fundo de elementos muted */
-    --muted-foreground: 215 20% 65%; /* Texto muted mais claro */
+    --muted: 222.2 84% 15%;
+    --muted-foreground: 215 20% 65%;
 
-    --accent: 209 100% 35%; /* Azul SENAC ajustado */
+    --accent: 209 100% 35%;
     --accent-foreground: 0 0% 95%;
 
-    --destructive: 0 84% 62%; /* Vermelho mais claro */
+    --destructive: 0 84% 62%;
     --destructive-foreground: 0 0% 95%;
 
-    --border: 222.2 84% 15%; /* Bordas mais perceptíveis */
-    --input: 222, 62%, 28%; /* Inputs com bom contraste */
+    --border: 222.2 84% 15%;
+    --input: 222, 62%, 28%;
 
-    --ring: 33 93% 60%; /* Animações com amarelo secundário */
+    --ring: 33 93% 60%;
 
-    --navbar: 222.2 84% 4.9%; /* Navbar mais escuro */
+    --navbar: 222.2 84% 4.9%;
   }
 }
 
