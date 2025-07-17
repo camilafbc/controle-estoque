@@ -1,6 +1,6 @@
 "use client";
 
-import { useSessionContext } from "@/context/SessionContext";
+import { useSessionContext } from "@/context/AuthContext";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 

@@ -1,15 +1,14 @@
 "use client";
 
-import { PersonIcon } from "@radix-ui/react-icons";
 import { Boxes, CalendarDays, GraduationCap, Package } from "lucide-react";
-import { useSession } from "next-auth/react";
 
 import DashCard from "@/components/dashboard/DashCard";
+import { useAuthContext } from "@/context/AuthContext";
 import { useGetCountTurmas } from "@/queries/turmas";
 
 export default function DashboardContent() {
-  const user = useSession();
-  const idCurso = Number(user.data?.user.curso);
+  const { user } = useAuthContext();
+  const idCurso = Number(user?.curso?.idCurso);
 
   const countTurmas = useGetCountTurmas(idCurso);
 

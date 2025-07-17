@@ -16,7 +16,7 @@ import { Input } from "@/components/ui/input";
 
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
-import { useSessionContext } from "@/context/SessionContext";
+import { useSessionContext } from "@/context/AuthContext";
 import { useUpdateUserMutation } from "@/mutations/users";
 import { useGetUser } from "@/queries/user";
 

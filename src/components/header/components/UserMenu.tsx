@@ -12,7 +12,7 @@ import { Button } from "@/components/ui/button";
 import { CircleUserRound, Laptop, LogOut, Moon, Sun } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import { useTheme } from "next-themes";
-import { useSessionContext } from "@/context/SessionContext";
+import { useSessionContext } from "@/context/AuthContext";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 

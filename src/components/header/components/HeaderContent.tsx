@@ -12,7 +12,7 @@ import {
   SheetContent,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { useSessionContext } from "@/context/SessionContext";
+import { useSessionContext } from "@/context/AuthContext";
 
 import UserMenu from "../user-menu/UserMenu";
 

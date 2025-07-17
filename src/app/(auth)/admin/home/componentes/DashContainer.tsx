@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 
 import DashCard from "@/components/dashboard/DashCard";
 import { AnimatedCard } from "@/components/effects/AnimatedCard";
-import { useSessionContext } from "@/context/SessionContext";
+import { useSessionContext } from "@/context/AuthContext";
 
 export default function DashContainer() {
   // const userTeste = useSessionContext();

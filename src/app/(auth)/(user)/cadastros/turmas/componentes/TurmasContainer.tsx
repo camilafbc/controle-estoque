@@ -36,7 +36,7 @@ export default function TurmasContainer() {
   const [editingId, setEditingId] = useState<number | null>();
 
   const turma = useGetTurmaById(editingId ? String(editingId) : "", {
-    enabled: openDialog, // 👈 Só busca quando o dialog está aberto
+    enabled: openDialog,
   });
   const createTurma = useInsertTurmaMutation();
   const updateTurma = useUpdateTurmaMutation();
