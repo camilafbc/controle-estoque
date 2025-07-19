@@ -1,3 +1,4 @@
+import dayjs from "dayjs";
 import { NextRequest, NextResponse } from "next/server";
 
 import { createProduto } from "@/services/produtos";
@@ -25,11 +26,13 @@ export async function POST(req: NextRequest) {
         { status: 400 },
       );
 
+    console.log("PRODUTO NA ROTA: ", body);
+
     const produto = {
       prodDescricao: body.prodDescricao.trim(),
       prodFabricante: body.prodFabricante.trim(),
-      prodQuantidade: body.prodQuantidade.trim(),
-      prodValidade: body.prodValidade.trim(),
+      prodQuantidade: body.prodQuantidade,
+      prodValidade: body.prodValidade,
       prodLote: body.prodLote.trim(),
       prodTurma: body.prodTurma,
       prodCurso: body.prodCurso,
