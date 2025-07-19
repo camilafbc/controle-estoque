@@ -31,6 +31,19 @@ export const countProdutosPorCurso = async (idCurso: number) => {
   return produtos;
 };
 
+export const getEstoquePorCurso = async (idCurso: number) => {
+  const produtos = await prisma.produto.aggregate({
+    _sum: {
+      prodQuantidade: true,
+    },
+    where: {
+      prodCurso: idCurso,
+    },
+  });
+
+  return produtos._sum.prodQuantidade || 0;
+};
+
 export const deleteProduto = async (idProduto: number) => {
   const produto = await prisma.produto.delete({
     where: {
