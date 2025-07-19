@@ -131,7 +131,7 @@ export const getProdutosExpirando = async (cursoId: number) => {
   const limitDate = new Date();
   limitDate.setDate(today.getDate() + 30);
 
-  const produtos = await prisma.produto.findMany({
+  const produtos = await prisma.produto.count({
     where: {
       prodCurso: cursoId,
       prodValidade: {
@@ -143,5 +143,5 @@ export const getProdutosExpirando = async (cursoId: number) => {
     },
   });
 
-  return produtos;
+  return produtos || 0;
 };
