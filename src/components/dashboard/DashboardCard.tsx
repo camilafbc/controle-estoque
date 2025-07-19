@@ -1,3 +1,5 @@
+"use client";
+
 import { motion } from "framer-motion";
 import { ReactNode } from "react";
 
@@ -10,7 +12,7 @@ import {
 } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 
-interface DashCardProps {
+interface DashboardCardProps {
   delay?: number;
   className?: string;
   title?: string | ReactNode;
@@ -24,7 +26,7 @@ interface DashCardProps {
   showDataSection?: boolean;
 }
 
-export default function DashCard({
+export default function DashboardCard({
   className,
   title,
   subtitle,
@@ -36,7 +38,7 @@ export default function DashCard({
   showHeader,
   showDataSection = true,
   delay = 0,
-}: DashCardProps) {
+}: DashboardCardProps) {
   return (
     <motion.div
       initial={{ opacity: 0, y: 20, scale: 0.95 }}

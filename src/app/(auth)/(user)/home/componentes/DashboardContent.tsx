@@ -2,7 +2,7 @@
 
 import { Boxes, CalendarDays, GraduationCap, Package } from "lucide-react";
 
-import DashCard from "@/components/dashboard/DashCard";
+import DashCard from "@/components/dashboard/DashboardCard";
 import { useAuthContext } from "@/context/AuthContext";
 import { useGetCountTurmas } from "@/queries/turmas";
 
