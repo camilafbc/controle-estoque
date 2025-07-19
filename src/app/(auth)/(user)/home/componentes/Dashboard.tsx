@@ -2,11 +2,11 @@
 
 import { Boxes, CalendarDays, GraduationCap, Package } from "lucide-react";
 
-import DashCard from "@/components/dashboard/DashboardCard";
+import DashboardCard from "@/components/dashboard/DashboardCard";
 import { useAuthContext } from "@/context/AuthContext";
 import { useGetCountTurmas } from "@/queries/turmas";
 
-export default function DashboardContent() {
+export default function Dashboard() {
   const { user } = useAuthContext();
   const idCurso = Number(user?.curso?.idCurso);
 
@@ -14,7 +14,7 @@ export default function DashboardContent() {
 
   return (
     <div className="grid grid-cols-1 gap-2 md:grid-cols-4">
-      <DashCard
+      <DashboardCard
         delay={0}
         showHeader={false}
         title="Turmas"
@@ -27,7 +27,7 @@ export default function DashboardContent() {
           </div>
         }
       />
-      <DashCard
+      <DashboardCard
         delay={1}
         showHeader={false}
         title="Produtos"
@@ -40,7 +40,7 @@ export default function DashboardContent() {
           </div>
         }
       />
-      <DashCard
+      <DashboardCard
         delay={2}
         showHeader={false}
         title="Validade"
@@ -53,7 +53,7 @@ export default function DashboardContent() {
           </div>
         }
       />
-      <DashCard
+      <DashboardCard
         delay={3}
         showHeader={false}
         title="Estoque"
