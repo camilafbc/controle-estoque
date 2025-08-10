@@ -1,5 +1,7 @@
 "use client";
 
+import Link from "next/link";
+
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -8,13 +10,13 @@ import {
   NavigationMenuList,
   NavigationMenuTrigger,
 } from "@/components/ui/navigation-menu";
-import Link from "next/link";
 
 interface NavbarProps {
   role?: string;
 }
 
 export default function Navbar({ role }: NavbarProps) {
+  console.log("NAVBAR: ", role);
   if (role === "admin") {
     return (
       <NavigationMenu className="hidden sm:block">
