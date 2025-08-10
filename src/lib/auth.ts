@@ -7,7 +7,6 @@ export const authOptions: AuthOptions = {
   pages: {
     signIn: "/api/auth/signin",
   },
-
   providers: [
     CredentialsProvider({
       id: "credentials",
@@ -66,7 +65,7 @@ export const authOptions: AuthOptions = {
           id: token.id as unknown as number,
           name: token.name as string,
           email: token.email as string,
-          curso: token.curso as string,
+          curso: token.curso as number,
           role: token.role as string,
         };
       }
@@ -74,10 +73,9 @@ export const authOptions: AuthOptions = {
     },
   },
 
-  // Configuração importante dos cookies
   cookies: {
     sessionToken: {
-      name: "next-auth.session-token",
+      name: "next-auth.senac-estoque-session-token",
       options: {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
@@ -87,76 +85,4 @@ export const authOptions: AuthOptions = {
       },
     },
   },
-
-  // providers: [
-  //   CredentialsProvider({
-  //     id: "credentials",
-  //     credentials: {
-  //       email: { label: "E-mail", type: "text" },
-  //       password: { label: "Senha", type: "password" },
-  //     },
-  //     authorize: async (credentials) => {
-  //       if (credentials) {
-  //         const response = await axios.post(
-  //           `${process.env.NEXTAUTH_URL}/api/auth/signin`,
-  //           {
-  //             email: credentials?.email,
-  //             password: credentials?.password,
-  //           },
-  //         );
-
-  //         console.log("Response from login:", response.data);
-
-  //         if (response.data.user) {
-  //           return {
-  //             id: response.data.user.id,
-  //             name: response.data.user.name,
-  //             email: response.data.user.email,
-  //             curso: response.data.user.curso,
-  //             role: response.data.user.role,
-  //             token: response.data.token,
-  //           };
-  //         } else {
-  //           return null;
-  //         }
-  //       } else {
-  //         console.log("Não recebeu credenciais");
-  //         return null;
-  //       }
-  //     },
-  //   }),
-  // ],
-  // callbacks: {
-  //   jwt: async ({ token, user }) => {
-  //     console.log("USER JWT: ", user);
-  //     if (user) {
-  //       token.id = user.id;
-  //       token.name = user.name;
-  //       token.email = user.email;
-  //       token.curso = user.curso;
-  //       token.role = user.role;
-  //       token.accessToken = user.token; // Adiciona o token JWT vindo do back-end
-  //     }
-  //     return token;
-  //   },
-  //   session: async ({ session, token }) => {
-  //     // console.log("USER SESSION: ", user);
-  //     console.log("TOKEN SESSION: ", token);
-
-  //     if (token) {
-  //       session.user = {
-  //         id: token.id as unknown as number,
-  //         name: token.name as string,
-  //         email: token.email as string,
-  //         curso: token.curso as string,
-  //         role: token.role as string,
-  //       };
-  //       session.accessToken = token.accessToken as string;
-  //     }
-
-  //     console.log("Session: ", session);
-
-  //     return session;
-  //   },
-  // },
 };
