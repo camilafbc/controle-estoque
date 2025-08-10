@@ -3,13 +3,16 @@ import { error } from "console";
 import { NextRequest, NextResponse } from "next/server";
 import { getToken } from "next-auth/jwt";
 
+import { getProduto } from "@/api/produtos";
 import { createOperacao } from "@/services/operacoes";
-import { updateQuantidadeProduto } from "@/services/produtos";
+import { getProdutoById, updateQuantidadeProduto } from "@/services/produtos";
 import { handleDatabaseError } from "@/utils/handleDbError";
+
+const customCookie = process.env.NEXT_CUSTOM_COOKIE;
 
 export async function POST(req: NextRequest) {
   try {
-    const token = await getToken({ req });
+    const token = await getToken({ req, cookieName: customCookie });
 
     if (!token || !token.id)
       return NextResponse.json(
@@ -19,10 +22,10 @@ export async function POST(req: NextRequest) {
 
     const idUser = token.id;
 
-    const { idProduto, tipoOp, quantidade } = await req.json();
+    const { uuidProduto, tipoOp, quantidade } = await req.json();
 
     if (
-      typeof idProduto !== "number" ||
+      typeof uuidProduto !== "string" ||
       typeof tipoOp !== "number" ||
       typeof quantidade !== "number"
     ) {
@@ -31,6 +34,17 @@ export async function POST(req: NextRequest) {
         { status: 400 },
       );
     }
+
+    const produto = await getProdutoById(uuidProduto);
+
+    if (!produto) {
+      return NextResponse.json(
+        { error: true, message: "Produto não encontrado!" },
+        { status: 404 },
+      );
+    }
+
+    const idProduto = produto?.idProduto;
 
     const operacao = await createOperacao(
       +idUser,

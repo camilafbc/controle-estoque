@@ -12,7 +12,8 @@ export async function GET(
   { params }: { params: { id: string } },
 ) {
   try {
-    const produto = await getProdutoById(+params.id);
+    const uuiProduto = params.id;
+    const produto = await getProdutoById(uuiProduto);
     return NextResponse.json(produto, { status: 200 });
   } catch (error) {
     const { status, message } = handleDatabaseError(error);

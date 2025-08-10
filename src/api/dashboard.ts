@@ -15,8 +15,10 @@ export const getDashTotalVencimento = async () => {
   return response.data;
 };
 
-export const getRelatorioDozeMeses = async () => {
-  const response = await api.get("/dashboard/relatorioDozeMeses");
+export const getRelatorioDozeMeses = async (idCurso: number) => {
+  const response = await api.get(
+    `/api/user/operacoes/relatorios/${idCurso}/last-12-months`,
+  );
   return response.data;
 };
 

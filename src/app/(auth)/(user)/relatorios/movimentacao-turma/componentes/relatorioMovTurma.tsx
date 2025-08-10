@@ -1,4 +1,3 @@
-import React from "react";
 import {
   Page,
   Text,
@@ -8,6 +7,8 @@ import {
   Image,
 } from "@react-pdf/renderer";
 import { format } from "date-fns";
+import dayjs from "dayjs";
+import React from "react";
 /* eslint-disable */
 // Estilos atualizados
 const styles = StyleSheet.create({
@@ -81,10 +82,26 @@ const styles = StyleSheet.create({
   },
 });
 
+interface DocumentProps {
+  data: {
+    turma: string;
+    turnoTurma: string;
+    data: {
+      prodDescricao: string;
+      prodFabricante: string;
+      entradas: number;
+      saidas: number;
+    }[];
+  };
+  dates: {
+    inicio: Date;
+    final: Date;
+  };
+  user: string | undefined;
+}
+
 // Componente de relatório
-const MyDocument = ({ teste }: any) => {
-  //console.log(teste);
-  // , turma, dataInicial, dataFinal, usuario
+const RelatorioDocument = ({ data, dates, user }: DocumentProps) => {
   const currentDate = format(new Date(), "dd/MM/yyyy HH:mm");
 
   return (
@@ -99,16 +116,13 @@ const MyDocument = ({ teste }: any) => {
         {/* Informações do Relatório */}
         <View style={styles.infoSection}>
           <Text style={styles.infoText}>
-            Turma: {teste.codTurma} - {teste.turnoTurma}
+            Turma: {data.turma} - {data.turnoTurma}
           </Text>
           <Text style={styles.infoText}>
-            Período:{" "}
-            {format(new Date(teste.dataInicial + "T00:00:00"), "dd/MM/yyyy")} a{" "}
-            {format(new Date(teste.dataFinal + "T00:00:00"), "dd/MM/yyyy")}
-            {/* Período: {format(new Date(teste.dataInicial), "dd/MM/yyyy")} a{" "}
-            {format(new Date(teste.dataFinal), "dd/MM/yyyy")} */}
+            Período: {dayjs(dates.inicio).format("DD/MM/YYYY")} a{" "}
+            {dayjs(dates.final).format("DD/MM/YYYY")}
           </Text>
-          <Text style={styles.infoText}>Usuário: {teste.nomeUser}</Text>
+          <Text style={styles.infoText}>Usuário: {user}</Text>
         </View>
 
         {/* Data de emissão */}
@@ -133,7 +147,7 @@ const MyDocument = ({ teste }: any) => {
           </View>
 
           {/* Linhas de dados */}
-          {teste.result.map((item: any, index: number) => (
+          {data.data.map((item: any, index: number) => (
             <View key={index} style={styles.tableRow}>
               <View style={styles.tableCol}>
                 <Text style={styles.tableCell}>{item.prodDescricao}</Text>
@@ -155,4 +169,4 @@ const MyDocument = ({ teste }: any) => {
   );
 };
 
-export default MyDocument;
+export default RelatorioDocument;
