@@ -3,7 +3,7 @@
 import { yupResolver } from "@hookform/resolvers/yup";
 import { Key } from "lucide-react";
 import { forwardRef, useEffect, useImperativeHandle, useState } from "react";
-import { useForm } from "react-hook-form";
+import { SubmitHandler, useForm } from "react-hook-form";
 import * as yup from "yup";
 
 import { Button } from "../ui/button";
@@ -44,18 +44,21 @@ type FormUserProfileValues = {
   senha?: string;
 };
 
-interface FormUserProfileProps {
-  initialValues?: FormUserProfileValues;
-  isLoading?: boolean;
-}
-
 export interface FormUserProfileRef {
   resetForm: () => void;
-  getValues: () => FormUserProfileFields;
+  // getValues: () => FormUserProfileFields;
+  submitForm: () => void;
+}
+interface FormUserProfileProps {
+  initialValues?: FormUserProfileValues;
+  onSubmit?: any;
+  // isLoading?: boolean;
+  // onSuccess?: (message: string) => void;
+  // onError?: (message: string) => void;
 }
 
 const FormUserProfile = forwardRef<FormUserProfileRef, FormUserProfileProps>(
-  ({ initialValues, isLoading = false }, ref) => {
+  ({ initialValues, onSubmit }, ref) => {
     const [showPasswordContainer, setShowPasswordContainer] =
       useState<boolean>(false);
 
@@ -73,6 +76,7 @@ const FormUserProfile = forwardRef<FormUserProfileRef, FormUserProfileProps>(
       control,
       reset,
       getValues,
+      handleSubmit,
       formState: { errors },
     } = form;
 
@@ -86,7 +90,7 @@ const FormUserProfile = forwardRef<FormUserProfileRef, FormUserProfileProps>(
         });
         setShowPasswordContainer(false);
       },
-      getValues: () => getValues(),
+      submitForm: () => handleSubmit(onSubmit ?? (() => {}))(),
     }));
 
     useEffect(() => {

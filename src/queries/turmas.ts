@@ -1,13 +1,14 @@
 import { useQuery } from "@tanstack/react-query";
 
 import { getCountTurmas, getTurmaById, getTurmas } from "@/api/turmas";
+import { Turma } from "@/types/Turma";
 
-export const useTurmas = (idCurso: number) => {
-  // console.log("Chamou o useTurmas");
+export const useTurmas = (idCurso: number, initialData: Turma[]) => {
   const query = useQuery({
     queryKey: ["turmas"],
     queryFn: () => getTurmas(idCurso),
     enabled: !!idCurso,
+    initialData: initialData,
     staleTime: Infinity,
   });
   return query;

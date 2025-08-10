@@ -67,15 +67,12 @@ const FormMovimentacoes = forwardRef<
     submitForm: () => handleSubmit(onSubmit)(),
   }));
 
-  // Assistir mudanças no campo quantidade
   const quantidade = watch("quantidade", 1);
 
-  // Função para incrementar quantidade
   const handleIncrease = () => {
     setValue("quantidade", Number(quantidade) + 1);
   };
 
-  // Função para decrementar quantidade (mínimo 1)
   const handleDecrease = () => {
     setValue("quantidade", Number(quantidade) > 1 ? Number(quantidade) - 1 : 1);
   };
@@ -113,7 +110,7 @@ const FormMovimentacoes = forwardRef<
             control={control}
             name="quantidade"
             render={({ field }) => (
-              <FormItem className="flex flex-col gap-2">
+              <FormItem className="flex flex-col">
                 <Label>Quantidade</Label>
                 <div className="group flex w-[150px]">
                   <Button

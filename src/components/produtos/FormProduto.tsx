@@ -4,14 +4,17 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import dayjs from "dayjs";
 import { forwardRef, ReactNode, useEffect, useImperativeHandle } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
+import { NumericFormat } from "react-number-format";
 import * as yup from "yup";
 
 import { Produto } from "@/types/Produto";
 import { Turma } from "@/types/Turma";
 
+import DatePickerInput from "../DatePickerInput";
 import { MySelect } from "../MySelect";
 import { Form, FormField, FormItem } from "../ui/form";
 import { Input } from "../ui/input";
+import { VirtualizedCombobox } from "../ui/virtualized-combobox/VirtualizedCombobox";
 
 const validationSchema = yup.object({
   produto: yup.string().required("Campo obrigatório"),
@@ -35,7 +38,7 @@ export interface FormProdutoRef {
 interface FormProdutoProps {
   onSubmit: SubmitHandler<FormProdutoFields>;
   initialValues?: Produto;
-  turmas?: Turma[];
+  turmas: Turma[];
   turmasLoading?: boolean;
   defaultFocus?: keyof FormProdutoFields;
 }
@@ -57,7 +60,7 @@ const FormProduto = forwardRef<FormProdutoRef, FormProdutoProps>(
         produto: "",
         fabricante: "",
         lote: "",
-        quantidade: "",
+        quantidade: "1",
         dataValidade: "",
         turma: "",
       },
@@ -78,7 +81,7 @@ const FormProduto = forwardRef<FormProdutoRef, FormProdutoProps>(
           produto: "",
           fabricante: "",
           lote: "",
-          quantidade: "",
+          quantidade: "0,000",
           dataValidade: "",
           turma: "",
         });
@@ -194,9 +197,11 @@ const FormProduto = forwardRef<FormProdutoRef, FormProdutoProps>(
                     field.onChange(value);
                   }}
                 />
-                <span className="min-h-4 text-xs font-semibold text-destructive">
-                  {errors.quantidade && errors.quantidade.message}
-                </span>
+                {errors.quantidade && (
+                  <span className="text-xs font-semibold text-destructive">
+                    {errors.quantidade.message}
+                  </span>
+                )}
               </FormItem>
             )}
           />
@@ -206,23 +211,12 @@ const FormProduto = forwardRef<FormProdutoRef, FormProdutoProps>(
             name="dataValidade"
             render={({ field }) => (
               <FormItem className="col-span-1 p-1">
-                <Input
-                  id="input-dataValidade"
+                <DatePickerInput
                   label="Validade"
-                  placeholder="DD/MM/YYYY"
-                  maxLength={10}
-                  required={true}
-                  error={!!errors.dataValidade}
-                  value={field.value}
-                  onInput={(ev) => {
-                    const value = ev.currentTarget.value
-                      .replace(/\D/g, "")
-                      .replace(/(\d{2})(\d)/, "$1/$2")
-                      .replace(/(\d{2})(\d)/, "$1/$2")
-                      .replace(/(\d{4})\d+?$/, "$1");
-                    ev.currentTarget.value = value;
-                    field.onChange(value);
-                  }}
+                  placeholder="dd/mm/aaaa"
+                  required
+                  selected={field.value}
+                  onSelect={field.onChange}
                 />
                 <span className="min-h-4 text-xs font-semibold text-destructive">
                   {errors.dataValidade && errors.dataValidade.message}
@@ -236,22 +230,23 @@ const FormProduto = forwardRef<FormProdutoRef, FormProdutoProps>(
             control={control}
             render={({ field }) => (
               <FormItem className="col-span-1 p-1">
-                <MySelect
+                <VirtualizedCombobox
                   {...field}
+                  required
                   label="Turma"
                   id="select-turma"
-                  required={true}
-                  loading={turmasLoading}
+                  height={100}
                   options={
-                    turmas?.map((turma: Turma) => ({
+                    turmas.map((turma: Turma) => ({
                       label: `${turma.codigoTurma} - ${turma.turnoTurma}`,
-                      value: String(turma.idTurma),
+                      id: turma.uuid?.toString() || "",
                     })) || []
                   }
+                  placeholder="Buscar turma"
+                  loading={turmasLoading}
+                  error={errors.turma?.message}
                   value={field.value}
-                  onValueChange={(value) => {
-                    field.onChange(value);
-                  }}
+                  onChange={(value) => field.onChange(value ?? "")}
                 />
                 <span className="min-h-4 text-xs font-semibold text-destructive">
                   {errors.turma && errors.turma.message}

@@ -37,6 +37,7 @@ interface MyDialogProps extends VariantProps<typeof DialogVariants> {
   size?: "default" | "sm" | "lg" | "xl";
   children?: ReactNode;
   footerChildren?: ReactNode;
+  modal?: boolean;
 }
 
 const MyDialog = ({
@@ -47,10 +48,17 @@ const MyDialog = ({
   children,
   footerChildren,
   size = "default",
+  modal = false,
   className,
 }: MyDialogProps) => {
   return (
-    <Dialog open={open} onOpenChange={setIsOpen}>
+    <Dialog open={open} onOpenChange={setIsOpen} modal={modal}>
+      {open && !modal && (
+        <div
+          className="fixed inset-0 z-40 bg-black/50"
+          // onClick={() => setOpenAlert(false)}
+        />
+      )}
       <DialogContent
         // className="min-w-sm max-w-5xl"
         className={cn(DialogVariants({ size }), className)}

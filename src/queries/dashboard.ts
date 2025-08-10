@@ -36,10 +36,15 @@ export const useDashTotalVencimento = () => {
   return query;
 };
 
-export const useDashRelatorioDozeMeses = () => {
+export const useDashRelatorioDozeMeses = (
+  idCurso: number,
+  initialData?: any,
+) => {
   const query = useQuery({
     queryKey: ["dashRelatorioDozeMeses"],
-    queryFn: () => getRelatorioDozeMeses(),
+    queryFn: () => getRelatorioDozeMeses(idCurso),
+    enabled: !!idCurso,
+    initialData: initialData,
     staleTime: Infinity,
   });
   return query;
