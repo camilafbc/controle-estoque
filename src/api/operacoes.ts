@@ -6,7 +6,7 @@ import api from "@/lib/axios";
 // };
 
 export const createOperacao = async (operacao: {
-  idProduto: number;
+  uuidProduto: string;
   tipoOp: number;
   quantidade: number;
 }) => {
@@ -14,7 +14,7 @@ export const createOperacao = async (operacao: {
   return result.data;
 };
 
-export const getOperacoesByProduto = async (idProduto: number) => {
-  const response = await api.get(`/api/user/operacoes/produto/${idProduto}`);
+export const getOperacoesByProduto = async (uuidProduto: string) => {
+  const response = await api.get(`/api/user/operacoes/produto/${uuidProduto}`);
   return response.data;
 };

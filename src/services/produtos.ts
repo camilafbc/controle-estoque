@@ -3,20 +3,25 @@ import dayjs from "dayjs";
 import prisma from "@/lib/prisma";
 import { Produto } from "@/types/Produto";
 
-export const getProdutos = async (idCurso: number, idTurma: number) => {
+export const getProdutos = async (idCurso: number, turmaUuid: string) => {
+  const turma = await prisma.turma.findUnique({
+    where: { uuid: turmaUuid as string },
+    select: { idTurma: true },
+  });
+
   const produtos = await prisma.produto.findMany({
     where: {
       prodCurso: Number(idCurso),
-      prodTurma: Number(idTurma),
+      prodTurma: Number(turma?.idTurma),
     },
   });
   return produtos;
 };
 
-export const getProdutoById = async (idProduto: number) => {
+export const getProdutoById = async (uuidProduto: string) => {
   const produto = await prisma.produto.findUnique({
     where: {
-      idProduto: Number(idProduto),
+      uuid: uuidProduto,
     },
   });
   return produto;
@@ -53,19 +58,29 @@ export const deleteProduto = async (idProduto: number) => {
   return produto;
 };
 
-export const createProduto = async (produto: Omit<Produto, "idProduto">) => {
-  const produtoCreated = await prisma.produto.create({
-    data: {
-      prodDescricao: produto.prodDescricao.trim(),
-      prodFabricante: produto.prodFabricante.trim(),
-      prodLote: produto.prodLote.trim(),
-      prodQuantidade: produto.prodQuantidade,
-      prodValidade: dayjs(produto.prodValidade, "DD/MM/YYYY").toISOString(),
-      prodCurso: produto.prodCurso,
-      prodTurma: produto.prodTurma,
-    },
+export const createProduto = async (
+  produto: Omit<Produto, "idProduto" | "prodTurma">,
+  turmaUuid: string,
+) => {
+  const turma = await prisma.turma.findUnique({
+    where: { uuid: turmaUuid as string },
+    select: { idTurma: true },
   });
-  return produtoCreated;
+
+  if (turma) {
+    const produtoCreated = await prisma.produto.create({
+      data: {
+        prodDescricao: produto.prodDescricao.trim(),
+        prodFabricante: produto.prodFabricante.trim(),
+        prodLote: produto.prodLote.trim(),
+        prodQuantidade: produto.prodQuantidade,
+        prodValidade: new Date(produto.prodValidade),
+        prodCurso: produto.prodCurso,
+        prodTurma: turma?.idTurma,
+      },
+    });
+    return produtoCreated;
+  }
 };
 
 export const updateProduto = async (produto: Produto) => {

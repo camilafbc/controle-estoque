@@ -14,13 +14,14 @@ export const useDeleteProductMutation = () => {
   return mutation;
 };
 
-export const useCreateProdutoMutation = () => {
+export const useCreateProdutoMutation = (uuidTurma: string) => {
   const queryClient = useQueryClient();
   const mutation = useMutation({
-    mutationFn: (produto: Omit<Produto, "idProduto">) => createProduto(produto),
-    onSuccess: (retorno) => {
+    mutationFn: (produto: Omit<Produto, "idProduto" | "prodTurma">) =>
+      createProduto(produto),
+    onSuccess: (_, variables) => {
       queryClient.invalidateQueries({
-        queryKey: ["produtos", retorno.produto.turma],
+        queryKey: ["produtos", uuidTurma, variables.prodCurso],
       });
     },
   });
@@ -30,7 +31,7 @@ export const useCreateProdutoMutation = () => {
 export const useUpdateProductMutation = () => {
   const queryClient = useQueryClient();
   const mutation = useMutation({
-    mutationFn: (produto: Produto) => updateProduto(produto),
+    mutationFn: (produto: Omit<Produto, "prodTurma">) => updateProduto(produto),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["produtos"] });
     },

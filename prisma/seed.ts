@@ -6,6 +6,7 @@
 // npx prisma db seed --preview-feature
 
 import bcrypt from "bcryptjs";
+
 import { PrismaClient } from "../src/generated/prisma";
 // const { PrismaClient } = require('@/generated/prisma');
 
@@ -29,6 +30,30 @@ async function main() {
       created_by: 0, // Pode ser 0 ou null se preferir
     },
   });
+
+  // Popular produtos existentes
+  const produtos = await prisma.produto.findMany({
+    where: { uuid: null },
+  });
+
+  for (const produto of produtos) {
+    await prisma.produto.update({
+      where: { idProduto: produto.idProduto },
+      data: { uuid: crypto.randomUUID() },
+    });
+  }
+
+  // Popular turmas existentes
+  const turmas = await prisma.turma.findMany({
+    where: { uuid: null },
+  });
+
+  for (const turma of turmas) {
+    await prisma.turma.update({
+      where: { idTurma: turma.idTurma },
+      data: { uuid: crypto.randomUUID() },
+    });
+  }
 
   console.log("✅ Seed executado com sucesso!");
 }

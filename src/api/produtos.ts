@@ -7,11 +7,11 @@ export const getCountProdutos = async (idCurso: number): Promise<Produto[]> => {
 };
 
 export const getProdutos = async (
-  turma: number,
+  turmaUuid: string,
   curso: number,
 ): Promise<Produto[]> => {
   const response = await api.get(
-    `/api/user/produtos/turma/${turma.toString()}`,
+    `/api/user/produtos/turma/${turmaUuid.toString()}`,
     { params: { idCurso: curso } },
   );
   return response.data;
@@ -22,12 +22,14 @@ export const getProduto = async (id: number): Promise<Produto> => {
   return response.data;
 };
 
-export const createProduto = async (produto: Omit<Produto, "idProduto">) => {
+export const createProduto = async (
+  produto: Omit<Produto, "idProduto" | "prodTurma">,
+) => {
   const response = await api.post("/api/user/produtos", produto);
   return response.data;
 };
 
-export const updateProduto = async (produto: Produto) => {
+export const updateProduto = async (produto: Omit<Produto, "prodTurma">) => {
   const response = await api.put("/api/user/produtos", { produto });
   return response.data;
 };

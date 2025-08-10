@@ -3763,6 +3763,7 @@ export namespace Prisma {
 
   export type TurmaMinAggregateOutputType = {
     idTurma: number | null
+    uuid: string | null
     codigoTurma: string | null
     turnoTurma: string | null
     idCurso: number | null
@@ -3771,6 +3772,7 @@ export namespace Prisma {
 
   export type TurmaMaxAggregateOutputType = {
     idTurma: number | null
+    uuid: string | null
     codigoTurma: string | null
     turnoTurma: string | null
     idCurso: number | null
@@ -3779,6 +3781,7 @@ export namespace Prisma {
 
   export type TurmaCountAggregateOutputType = {
     idTurma: number
+    uuid: number
     codigoTurma: number
     turnoTurma: number
     idCurso: number
@@ -3799,6 +3802,7 @@ export namespace Prisma {
 
   export type TurmaMinAggregateInputType = {
     idTurma?: true
+    uuid?: true
     codigoTurma?: true
     turnoTurma?: true
     idCurso?: true
@@ -3807,6 +3811,7 @@ export namespace Prisma {
 
   export type TurmaMaxAggregateInputType = {
     idTurma?: true
+    uuid?: true
     codigoTurma?: true
     turnoTurma?: true
     idCurso?: true
@@ -3815,6 +3820,7 @@ export namespace Prisma {
 
   export type TurmaCountAggregateInputType = {
     idTurma?: true
+    uuid?: true
     codigoTurma?: true
     turnoTurma?: true
     idCurso?: true
@@ -3910,6 +3916,7 @@ export namespace Prisma {
 
   export type TurmaGroupByOutputType = {
     idTurma: number
+    uuid: string | null
     codigoTurma: string
     turnoTurma: string
     idCurso: number
@@ -3937,6 +3944,7 @@ export namespace Prisma {
 
   export type TurmaSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     idTurma?: boolean
+    uuid?: boolean
     codigoTurma?: boolean
     turnoTurma?: boolean
     idCurso?: boolean
@@ -3948,6 +3956,7 @@ export namespace Prisma {
 
   export type TurmaSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     idTurma?: boolean
+    uuid?: boolean
     codigoTurma?: boolean
     turnoTurma?: boolean
     idCurso?: boolean
@@ -3957,6 +3966,7 @@ export namespace Prisma {
 
   export type TurmaSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     idTurma?: boolean
+    uuid?: boolean
     codigoTurma?: boolean
     turnoTurma?: boolean
     idCurso?: boolean
@@ -3966,13 +3976,14 @@ export namespace Prisma {
 
   export type TurmaSelectScalar = {
     idTurma?: boolean
+    uuid?: boolean
     codigoTurma?: boolean
     turnoTurma?: boolean
     idCurso?: boolean
     status?: boolean
   }
 
-  export type TurmaOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"idTurma" | "codigoTurma" | "turnoTurma" | "idCurso" | "status", ExtArgs["result"]["turma"]>
+  export type TurmaOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"idTurma" | "uuid" | "codigoTurma" | "turnoTurma" | "idCurso" | "status", ExtArgs["result"]["turma"]>
   export type TurmaInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     curso?: boolean | CursoDefaultArgs<ExtArgs>
     produtos?: boolean | Turma$produtosArgs<ExtArgs>
@@ -3993,6 +4004,7 @@ export namespace Prisma {
     }
     scalars: $Extensions.GetPayloadResult<{
       idTurma: number
+      uuid: string | null
       codigoTurma: string
       turnoTurma: string
       idCurso: number
@@ -4423,6 +4435,7 @@ export namespace Prisma {
    */
   interface TurmaFieldRefs {
     readonly idTurma: FieldRef<"Turma", 'Int'>
+    readonly uuid: FieldRef<"Turma", 'String'>
     readonly codigoTurma: FieldRef<"Turma", 'String'>
     readonly turnoTurma: FieldRef<"Turma", 'String'>
     readonly idCurso: FieldRef<"Turma", 'Int'>
@@ -4893,6 +4906,7 @@ export namespace Prisma {
 
   export type ProdutoMinAggregateOutputType = {
     idProduto: number | null
+    uuid: string | null
     prodDescricao: string | null
     prodFabricante: string | null
     prodQuantidade: number | null
@@ -4904,6 +4918,7 @@ export namespace Prisma {
 
   export type ProdutoMaxAggregateOutputType = {
     idProduto: number | null
+    uuid: string | null
     prodDescricao: string | null
     prodFabricante: string | null
     prodQuantidade: number | null
@@ -4915,6 +4930,7 @@ export namespace Prisma {
 
   export type ProdutoCountAggregateOutputType = {
     idProduto: number
+    uuid: number
     prodDescricao: number
     prodFabricante: number
     prodQuantidade: number
@@ -4942,6 +4958,7 @@ export namespace Prisma {
 
   export type ProdutoMinAggregateInputType = {
     idProduto?: true
+    uuid?: true
     prodDescricao?: true
     prodFabricante?: true
     prodQuantidade?: true
@@ -4953,6 +4970,7 @@ export namespace Prisma {
 
   export type ProdutoMaxAggregateInputType = {
     idProduto?: true
+    uuid?: true
     prodDescricao?: true
     prodFabricante?: true
     prodQuantidade?: true
@@ -4964,6 +4982,7 @@ export namespace Prisma {
 
   export type ProdutoCountAggregateInputType = {
     idProduto?: true
+    uuid?: true
     prodDescricao?: true
     prodFabricante?: true
     prodQuantidade?: true
@@ -5062,6 +5081,7 @@ export namespace Prisma {
 
   export type ProdutoGroupByOutputType = {
     idProduto: number
+    uuid: string | null
     prodDescricao: string
     prodFabricante: string
     prodQuantidade: number
@@ -5092,6 +5112,7 @@ export namespace Prisma {
 
   export type ProdutoSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     idProduto?: boolean
+    uuid?: boolean
     prodDescricao?: boolean
     prodFabricante?: boolean
     prodQuantidade?: boolean
@@ -5107,6 +5128,7 @@ export namespace Prisma {
 
   export type ProdutoSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     idProduto?: boolean
+    uuid?: boolean
     prodDescricao?: boolean
     prodFabricante?: boolean
     prodQuantidade?: boolean
@@ -5120,6 +5142,7 @@ export namespace Prisma {
 
   export type ProdutoSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     idProduto?: boolean
+    uuid?: boolean
     prodDescricao?: boolean
     prodFabricante?: boolean
     prodQuantidade?: boolean
@@ -5133,6 +5156,7 @@ export namespace Prisma {
 
   export type ProdutoSelectScalar = {
     idProduto?: boolean
+    uuid?: boolean
     prodDescricao?: boolean
     prodFabricante?: boolean
     prodQuantidade?: boolean
@@ -5142,7 +5166,7 @@ export namespace Prisma {
     prodTurma?: boolean
   }
 
-  export type ProdutoOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"idProduto" | "prodDescricao" | "prodFabricante" | "prodQuantidade" | "prodValidade" | "prodLote" | "prodCurso" | "prodTurma", ExtArgs["result"]["produto"]>
+  export type ProdutoOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"idProduto" | "uuid" | "prodDescricao" | "prodFabricante" | "prodQuantidade" | "prodValidade" | "prodLote" | "prodCurso" | "prodTurma", ExtArgs["result"]["produto"]>
   export type ProdutoInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     curso?: boolean | CursoDefaultArgs<ExtArgs>
     turma?: boolean | TurmaDefaultArgs<ExtArgs>
@@ -5167,6 +5191,7 @@ export namespace Prisma {
     }
     scalars: $Extensions.GetPayloadResult<{
       idProduto: number
+      uuid: string | null
       prodDescricao: string
       prodFabricante: string
       prodQuantidade: number
@@ -5601,6 +5626,7 @@ export namespace Prisma {
    */
   interface ProdutoFieldRefs {
     readonly idProduto: FieldRef<"Produto", 'Int'>
+    readonly uuid: FieldRef<"Produto", 'String'>
     readonly prodDescricao: FieldRef<"Produto", 'String'>
     readonly prodFabricante: FieldRef<"Produto", 'String'>
     readonly prodQuantidade: FieldRef<"Produto", 'Int'>
@@ -7216,6 +7242,7 @@ export namespace Prisma {
 
   export const TurmaScalarFieldEnum: {
     idTurma: 'idTurma',
+    uuid: 'uuid',
     codigoTurma: 'codigoTurma',
     turnoTurma: 'turnoTurma',
     idCurso: 'idCurso',
@@ -7227,6 +7254,7 @@ export namespace Prisma {
 
   export const ProdutoScalarFieldEnum: {
     idProduto: 'idProduto',
+    uuid: 'uuid',
     prodDescricao: 'prodDescricao',
     prodFabricante: 'prodFabricante',
     prodQuantidade: 'prodQuantidade',
@@ -7503,6 +7531,7 @@ export namespace Prisma {
     OR?: TurmaWhereInput[]
     NOT?: TurmaWhereInput | TurmaWhereInput[]
     idTurma?: IntFilter<"Turma"> | number
+    uuid?: StringNullableFilter<"Turma"> | string | null
     codigoTurma?: StringFilter<"Turma"> | string
     turnoTurma?: StringFilter<"Turma"> | string
     idCurso?: IntFilter<"Turma"> | number
@@ -7513,6 +7542,7 @@ export namespace Prisma {
 
   export type TurmaOrderByWithRelationInput = {
     idTurma?: SortOrder
+    uuid?: SortOrderInput | SortOrder
     codigoTurma?: SortOrder
     turnoTurma?: SortOrder
     idCurso?: SortOrder
@@ -7523,6 +7553,7 @@ export namespace Prisma {
 
   export type TurmaWhereUniqueInput = Prisma.AtLeast<{
     idTurma?: number
+    uuid?: string
     codigoTurma?: string
     AND?: TurmaWhereInput | TurmaWhereInput[]
     OR?: TurmaWhereInput[]
@@ -7532,10 +7563,11 @@ export namespace Prisma {
     status?: BoolFilter<"Turma"> | boolean
     curso?: XOR<CursoScalarRelationFilter, CursoWhereInput>
     produtos?: ProdutoListRelationFilter
-  }, "idTurma" | "codigoTurma">
+  }, "idTurma" | "uuid" | "codigoTurma">
 
   export type TurmaOrderByWithAggregationInput = {
     idTurma?: SortOrder
+    uuid?: SortOrderInput | SortOrder
     codigoTurma?: SortOrder
     turnoTurma?: SortOrder
     idCurso?: SortOrder
@@ -7552,6 +7584,7 @@ export namespace Prisma {
     OR?: TurmaScalarWhereWithAggregatesInput[]
     NOT?: TurmaScalarWhereWithAggregatesInput | TurmaScalarWhereWithAggregatesInput[]
     idTurma?: IntWithAggregatesFilter<"Turma"> | number
+    uuid?: StringNullableWithAggregatesFilter<"Turma"> | string | null
     codigoTurma?: StringWithAggregatesFilter<"Turma"> | string
     turnoTurma?: StringWithAggregatesFilter<"Turma"> | string
     idCurso?: IntWithAggregatesFilter<"Turma"> | number
@@ -7563,6 +7596,7 @@ export namespace Prisma {
     OR?: ProdutoWhereInput[]
     NOT?: ProdutoWhereInput | ProdutoWhereInput[]
     idProduto?: IntFilter<"Produto"> | number
+    uuid?: StringNullableFilter<"Produto"> | string | null
     prodDescricao?: StringFilter<"Produto"> | string
     prodFabricante?: StringFilter<"Produto"> | string
     prodQuantidade?: IntFilter<"Produto"> | number
@@ -7577,6 +7611,7 @@ export namespace Prisma {
 
   export type ProdutoOrderByWithRelationInput = {
     idProduto?: SortOrder
+    uuid?: SortOrderInput | SortOrder
     prodDescricao?: SortOrder
     prodFabricante?: SortOrder
     prodQuantidade?: SortOrder
@@ -7591,6 +7626,7 @@ export namespace Prisma {
 
   export type ProdutoWhereUniqueInput = Prisma.AtLeast<{
     idProduto?: number
+    uuid?: string
     prodDescricao?: string
     AND?: ProdutoWhereInput | ProdutoWhereInput[]
     OR?: ProdutoWhereInput[]
@@ -7604,10 +7640,11 @@ export namespace Prisma {
     curso?: XOR<CursoScalarRelationFilter, CursoWhereInput>
     turma?: XOR<TurmaScalarRelationFilter, TurmaWhereInput>
     operacoes?: OperacaoListRelationFilter
-  }, "idProduto" | "prodDescricao">
+  }, "idProduto" | "uuid" | "prodDescricao">
 
   export type ProdutoOrderByWithAggregationInput = {
     idProduto?: SortOrder
+    uuid?: SortOrderInput | SortOrder
     prodDescricao?: SortOrder
     prodFabricante?: SortOrder
     prodQuantidade?: SortOrder
@@ -7627,6 +7664,7 @@ export namespace Prisma {
     OR?: ProdutoScalarWhereWithAggregatesInput[]
     NOT?: ProdutoScalarWhereWithAggregatesInput | ProdutoScalarWhereWithAggregatesInput[]
     idProduto?: IntWithAggregatesFilter<"Produto"> | number
+    uuid?: StringNullableWithAggregatesFilter<"Produto"> | string | null
     prodDescricao?: StringWithAggregatesFilter<"Produto"> | string
     prodFabricante?: StringWithAggregatesFilter<"Produto"> | string
     prodQuantidade?: IntWithAggregatesFilter<"Produto"> | number
@@ -7844,6 +7882,7 @@ export namespace Prisma {
   }
 
   export type TurmaCreateInput = {
+    uuid?: string | null
     codigoTurma: string
     turnoTurma: string
     status: boolean
@@ -7853,6 +7892,7 @@ export namespace Prisma {
 
   export type TurmaUncheckedCreateInput = {
     idTurma?: number
+    uuid?: string | null
     codigoTurma: string
     turnoTurma: string
     idCurso: number
@@ -7861,6 +7901,7 @@ export namespace Prisma {
   }
 
   export type TurmaUpdateInput = {
+    uuid?: NullableStringFieldUpdateOperationsInput | string | null
     codigoTurma?: StringFieldUpdateOperationsInput | string
     turnoTurma?: StringFieldUpdateOperationsInput | string
     status?: BoolFieldUpdateOperationsInput | boolean
@@ -7870,6 +7911,7 @@ export namespace Prisma {
 
   export type TurmaUncheckedUpdateInput = {
     idTurma?: IntFieldUpdateOperationsInput | number
+    uuid?: NullableStringFieldUpdateOperationsInput | string | null
     codigoTurma?: StringFieldUpdateOperationsInput | string
     turnoTurma?: StringFieldUpdateOperationsInput | string
     idCurso?: IntFieldUpdateOperationsInput | number
@@ -7879,6 +7921,7 @@ export namespace Prisma {
 
   export type TurmaCreateManyInput = {
     idTurma?: number
+    uuid?: string | null
     codigoTurma: string
     turnoTurma: string
     idCurso: number
@@ -7886,6 +7929,7 @@ export namespace Prisma {
   }
 
   export type TurmaUpdateManyMutationInput = {
+    uuid?: NullableStringFieldUpdateOperationsInput | string | null
     codigoTurma?: StringFieldUpdateOperationsInput | string
     turnoTurma?: StringFieldUpdateOperationsInput | string
     status?: BoolFieldUpdateOperationsInput | boolean
@@ -7893,6 +7937,7 @@ export namespace Prisma {
 
   export type TurmaUncheckedUpdateManyInput = {
     idTurma?: IntFieldUpdateOperationsInput | number
+    uuid?: NullableStringFieldUpdateOperationsInput | string | null
     codigoTurma?: StringFieldUpdateOperationsInput | string
     turnoTurma?: StringFieldUpdateOperationsInput | string
     idCurso?: IntFieldUpdateOperationsInput | number
@@ -7900,6 +7945,7 @@ export namespace Prisma {
   }
 
   export type ProdutoCreateInput = {
+    uuid?: string | null
     prodDescricao: string
     prodFabricante: string
     prodQuantidade: number
@@ -7912,6 +7958,7 @@ export namespace Prisma {
 
   export type ProdutoUncheckedCreateInput = {
     idProduto?: number
+    uuid?: string | null
     prodDescricao: string
     prodFabricante: string
     prodQuantidade: number
@@ -7923,6 +7970,7 @@ export namespace Prisma {
   }
 
   export type ProdutoUpdateInput = {
+    uuid?: NullableStringFieldUpdateOperationsInput | string | null
     prodDescricao?: StringFieldUpdateOperationsInput | string
     prodFabricante?: StringFieldUpdateOperationsInput | string
     prodQuantidade?: IntFieldUpdateOperationsInput | number
@@ -7935,6 +7983,7 @@ export namespace Prisma {
 
   export type ProdutoUncheckedUpdateInput = {
     idProduto?: IntFieldUpdateOperationsInput | number
+    uuid?: NullableStringFieldUpdateOperationsInput | string | null
     prodDescricao?: StringFieldUpdateOperationsInput | string
     prodFabricante?: StringFieldUpdateOperationsInput | string
     prodQuantidade?: IntFieldUpdateOperationsInput | number
@@ -7947,6 +7996,7 @@ export namespace Prisma {
 
   export type ProdutoCreateManyInput = {
     idProduto?: number
+    uuid?: string | null
     prodDescricao: string
     prodFabricante: string
     prodQuantidade: number
@@ -7957,6 +8007,7 @@ export namespace Prisma {
   }
 
   export type ProdutoUpdateManyMutationInput = {
+    uuid?: NullableStringFieldUpdateOperationsInput | string | null
     prodDescricao?: StringFieldUpdateOperationsInput | string
     prodFabricante?: StringFieldUpdateOperationsInput | string
     prodQuantidade?: IntFieldUpdateOperationsInput | number
@@ -7966,6 +8017,7 @@ export namespace Prisma {
 
   export type ProdutoUncheckedUpdateManyInput = {
     idProduto?: IntFieldUpdateOperationsInput | number
+    uuid?: NullableStringFieldUpdateOperationsInput | string | null
     prodDescricao?: StringFieldUpdateOperationsInput | string
     prodFabricante?: StringFieldUpdateOperationsInput | string
     prodQuantidade?: IntFieldUpdateOperationsInput | number
@@ -8302,6 +8354,21 @@ export namespace Prisma {
     _max?: NestedDateTimeFilter<$PrismaModel>
   }
 
+  export type StringNullableFilter<$PrismaModel = never> = {
+    equals?: string | StringFieldRefInput<$PrismaModel> | null
+    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    lt?: string | StringFieldRefInput<$PrismaModel>
+    lte?: string | StringFieldRefInput<$PrismaModel>
+    gt?: string | StringFieldRefInput<$PrismaModel>
+    gte?: string | StringFieldRefInput<$PrismaModel>
+    contains?: string | StringFieldRefInput<$PrismaModel>
+    startsWith?: string | StringFieldRefInput<$PrismaModel>
+    endsWith?: string | StringFieldRefInput<$PrismaModel>
+    mode?: QueryMode
+    not?: NestedStringNullableFilter<$PrismaModel> | string | null
+  }
+
   export type CursoScalarRelationFilter = {
     is?: CursoWhereInput
     isNot?: CursoWhereInput
@@ -8309,6 +8376,7 @@ export namespace Prisma {
 
   export type TurmaCountOrderByAggregateInput = {
     idTurma?: SortOrder
+    uuid?: SortOrder
     codigoTurma?: SortOrder
     turnoTurma?: SortOrder
     idCurso?: SortOrder
@@ -8322,6 +8390,7 @@ export namespace Prisma {
 
   export type TurmaMaxOrderByAggregateInput = {
     idTurma?: SortOrder
+    uuid?: SortOrder
     codigoTurma?: SortOrder
     turnoTurma?: SortOrder
     idCurso?: SortOrder
@@ -8330,6 +8399,7 @@ export namespace Prisma {
 
   export type TurmaMinOrderByAggregateInput = {
     idTurma?: SortOrder
+    uuid?: SortOrder
     codigoTurma?: SortOrder
     turnoTurma?: SortOrder
     idCurso?: SortOrder
@@ -8341,6 +8411,24 @@ export namespace Prisma {
     idCurso?: SortOrder
   }
 
+  export type StringNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: string | StringFieldRefInput<$PrismaModel> | null
+    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    lt?: string | StringFieldRefInput<$PrismaModel>
+    lte?: string | StringFieldRefInput<$PrismaModel>
+    gt?: string | StringFieldRefInput<$PrismaModel>
+    gte?: string | StringFieldRefInput<$PrismaModel>
+    contains?: string | StringFieldRefInput<$PrismaModel>
+    startsWith?: string | StringFieldRefInput<$PrismaModel>
+    endsWith?: string | StringFieldRefInput<$PrismaModel>
+    mode?: QueryMode
+    not?: NestedStringNullableWithAggregatesFilter<$PrismaModel> | string | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedStringNullableFilter<$PrismaModel>
+    _max?: NestedStringNullableFilter<$PrismaModel>
+  }
+
   export type TurmaScalarRelationFilter = {
     is?: TurmaWhereInput
     isNot?: TurmaWhereInput
@@ -8348,6 +8436,7 @@ export namespace Prisma {
 
   export type ProdutoCountOrderByAggregateInput = {
     idProduto?: SortOrder
+    uuid?: SortOrder
     prodDescricao?: SortOrder
     prodFabricante?: SortOrder
     prodQuantidade?: SortOrder
@@ -8366,6 +8455,7 @@ export namespace Prisma {
 
   export type ProdutoMaxOrderByAggregateInput = {
     idProduto?: SortOrder
+    uuid?: SortOrder
     prodDescricao?: SortOrder
     prodFabricante?: SortOrder
     prodQuantidade?: SortOrder
@@ -8377,6 +8467,7 @@ export namespace Prisma {
 
   export type ProdutoMinOrderByAggregateInput = {
     idProduto?: SortOrder
+    uuid?: SortOrder
     prodDescricao?: SortOrder
     prodFabricante?: SortOrder
     prodQuantidade?: SortOrder
@@ -8682,6 +8773,10 @@ export namespace Prisma {
     connect?: ProdutoWhereUniqueInput | ProdutoWhereUniqueInput[]
   }
 
+  export type NullableStringFieldUpdateOperationsInput = {
+    set?: string | null
+  }
+
   export type CursoUpdateOneRequiredWithoutTurmasNestedInput = {
     create?: XOR<CursoCreateWithoutTurmasInput, CursoUncheckedCreateWithoutTurmasInput>
     connectOrCreate?: CursoCreateOrConnectWithoutTurmasInput
@@ -8978,7 +9073,39 @@ export namespace Prisma {
     _max?: NestedDateTimeFilter<$PrismaModel>
   }
 
+  export type NestedStringNullableFilter<$PrismaModel = never> = {
+    equals?: string | StringFieldRefInput<$PrismaModel> | null
+    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    lt?: string | StringFieldRefInput<$PrismaModel>
+    lte?: string | StringFieldRefInput<$PrismaModel>
+    gt?: string | StringFieldRefInput<$PrismaModel>
+    gte?: string | StringFieldRefInput<$PrismaModel>
+    contains?: string | StringFieldRefInput<$PrismaModel>
+    startsWith?: string | StringFieldRefInput<$PrismaModel>
+    endsWith?: string | StringFieldRefInput<$PrismaModel>
+    not?: NestedStringNullableFilter<$PrismaModel> | string | null
+  }
+
+  export type NestedStringNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: string | StringFieldRefInput<$PrismaModel> | null
+    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    lt?: string | StringFieldRefInput<$PrismaModel>
+    lte?: string | StringFieldRefInput<$PrismaModel>
+    gt?: string | StringFieldRefInput<$PrismaModel>
+    gte?: string | StringFieldRefInput<$PrismaModel>
+    contains?: string | StringFieldRefInput<$PrismaModel>
+    startsWith?: string | StringFieldRefInput<$PrismaModel>
+    endsWith?: string | StringFieldRefInput<$PrismaModel>
+    not?: NestedStringNullableWithAggregatesFilter<$PrismaModel> | string | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedStringNullableFilter<$PrismaModel>
+    _max?: NestedStringNullableFilter<$PrismaModel>
+  }
+
   export type TurmaCreateWithoutCursoInput = {
+    uuid?: string | null
     codigoTurma: string
     turnoTurma: string
     status: boolean
@@ -8987,6 +9114,7 @@ export namespace Prisma {
 
   export type TurmaUncheckedCreateWithoutCursoInput = {
     idTurma?: number
+    uuid?: string | null
     codigoTurma: string
     turnoTurma: string
     status: boolean
@@ -9004,6 +9132,7 @@ export namespace Prisma {
   }
 
   export type ProdutoCreateWithoutCursoInput = {
+    uuid?: string | null
     prodDescricao: string
     prodFabricante: string
     prodQuantidade: number
@@ -9015,6 +9144,7 @@ export namespace Prisma {
 
   export type ProdutoUncheckedCreateWithoutCursoInput = {
     idProduto?: number
+    uuid?: string | null
     prodDescricao: string
     prodFabricante: string
     prodQuantidade: number
@@ -9090,6 +9220,7 @@ export namespace Prisma {
     OR?: TurmaScalarWhereInput[]
     NOT?: TurmaScalarWhereInput | TurmaScalarWhereInput[]
     idTurma?: IntFilter<"Turma"> | number
+    uuid?: StringNullableFilter<"Turma"> | string | null
     codigoTurma?: StringFilter<"Turma"> | string
     turnoTurma?: StringFilter<"Turma"> | string
     idCurso?: IntFilter<"Turma"> | number
@@ -9117,6 +9248,7 @@ export namespace Prisma {
     OR?: ProdutoScalarWhereInput[]
     NOT?: ProdutoScalarWhereInput | ProdutoScalarWhereInput[]
     idProduto?: IntFilter<"Produto"> | number
+    uuid?: StringNullableFilter<"Produto"> | string | null
     prodDescricao?: StringFilter<"Produto"> | string
     prodFabricante?: StringFilter<"Produto"> | string
     prodQuantidade?: IntFilter<"Produto"> | number
@@ -9278,6 +9410,7 @@ export namespace Prisma {
   }
 
   export type ProdutoCreateWithoutTurmaInput = {
+    uuid?: string | null
     prodDescricao: string
     prodFabricante: string
     prodQuantidade: number
@@ -9289,6 +9422,7 @@ export namespace Prisma {
 
   export type ProdutoUncheckedCreateWithoutTurmaInput = {
     idProduto?: number
+    uuid?: string | null
     prodDescricao: string
     prodFabricante: string
     prodQuantidade: number
@@ -9371,6 +9505,7 @@ export namespace Prisma {
   }
 
   export type TurmaCreateWithoutProdutosInput = {
+    uuid?: string | null
     codigoTurma: string
     turnoTurma: string
     status: boolean
@@ -9379,6 +9514,7 @@ export namespace Prisma {
 
   export type TurmaUncheckedCreateWithoutProdutosInput = {
     idTurma?: number
+    uuid?: string | null
     codigoTurma: string
     turnoTurma: string
     idCurso: number
@@ -9453,6 +9589,7 @@ export namespace Prisma {
   }
 
   export type TurmaUpdateWithoutProdutosInput = {
+    uuid?: NullableStringFieldUpdateOperationsInput | string | null
     codigoTurma?: StringFieldUpdateOperationsInput | string
     turnoTurma?: StringFieldUpdateOperationsInput | string
     status?: BoolFieldUpdateOperationsInput | boolean
@@ -9461,6 +9598,7 @@ export namespace Prisma {
 
   export type TurmaUncheckedUpdateWithoutProdutosInput = {
     idTurma?: IntFieldUpdateOperationsInput | number
+    uuid?: NullableStringFieldUpdateOperationsInput | string | null
     codigoTurma?: StringFieldUpdateOperationsInput | string
     turnoTurma?: StringFieldUpdateOperationsInput | string
     idCurso?: IntFieldUpdateOperationsInput | number
@@ -9514,6 +9652,7 @@ export namespace Prisma {
   }
 
   export type ProdutoCreateWithoutOperacoesInput = {
+    uuid?: string | null
     prodDescricao: string
     prodFabricante: string
     prodQuantidade: number
@@ -9525,6 +9664,7 @@ export namespace Prisma {
 
   export type ProdutoUncheckedCreateWithoutOperacoesInput = {
     idProduto?: number
+    uuid?: string | null
     prodDescricao: string
     prodFabricante: string
     prodQuantidade: number
@@ -9587,6 +9727,7 @@ export namespace Prisma {
   }
 
   export type ProdutoUpdateWithoutOperacoesInput = {
+    uuid?: NullableStringFieldUpdateOperationsInput | string | null
     prodDescricao?: StringFieldUpdateOperationsInput | string
     prodFabricante?: StringFieldUpdateOperationsInput | string
     prodQuantidade?: IntFieldUpdateOperationsInput | number
@@ -9598,6 +9739,7 @@ export namespace Prisma {
 
   export type ProdutoUncheckedUpdateWithoutOperacoesInput = {
     idProduto?: IntFieldUpdateOperationsInput | number
+    uuid?: NullableStringFieldUpdateOperationsInput | string | null
     prodDescricao?: StringFieldUpdateOperationsInput | string
     prodFabricante?: StringFieldUpdateOperationsInput | string
     prodQuantidade?: IntFieldUpdateOperationsInput | number
@@ -9609,6 +9751,7 @@ export namespace Prisma {
 
   export type TurmaCreateManyCursoInput = {
     idTurma?: number
+    uuid?: string | null
     codigoTurma: string
     turnoTurma: string
     status: boolean
@@ -9616,6 +9759,7 @@ export namespace Prisma {
 
   export type ProdutoCreateManyCursoInput = {
     idProduto?: number
+    uuid?: string | null
     prodDescricao: string
     prodFabricante: string
     prodQuantidade: number
@@ -9637,6 +9781,7 @@ export namespace Prisma {
   }
 
   export type TurmaUpdateWithoutCursoInput = {
+    uuid?: NullableStringFieldUpdateOperationsInput | string | null
     codigoTurma?: StringFieldUpdateOperationsInput | string
     turnoTurma?: StringFieldUpdateOperationsInput | string
     status?: BoolFieldUpdateOperationsInput | boolean
@@ -9645,6 +9790,7 @@ export namespace Prisma {
 
   export type TurmaUncheckedUpdateWithoutCursoInput = {
     idTurma?: IntFieldUpdateOperationsInput | number
+    uuid?: NullableStringFieldUpdateOperationsInput | string | null
     codigoTurma?: StringFieldUpdateOperationsInput | string
     turnoTurma?: StringFieldUpdateOperationsInput | string
     status?: BoolFieldUpdateOperationsInput | boolean
@@ -9653,12 +9799,14 @@ export namespace Prisma {
 
   export type TurmaUncheckedUpdateManyWithoutCursoInput = {
     idTurma?: IntFieldUpdateOperationsInput | number
+    uuid?: NullableStringFieldUpdateOperationsInput | string | null
     codigoTurma?: StringFieldUpdateOperationsInput | string
     turnoTurma?: StringFieldUpdateOperationsInput | string
     status?: BoolFieldUpdateOperationsInput | boolean
   }
 
   export type ProdutoUpdateWithoutCursoInput = {
+    uuid?: NullableStringFieldUpdateOperationsInput | string | null
     prodDescricao?: StringFieldUpdateOperationsInput | string
     prodFabricante?: StringFieldUpdateOperationsInput | string
     prodQuantidade?: IntFieldUpdateOperationsInput | number
@@ -9670,6 +9818,7 @@ export namespace Prisma {
 
   export type ProdutoUncheckedUpdateWithoutCursoInput = {
     idProduto?: IntFieldUpdateOperationsInput | number
+    uuid?: NullableStringFieldUpdateOperationsInput | string | null
     prodDescricao?: StringFieldUpdateOperationsInput | string
     prodFabricante?: StringFieldUpdateOperationsInput | string
     prodQuantidade?: IntFieldUpdateOperationsInput | number
@@ -9681,6 +9830,7 @@ export namespace Prisma {
 
   export type ProdutoUncheckedUpdateManyWithoutCursoInput = {
     idProduto?: IntFieldUpdateOperationsInput | number
+    uuid?: NullableStringFieldUpdateOperationsInput | string | null
     prodDescricao?: StringFieldUpdateOperationsInput | string
     prodFabricante?: StringFieldUpdateOperationsInput | string
     prodQuantidade?: IntFieldUpdateOperationsInput | number
@@ -9759,6 +9909,7 @@ export namespace Prisma {
 
   export type ProdutoCreateManyTurmaInput = {
     idProduto?: number
+    uuid?: string | null
     prodDescricao: string
     prodFabricante: string
     prodQuantidade: number
@@ -9768,6 +9919,7 @@ export namespace Prisma {
   }
 
   export type ProdutoUpdateWithoutTurmaInput = {
+    uuid?: NullableStringFieldUpdateOperationsInput | string | null
     prodDescricao?: StringFieldUpdateOperationsInput | string
     prodFabricante?: StringFieldUpdateOperationsInput | string
     prodQuantidade?: IntFieldUpdateOperationsInput | number
@@ -9779,6 +9931,7 @@ export namespace Prisma {
 
   export type ProdutoUncheckedUpdateWithoutTurmaInput = {
     idProduto?: IntFieldUpdateOperationsInput | number
+    uuid?: NullableStringFieldUpdateOperationsInput | string | null
     prodDescricao?: StringFieldUpdateOperationsInput | string
     prodFabricante?: StringFieldUpdateOperationsInput | string
     prodQuantidade?: IntFieldUpdateOperationsInput | number
@@ -9790,6 +9943,7 @@ export namespace Prisma {
 
   export type ProdutoUncheckedUpdateManyWithoutTurmaInput = {
     idProduto?: IntFieldUpdateOperationsInput | number
+    uuid?: NullableStringFieldUpdateOperationsInput | string | null
     prodDescricao?: StringFieldUpdateOperationsInput | string
     prodFabricante?: StringFieldUpdateOperationsInput | string
     prodQuantidade?: IntFieldUpdateOperationsInput | number

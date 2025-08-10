@@ -2,6 +2,8 @@ import dayjs from "dayjs";
 
 import prisma from "@/lib/prisma";
 
+import { getProdutoById } from "./produtos";
+
 export const createOperacao = async (
   idUser: number,
   idProduto: number,
@@ -23,13 +25,15 @@ export const createOperacao = async (
   return operacao;
 };
 
-export const getOperacoesPorProduto = async (idProduto: number) => {
+export const getOperacoesPorProduto = async (uuidProduto: string) => {
+  const produto = await getProdutoById(uuidProduto);
+
   const operations = await prisma.operacao.findMany({
     where: {
-      idProduto: idProduto,
+      idProduto: produto?.idProduto,
     },
     orderBy: {
-      data: "desc",
+      idOperacao: "desc",
     },
     include: {
       usuario: {
@@ -85,42 +89,58 @@ export const getLastDezOperacoes = async (idCurso: number) => {
 
 export const getRelatorioOperacoes = async (
   idCurso: number,
-  turma: number,
-  inicio: string, // formato: 'YYYY-MM-DD'
-  final: string, // formato: 'YYYY-MM-DD'
+  idTurma: number,
+  dataInicial: Date,
+  dataFinal: Date,
 ) => {
+  const inicio = new Date(dataInicial);
+  inicio.setHours(0, 0, 0, 0);
+
+  const fim = new Date(dataFinal);
+  fim.setHours(23, 59, 59, 999);
+
   const result = await prisma.$queryRaw<any[]>`
   SELECT 
-    prod.prodDescricao, 
-    prod.prodFabricante, 
-    SUM(CASE WHEN op.tipoOperacao = 1 THEN op.quantidade ELSE 0 END) AS entradas, 
-    SUM(CASE WHEN op.tipoOperacao = 0 THEN op.quantidade ELSE 0 END) AS saidas 
-  FROM produtos prod 
-  INNER JOIN operacoes op ON prod.idProduto = op.idProduto 
-  WHERE prod.prodCurso = ${idCurso}
-    AND prod.prodTurma = ${turma}
-    AND op.data BETWEEN ${`${inicio} 00:00:00`} AND ${`${final} 23:59:59`}
-  GROUP BY prod.prodDescricao, prod.prodFabricante 
+    prod."prodDescricao", 
+    prod."prodFabricante", 
+    SUM(CASE WHEN op."tipoOperacao" = 1 THEN op.quantidade ELSE 0 END) AS entradas, 
+    SUM(CASE WHEN op."tipoOperacao" = 0 THEN op.quantidade ELSE 0 END) AS saidas 
+  FROM "Produto" prod 
+  INNER JOIN "Operacao" op ON prod."idProduto" = op."idProduto" 
+  WHERE prod."prodCurso" = ${idCurso}
+    AND prod."prodTurma" = ${idTurma}
+    AND op.data BETWEEN ${inicio} AND ${fim}
+  GROUP BY prod."idProduto", prod."prodDescricao", prod."prodFabricante"
   ORDER BY saidas DESC
 `;
 
-  return result;
+  const parsed = result.map((row) => ({
+    ...row,
+    entradas: Number(row.entradas),
+    saidas: Number(row.saidas),
+  }));
+  return parsed;
 };
 
 export const getRelatorioUltimosDozeMeses = async (idCurso: number) => {
   const result = await prisma.$queryRaw<any[]>`
       SELECT 
-        MONTH(op.data) AS mes, 
-        YEAR(op.data) AS ano, 
-        SUM(CASE WHEN op.tipoOperacao = 1 THEN op.quantidade ELSE 0 END) AS entradas, 
-        SUM(CASE WHEN op.tipoOperacao = 0 THEN op.quantidade ELSE 0 END) AS saidas 
-      FROM produtos prod 
-      INNER JOIN operacoes op ON prod.idProduto = op.idProduto 
-      WHERE prod.prodCurso = ${idCurso} 
-        AND op.data >= DATE_SUB(CURRENT_DATE, INTERVAL 12 MONTH) 
-      GROUP BY ano, mes 
-      ORDER BY ano ASC, mes ASC
+      EXTRACT(MONTH FROM op.data) AS mes,
+      EXTRACT(YEAR FROM op.data) AS ano,
+      SUM(CASE WHEN op."tipoOperacao" = 1 THEN op.quantidade ELSE 0 END) AS entradas,
+      SUM(CASE WHEN op."tipoOperacao" = 0 THEN op.quantidade ELSE 0 END) AS saidas
+    FROM "Produto" prod
+    INNER JOIN "Operacao" op ON prod."idProduto" = op."idProduto"
+    WHERE prod."prodCurso" = ${idCurso}
+      AND op.data >= CURRENT_DATE - INTERVAL '12 months'
+    GROUP BY ano, mes
+    ORDER BY ano ASC, mes ASC
     `;
 
-  return result;
+  const parsed = result.map((row) => ({
+    ...row,
+    entradas: Number(row.entradas),
+    saidas: Number(row.saidas),
+  }));
+  return parsed;
 };

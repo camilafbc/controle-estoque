@@ -141,6 +141,7 @@ exports.Prisma.UserScalarFieldEnum = {
 
 exports.Prisma.TurmaScalarFieldEnum = {
   idTurma: 'idTurma',
+  uuid: 'uuid',
   codigoTurma: 'codigoTurma',
   turnoTurma: 'turnoTurma',
   idCurso: 'idCurso',
@@ -149,6 +150,7 @@ exports.Prisma.TurmaScalarFieldEnum = {
 
 exports.Prisma.ProdutoScalarFieldEnum = {
   idProduto: 'idProduto',
+  uuid: 'uuid',
   prodDescricao: 'prodDescricao',
   prodFabricante: 'prodFabricante',
   prodQuantidade: 'prodQuantidade',
