@@ -24,13 +24,17 @@ import { getErrorMessage } from "@/utils/getErrorMessage";
 
 import { columns } from "./TableColumns";
 
-export default function TurmasContainer() {
+interface TurmasContainerProps {
+  initialData: Turma[];
+}
+
+export default function TurmasContainer({ initialData }: TurmasContainerProps) {
   // ref
   const formRef = useRef<FormTurmasRef>(null);
   const user = useSession();
   const idCurso = user.data?.user.curso;
   const deleteMutation = useDeleteTurmaMutation();
-  const { data: turmas, isLoading } = useTurmas(Number(idCurso));
+  const { data: turmas, isLoading } = useTurmas(Number(idCurso), initialData);
   const [filterValue, setFilterValue] = useState("");
   const [openDialog, setOpenDialog] = useState(false);
   const [editingId, setEditingId] = useState<number | null>();
@@ -179,7 +183,15 @@ export default function TurmasContainer() {
         >
           <FormTurmas
             ref={formRef}
-            initialValues={turma.data}
+            initialValues={
+              turma.data
+                ? {
+                    ...turma.data,
+                    uuid:
+                      turma.data.uuid === undefined ? null : turma.data.uuid,
+                  }
+                : undefined
+            }
             isLoading={createTurma.isPending || updateTurma.isPending}
           />
         </MyDialog>

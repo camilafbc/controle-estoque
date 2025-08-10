@@ -14,8 +14,8 @@ export async function POST(req: NextRequest) {
       !body.prodQuantidade ||
       !body.prodValidade ||
       !body.prodLote ||
-      !body.prodTurma ||
-      !body.prodCurso
+      !body.prodCurso ||
+      !body.turmaUuid
     )
       return NextResponse.json(
         {
@@ -26,19 +26,16 @@ export async function POST(req: NextRequest) {
         { status: 400 },
       );
 
-    console.log("PRODUTO NA ROTA: ", body);
-
     const produto = {
       prodDescricao: body.prodDescricao.trim(),
       prodFabricante: body.prodFabricante.trim(),
       prodQuantidade: body.prodQuantidade,
       prodValidade: body.prodValidade,
       prodLote: body.prodLote.trim(),
-      prodTurma: body.prodTurma,
       prodCurso: body.prodCurso,
     };
 
-    const newProduto = await createProduto(produto);
+    const newProduto = await createProduto(produto, body.turmaUuid);
     return NextResponse.json(
       { produto: newProduto, message: "Produto cadastrado com sucesso!" },
       { status: 201 },
