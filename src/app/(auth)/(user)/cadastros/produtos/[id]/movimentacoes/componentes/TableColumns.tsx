@@ -1,10 +1,11 @@
 "use client";
 
 import { ColumnDef } from "@tanstack/react-table";
-import { DataTableColumnHeader } from "@/components/ui/data-table/data-table-column-header";
-import { Produto } from "@/types/Produto";
 
-export const columns: ColumnDef<Produto>[] = [
+import { DataTableColumnHeader } from "@/components/ui/data-table/data-table-column-header";
+import { Operacao } from "@/types/Operacao";
+
+export const columns: ColumnDef<Operacao>[] = [
   {
     accessorKey: "tipoOperacao",
     header: ({ column }) => (
@@ -21,29 +22,6 @@ export const columns: ColumnDef<Produto>[] = [
     meta: { type: "string", minWidth: "30" },
     size: 15,
   },
-  // {
-  //   accessorKey: "data",
-  //   header: ({ column }) => (
-  //     <DataTableColumnHeader
-  //       column={column}
-  //       title="Data"
-  //       className="justify-center"
-  //     />
-  //   ),
-  //   cell: ({ row }) => {
-  //     const getData = row.getValue("data") as string;
-  //     const data = getData.split(" ")[0];
-  //     // const prodValidade = row.getValue("prodValidade") as string;
-  //     return data;
-
-  //     // return (
-  //     //   <p className="pe-4 text-center">{dayjs(data).format("DD/MM/YYYY")}</p>
-  //     // );
-  //   },
-  //   enableSorting: true,
-  //   meta: { type: "date", minWidth: "30" },
-  //   size: 10,
-  // },
   {
     accessorKey: "data",
     header: ({ column }) => (

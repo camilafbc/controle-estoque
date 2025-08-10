@@ -5,10 +5,11 @@ import { handleDatabaseError } from "@/utils/handleDbError";
 
 export async function GET(
   req: NextRequest,
-  { params }: { params: { id: number } },
+  { params }: { params: { id: string } },
 ) {
   try {
-    const produto = await getOperacoesPorProduto(+params.id);
+    const uuidProduto = params.id;
+    const produto = await getOperacoesPorProduto(uuidProduto);
     return NextResponse.json(produto, { status: 200 });
   } catch (error) {
     const { status, message } = handleDatabaseError(error);
