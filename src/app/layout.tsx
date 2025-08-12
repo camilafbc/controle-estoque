@@ -13,7 +13,7 @@ const fontSans = FontSans({
 
 export const metadata: Metadata = {
   title: "Gestão de Estoque",
-  // description: "Gestão de estoque - Senac Lavras.",
+  description: "Gestão de estoque - Senac Lavras",
   icons: "/favicon.png",
 };
 

@@ -22,6 +22,7 @@ export default async function Page() {
     estoqueCount,
     validadeCount,
     last12Months,
+    last10Ops,
   ] = await Promise.all([
     fetch(`${process.env.NEXTAUTH_URL}/api/user/turmas/count/${idCurso}`, {
       cache: "no-store",
@@ -56,6 +57,15 @@ export default async function Page() {
         },
       },
     ).then((res) => res.json()),
+    fetch(
+      `${process.env.NEXTAUTH_URL}/api/user/operacoes/relatorios/${idCurso}/last-10-op`,
+      {
+        cache: "no-store",
+        headers: {
+          Cookie: `${sessionCookie?.name}=${sessionCookie?.value}`,
+        },
+      },
+    ).then((res) => res.json()),
   ]);
 
   const initialData = {
@@ -64,6 +74,7 @@ export default async function Page() {
     estoque: estoqueCount,
     validade: validadeCount,
     lastMonths: last12Months,
+    lastOps: last10Ops,
   };
 
   return (

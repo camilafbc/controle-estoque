@@ -22,8 +22,10 @@ export const getRelatorioDozeMeses = async (idCurso: number) => {
   return response.data;
 };
 
-export const getDashLastOperacoes = async () => {
-  const response = await api.get("/dashboard/lastDezOperacoes");
+export const getDashLastOperacoes = async (idCurso: number) => {
+  const response = await api.get(
+    `/api/user/operacoes/relatorios/${idCurso}/last-10-op`,
+  );
   return response.data;
 };
 

@@ -5,6 +5,7 @@ import { getServerSession } from "next-auth";
 
 import DashboardCard from "@/components/dashboard/DashboardCard";
 import GraficoDozeMeses from "@/components/dashboard/GraficoDozeMeses";
+import TableOperacoes from "@/components/dashboard/TabelaOperacoes";
 import { authOptions } from "@/lib/auth";
 import { useDashRelatorioDozeMeses } from "@/queries/dashboard";
 
@@ -15,6 +16,7 @@ interface DashboardProps {
     estoque: number;
     validade: number;
     lastMonths: any;
+    lastOps: any;
   };
   idCurso: number | undefined;
 }
@@ -87,6 +89,12 @@ export default function Dashboard({ initialData, idCurso }: DashboardProps) {
           data={lastMonthsData.data}
           isLoading={lastMonthsData.isFetching}
           delay={4}
+          className="md:col-span-2"
+        />
+        <TableOperacoes
+          data={initialData.lastOps}
+          isLoading={false}
+          delay={5}
           className="md:col-span-2"
         />
       </div>
