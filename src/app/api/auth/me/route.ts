@@ -1,22 +1,21 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getToken } from "next-auth/jwt";
+import { getServerSession } from "next-auth";
 
+import { authOptions } from "@/lib/auth";
 import { getUserById } from "@/services/users";
 import { handleDatabaseError } from "@/utils/handleDbError";
 
 export async function GET(req: NextRequest) {
-  const customCookie = process.env.NEXT_PUBLIC_CUSTOM_COOKIE;
-
   try {
-    const token = await getToken({ req, cookieName: customCookie });
-
-    if (!token || !token.id)
+    const session = await getServerSession(authOptions);
+    if (!session || session.user?.role !== "user") {
       return NextResponse.json(
-        { error: true, message: "Não autorizado!" },
+        { error: true, message: "Acesso negado." },
         { status: 401 },
       );
+    }
 
-    const user = await getUserById(+token.id);
+    const user = await getUserById(session.user.id);
 
     if (!user)
       return NextResponse.json(

@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
+import { getServerSession } from "next-auth";
 import { getToken } from "next-auth/jwt";
 
+import { authOptions } from "@/lib/auth";
 import {
   getRelatorioOperacoes,
   getRelatorioUltimosDozeMeses,
@@ -12,6 +14,14 @@ export async function GET(
   req: NextRequest,
   { params }: { params: { idCurso: string } },
 ) {
+  const session = await getServerSession(authOptions);
+  if (!session || session.user?.role !== "user") {
+    return NextResponse.json(
+      { error: true, message: "Acesso negado." },
+      { status: 401 },
+    );
+  }
+
   try {
     const idCurso = Number(params.idCurso);
 

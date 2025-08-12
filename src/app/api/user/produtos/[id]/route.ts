@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
+import { getServerSession } from "next-auth";
 
+import { authOptions } from "@/lib/auth";
 import {
   deleteProduto,
   getProdutoById,
@@ -11,6 +13,14 @@ export async function GET(
   _: NextRequest,
   { params }: { params: { id: string } },
 ) {
+  const session = await getServerSession(authOptions);
+  if (!session || session.user?.role !== "user") {
+    return NextResponse.json(
+      { error: true, message: "Acesso negado." },
+      { status: 401 },
+    );
+  }
+
   try {
     const uuiProduto = params.id;
     const produto = await getProdutoById(uuiProduto);
@@ -25,6 +35,14 @@ export async function DELETE(
   _: NextRequest,
   { params }: { params: { id: string } },
 ) {
+  const session = await getServerSession(authOptions);
+  if (!session || session.user?.role !== "user") {
+    return NextResponse.json(
+      { error: true, message: "Acesso negado." },
+      { status: 401 },
+    );
+  }
+
   try {
     const produto = await deleteProduto(+params.id);
     if (produto) {
@@ -43,6 +61,14 @@ export async function PUT(
   req: NextRequest,
   { params }: { params: { id: string } },
 ) {
+  const session = await getServerSession(authOptions);
+  if (!session || session.user?.role !== "user") {
+    return NextResponse.json(
+      { error: true, message: "Acesso negado." },
+      { status: 401 },
+    );
+  }
+
   try {
     const body = await req.json();
 

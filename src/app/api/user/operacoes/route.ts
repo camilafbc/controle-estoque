@@ -1,26 +1,26 @@
 import { error } from "console";
 
 import { NextRequest, NextResponse } from "next/server";
+import { getServerSession } from "next-auth";
 import { getToken } from "next-auth/jwt";
 
 import { getProduto } from "@/api/produtos";
+import { authOptions } from "@/lib/auth";
 import { createOperacao } from "@/services/operacoes";
 import { getProdutoById, updateQuantidadeProduto } from "@/services/produtos";
 import { handleDatabaseError } from "@/utils/handleDbError";
 
-const customCookie = process.env.NEXT_CUSTOM_COOKIE;
-
 export async function POST(req: NextRequest) {
+  const session = await getServerSession(authOptions);
+  if (!session || session.user?.role !== "user") {
+    return NextResponse.json(
+      { error: true, message: "Acesso negado." },
+      { status: 401 },
+    );
+  }
+
   try {
-    const token = await getToken({ req, cookieName: customCookie });
-
-    if (!token || !token.id)
-      return NextResponse.json(
-        { error: true, message: "Usuário não autorizado!" },
-        { status: 401 },
-      );
-
-    const idUser = token.id;
+    const idUser = session.user.id;
 
     const { uuidProduto, tipoOp, quantidade } = await req.json();
 

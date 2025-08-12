@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
+import { getServerSession } from "next-auth";
 
+import { authOptions } from "@/lib/auth";
 import { deleteTurma, getTurmaById, updateTurma } from "@/services/turmas";
 import { handleDatabaseError } from "@/utils/handleDbError";
 
@@ -7,6 +9,14 @@ export async function GET(
   _: NextRequest,
   { params }: { params: { id: string } },
 ) {
+  const session = await getServerSession(authOptions);
+  if (!session || session.user?.role !== "user") {
+    return NextResponse.json(
+      { error: true, message: "Acesso negado." },
+      { status: 401 },
+    );
+  }
+
   try {
     const turma = await getTurmaById(Number(params.id));
     return NextResponse.json(turma, { status: 200 });
@@ -20,6 +30,14 @@ export async function DELETE(
   _: NextRequest,
   { params }: { params: { id: string } },
 ) {
+  const session = await getServerSession(authOptions);
+  if (!session || session.user?.role !== "user") {
+    return NextResponse.json(
+      { error: true, message: "Acesso negado." },
+      { status: 401 },
+    );
+  }
+
   try {
     const turma = await deleteTurma(Number(params.id));
     if (turma)
@@ -37,6 +55,14 @@ export async function PUT(
   req: NextRequest,
   { params }: { params: { id: string } },
 ) {
+  const session = await getServerSession(authOptions);
+  if (!session || session.user?.role !== "user") {
+    return NextResponse.json(
+      { error: true, message: "Acesso negado." },
+      { status: 401 },
+    );
+  }
+
   try {
     const body = await req.json();
 
