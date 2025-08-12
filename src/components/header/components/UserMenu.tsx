@@ -87,7 +87,8 @@ export default function UserMenu({
         <Avatar className="h-[50px] w-[50px]">
           {avatarImage && <AvatarImage src={avatarImage} alt="profile-image" />}
           <AvatarFallback className="bg-primary text-center text-lg font-semibold text-white">
-            {name?.slice(0, 2).toUpperCase() ?? ""}
+            {name?.split(" ")?.[0]?.[0]}
+            {name?.split(" ")?.[1]?.[0]}
           </AvatarFallback>
         </Avatar>
       </PopoverTrigger>

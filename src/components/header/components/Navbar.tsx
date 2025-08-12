@@ -16,7 +16,6 @@ interface NavbarProps {
 }
 
 export default function Navbar({ role }: NavbarProps) {
-  console.log("NAVBAR: ", role);
   if (role === "admin") {
     return (
       <NavigationMenu className="hidden sm:block">
