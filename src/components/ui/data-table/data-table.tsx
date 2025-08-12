@@ -72,9 +72,7 @@ export function DataTable<TData, TValue>({
 
     if (cellValue !== "" && cellValue !== null) {
       let content;
-      switch (
-        columnDef.meta?.type // Usando meta.type em vez de columnDef.type
-      ) {
+      switch (columnDef.meta?.type) {
         case "boolean":
           content =
             cellValue === true || cellValue === "S" || cellValue === 1 ? (
@@ -116,10 +114,10 @@ export function DataTable<TData, TValue>({
   };
 
   return (
-    <Card className="rounded-xl- shadow-xlg min-h-[80] space-y-8 border-none">
+    <Card className="space-y-8 rounded-lg border-none shadow-none">
       <CardContent className="rounded-lg border p-0 shadow-sm">
         <Table className="overflow-x-scroll rounded-lg [&::-webkit-scrollbar]:hidden">
-          <TableHeader className="sticky top-0 z-10 bg-background">
+          <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => (
@@ -153,7 +151,7 @@ export function DataTable<TData, TValue>({
                     // </TableCell>
                     <TableCell
                       className={cn(
-                        "p-1 text-sm",
+                        "p-1 text-base",
                         (cell.column.columnDef as any).meta?.type ===
                           "number" && "pe-4 text-right",
                         (cell.column.columnDef as any).meta?.type ===
@@ -162,7 +160,6 @@ export function DataTable<TData, TValue>({
                           "pe-4 text-right",
                         (cell.column.columnDef as any).meta?.type ===
                           "string" && "ps-4",
-                        "py-2 text-base",
                       )}
                       key={cell.id}
                       style={{
