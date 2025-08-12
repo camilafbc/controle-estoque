@@ -20,7 +20,11 @@ import { getErrorMessage } from "@/utils/getErrorMessage";
 
 import { columns } from "./TableColumns";
 
-export default function CursosContainer() {
+interface CursosContainerProps {
+  cursos: Curso[];
+}
+
+export default function CursosContainer({ cursos }: CursosContainerProps) {
   // ref
   const formRef = useRef<FormCursoRef>(null);
   // states
@@ -28,7 +32,7 @@ export default function CursosContainer() {
   const [openDialog, setOpenDialog] = useState(false);
   const [editingId, setEditingId] = useState<number | null>(null);
   // data
-  const cursos = useCursos();
+  const { data: cursosData, isLoading: cursosLoading } = useCursos(cursos);
   const { data: cursoData, isLoading: isLoadingCurso } = useGetCurso(
     editingId || 0,
   );
@@ -115,8 +119,8 @@ export default function CursosContainer() {
       </div>
       <DataTable
         columns={columns(handleEdit, handleDelete)}
-        data={cursos.data || []}
-        isLoading={cursos.isLoading}
+        data={cursosData || []}
+        isLoading={cursosLoading}
       />
       {openDialog && (
         <MyDialog

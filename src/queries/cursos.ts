@@ -2,11 +2,13 @@ import { useQuery } from "@tanstack/react-query";
 
 import { getCursoById, getCursos } from "@/api/cursos";
 import { getCountCursos } from "@/api/dashboard";
+import { Curso } from "@/types/Curso";
 
-export const useCursos = () => {
+export const useCursos = (initialData?: Curso[]) => {
   const query = useQuery({
     queryKey: ["cursos"],
     queryFn: () => getCursos(),
+    initialData: initialData,
     staleTime: Infinity,
   });
   return query;
