@@ -2,8 +2,9 @@
 
 import { yupResolver } from "@hookform/resolvers/yup";
 import { Key } from "lucide-react";
+import { Session } from "next-auth";
 import { forwardRef, useEffect, useImperativeHandle, useState } from "react";
-import { SubmitHandler, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import * as yup from "yup";
 
 import { Button } from "../ui/button";
@@ -15,14 +16,6 @@ const validationSchema = yup.object({
   email: yup.string().email("E-mail inválido").required("Campo obrigatório"),
   senha: yup
     .string()
-    .test("senha-required", "Campo obrigatório", function (value) {
-      // senha não é obrigatória se for edição
-      const isRequired = !this.options?.context?.isEdit;
-      if (isRequired && !value) {
-        return this.createError({ message: "Senha é obrigatória" });
-      }
-      return true;
-    })
     .test(
       "min-length",
       "A senha deve ter no mínimo 6 caracteres",
@@ -38,23 +31,14 @@ const validationSchema = yup.object({
 
 export type FormUserProfileFields = yup.InferType<typeof validationSchema>;
 
-type FormUserProfileValues = {
-  nome: string;
-  email: string;
-  senha?: string;
-};
-
 export interface FormUserProfileRef {
   resetForm: () => void;
   // getValues: () => FormUserProfileFields;
   submitForm: () => void;
 }
 interface FormUserProfileProps {
-  initialValues?: FormUserProfileValues;
+  initialValues?: Session | null;
   onSubmit?: any;
-  // isLoading?: boolean;
-  // onSuccess?: (message: string) => void;
-  // onError?: (message: string) => void;
 }
 
 const FormUserProfile = forwardRef<FormUserProfileRef, FormUserProfileProps>(
@@ -96,11 +80,13 @@ const FormUserProfile = forwardRef<FormUserProfileRef, FormUserProfileProps>(
     useEffect(() => {
       if (initialValues) {
         reset({
-          nome: initialValues.nome ?? "",
-          email: initialValues.email ?? "",
+          nome: initialValues.user.name ?? "",
+          email: initialValues.user.email ?? "",
         });
       }
     }, [initialValues, reset]);
+
+    console.log("ERRORS: ", errors);
 
     return (
       <Form {...form}>
@@ -148,7 +134,7 @@ const FormUserProfile = forwardRef<FormUserProfileRef, FormUserProfileProps>(
                       placeholder="Informe o e-mail do usuário"
                       id="input-email-usuario"
                       size="lg"
-                      disabled={initialValues?.email ? true : false}
+                      disabled={initialValues ? true : false}
                       error={!!errors.email}
                     />
                     {errors.email && (

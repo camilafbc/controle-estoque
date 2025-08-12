@@ -49,7 +49,7 @@ export const authOptions: AuthOptions = {
   ],
 
   callbacks: {
-    jwt: async ({ token, user }) => {
+    jwt: async ({ token, user, session, trigger }) => {
       if (user) {
         token.id = user.id;
         token.name = user.name;
@@ -57,6 +57,26 @@ export const authOptions: AuthOptions = {
         token.curso = user.curso;
         token.role = user.role;
       }
+
+      if (trigger == "update") {
+        //console.log("SESSION TRIGGER: ", session);
+        // if (session?.user) {
+        //   const decodedToken = jwtDecode<CustomJwtPayload>(
+        //     session.data.accessToken,
+        //   );
+        //   console.log("DECODED no UPDATE: ", decodedToken);
+        //   token = {
+        //     ...token,
+        //     id: decodedToken.id,
+        //     name: session.user.name,
+        //     email: decodedToken.email,
+        //     accessToken: session.data.accessToken,
+        //     role: decodedToken.role,
+        //   };
+        // }
+        token.name = session.user.name;
+      }
+
       return token;
     },
     session: async ({ session, token }) => {

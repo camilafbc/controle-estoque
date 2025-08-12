@@ -5,8 +5,10 @@ import { getUserById } from "@/services/users";
 import { handleDatabaseError } from "@/utils/handleDbError";
 
 export async function GET(req: NextRequest) {
+  const customCookie = process.env.NEXT_PUBLIC_CUSTOM_COOKIE;
+
   try {
-    const token = await getToken({ req });
+    const token = await getToken({ req, cookieName: customCookie });
 
     if (!token || !token.id)
       return NextResponse.json(

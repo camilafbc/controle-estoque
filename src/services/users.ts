@@ -163,5 +163,5 @@ export const updateProfile = async (user: {
     data: dataToUpdate,
   });
 
-  return updatedUser;
+  return updatedUser.nome;
 };

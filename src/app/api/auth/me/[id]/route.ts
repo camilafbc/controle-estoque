@@ -17,8 +17,11 @@ export async function PUT(
       password: body.password ? body.password : null,
     };
 
-    if (!user.nome || !user.password) {
-      return;
+    if (!user.nome || !user.idUser) {
+      return NextResponse.json(
+        { error: "Erro ao atualizar dados. Dados incompletos!" },
+        { status: 400 },
+      );
     }
 
     if (user.password) {

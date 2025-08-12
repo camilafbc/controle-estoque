@@ -17,8 +17,12 @@ export const insertUser = async (user: Omit<User, "idUser">) => {
 };
 
 export const updateUser = async (user: Partial<User>) => {
-  console.log("chegando update: ", user);
   const response = await api.put(`/api/admin/users/${user.idUser}`, user);
+  return response.data;
+};
+
+export const updateProfile = async (user: Partial<User>) => {
+  const response = await api.put(`/api/auth/me/${user.idUser}`, user);
   return response.data;
 };
 
