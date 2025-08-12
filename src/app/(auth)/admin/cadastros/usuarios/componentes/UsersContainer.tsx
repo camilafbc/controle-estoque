@@ -25,7 +25,11 @@ import { getErrorMessage } from "@/utils/getErrorMessage";
 
 import { columns } from "./TableColumns";
 
-export default function UsersContainer() {
+interface UsersContainerProps {
+  users: User[];
+}
+
+export default function UsersContainer({ users }: UsersContainerProps) {
   // ref
   const formRef = useRef<FormUserRef>(null);
   // states
@@ -33,18 +37,16 @@ export default function UsersContainer() {
   const [openDialog, setOpenDialog] = useState(false);
   const [editingId, setEditingId] = useState<number | null>(null);
   // data
-  const { data: users, isLoading: usersLoading, isError } = useUsers();
-  const { data: usuario, isLoading: userLoading } = useGetUser(
-    Number(editingId),
-  );
+  const { data: usersData, isLoading: usersLoading } = useUsers(users);
+  const { data: usuario } = useGetUser(Number(editingId));
   const { data: cursos, isLoading: cursosLoading } = useCursos();
   // mutations
   const deleteMutation = useDeleteUserMutation();
   const createUser = useInsertUserMutation();
   const updateUser = useUpdateUserMutation();
 
-  const filteredData = users
-    ? users?.filter((user: { nome: string }) =>
+  const filteredData = usersData
+    ? usersData?.filter((user: { nome: string }) =>
         user.nome.toLowerCase().includes(filterValue.toLowerCase()),
       )
     : [];
