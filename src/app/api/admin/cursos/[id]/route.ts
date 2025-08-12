@@ -1,11 +1,22 @@
+import { NextRequest, NextResponse } from "next/server";
+import { getServerSession } from "next-auth";
+
+import { authOptions } from "@/lib/auth";
 import { deleteCurso, getCursoById, updateCurso } from "@/services/cursos";
 import { handleDatabaseError } from "@/utils/handleDbError";
-import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(
   _: NextRequest,
   { params }: { params: { id: number } },
 ) {
+  const session = await getServerSession(authOptions);
+  if (!session || session.user?.role !== "admin") {
+    return NextResponse.json(
+      { error: true, message: "Acesso negado." },
+      { status: 401 },
+    );
+  }
+
   try {
     if (!params.id) {
       return NextResponse.json(
@@ -25,6 +36,14 @@ export async function DELETE(
   _: Request,
   { params }: { params: { id: number } },
 ) {
+  const session = await getServerSession(authOptions);
+  if (!session || session.user?.role !== "admin") {
+    return NextResponse.json(
+      { error: true, message: "Acesso negado." },
+      { status: 401 },
+    );
+  }
+
   try {
     if (!params.id) {
       return NextResponse.json(
@@ -49,6 +68,14 @@ export async function PUT(
   request: NextRequest,
   { params }: { params: { id: string } },
 ) {
+  const session = await getServerSession(authOptions);
+  if (!session || session.user?.role !== "admin") {
+    return NextResponse.json(
+      { error: true, message: "Acesso negado." },
+      { status: 401 },
+    );
+  }
+
   try {
     const { nomeCurso, status } = await request.json();
 

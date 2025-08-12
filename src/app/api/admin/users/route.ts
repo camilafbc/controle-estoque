@@ -1,9 +1,19 @@
 import { NextResponse } from "next/server";
+import { getServerSession } from "next-auth";
 
+import { authOptions } from "@/lib/auth";
 import { createUser, getUsers, hasUserEmail } from "@/services/users";
 import { handleDatabaseError } from "@/utils/handleDbError";
 
 export async function GET() {
+  const session = await getServerSession(authOptions);
+  if (!session || session.user?.role !== "admin") {
+    return NextResponse.json(
+      { error: true, message: "Acesso negado." },
+      { status: 401 },
+    );
+  }
+
   try {
     const users = await getUsers();
 
@@ -15,6 +25,14 @@ export async function GET() {
 }
 
 export async function POST(request: Request) {
+  const session = await getServerSession(authOptions);
+  if (!session || session.user?.role !== "admin") {
+    return NextResponse.json(
+      { error: true, message: "Acesso negado." },
+      { status: 401 },
+    );
+  }
+
   try {
     const body = await request.json();
 
@@ -42,12 +60,14 @@ export async function POST(request: Request) {
       );
     }
 
+    const createdBy = session.user.id;
+
     const newUser = await createUser(
       nome,
       email,
       senha,
       role,
-      1,
+      createdBy,
       status,
       idCurso,
     );
