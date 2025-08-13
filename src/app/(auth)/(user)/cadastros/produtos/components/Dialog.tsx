@@ -39,7 +39,9 @@ export default function ProductDialog({
       open={open}
       setIsOpen={setOpen}
       title={
-        initialValues ? `Editando: ${initialValues.prodDescricao}` : "Cadastro"
+        initialValues
+          ? `Produto: ${initialValues.prodDescricao}`
+          : "Cadastro de Produtos"
       }
       footerChildren={
         <div className="flex w-full items-center justify-end gap-2">
@@ -55,7 +57,7 @@ export default function ProductDialog({
             type="button"
             loading={isLoading}
             onClick={onClick}
-            className="min-w-[120px] bg-primary hover:bg-primary/90"
+            className="min-w-[120px]"
           >
             Salvar
           </Button>

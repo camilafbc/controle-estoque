@@ -419,9 +419,7 @@ export const VirtualizedCombobox = forwardRef<
           </div>
 
           {!!error && (
-            <p className="text-[0.8rem] font-medium text-destructive">
-              {error}
-            </p>
+            <p className="text-xs font-semibold text-destructive">{error}</p>
           )}
         </div>
 

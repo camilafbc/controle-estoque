@@ -1,7 +1,7 @@
 import { yupResolver } from "@hookform/resolvers/yup";
 import { errorToJSON } from "next/dist/server/render";
 import { forwardRef, useEffect, useImperativeHandle } from "react";
-import { useForm } from "react-hook-form";
+import { SubmitHandler, useForm } from "react-hook-form";
 import * as yup from "yup";
 
 import { Turma } from "@/generated/prisma";
@@ -24,21 +24,33 @@ interface FormTurmasProps {
   initialValues?: Turma;
   isLoading?: boolean;
   defaultFocus?: keyof FormTurmasFields;
+  onSubmit: SubmitHandler<FormTurmasFields>;
 }
 
 export interface FormTurmasRef {
   resetForm: () => void;
   getValues: () => FormTurmasFields;
+  submitForm: () => void;
 }
 
 const FormTurmas = forwardRef<FormTurmasRef, FormTurmasProps>(
-  ({ initialValues, isLoading = false, defaultFocus = "codigo" }, ref) => {
+  (
+    { initialValues, isLoading = false, defaultFocus = "codigo", onSubmit },
+    ref,
+  ) => {
     const form = useForm<FormTurmasFields>({
       resolver: yupResolver(validationSchema),
-      defaultValues: { codigo: "", turno: "", status: true },
+      defaultValues: { codigo: "", turno: "Manhã", status: true },
     });
 
-    const { control, setFocus, reset, getValues } = form;
+    const {
+      control,
+      setFocus,
+      reset,
+      getValues,
+      handleSubmit,
+      formState: { errors },
+    } = form;
 
     useImperativeHandle(ref, () => ({
       resetForm: () => {
@@ -49,6 +61,7 @@ const FormTurmas = forwardRef<FormTurmasRef, FormTurmasProps>(
         });
       },
       getValues: () => getValues(),
+      submitForm: () => handleSubmit(onSubmit)(),
     }));
 
     useEffect(() => {
@@ -67,7 +80,10 @@ const FormTurmas = forwardRef<FormTurmasRef, FormTurmasProps>(
 
     return (
       <Form {...form}>
-        <form className="grid grid-cols-1 gap-x-4 gap-y-6 py-8 lg:grid-cols-2">
+        <form
+          onSubmit={handleSubmit(onSubmit)}
+          className="grid grid-cols-1 gap-x-4 gap-y-6 py-8 lg:grid-cols-2"
+        >
           {/* Campo do Curso */}
           <FormField
             control={control}
@@ -82,11 +98,12 @@ const FormTurmas = forwardRef<FormTurmasRef, FormTurmasProps>(
                   infoText="Dígitos que identificam a turma"
                   placeholder="Informe o código da turma"
                   disabled={isLoading}
+                  error={!!errors.codigo}
                   className="w-full"
                   value={field.value}
                   onChange={(value) => field.onChange(value)}
                 />
-                <FormMessage className="text-xs text-red-500" />
+                <FormMessage />
               </FormItem>
             )}
           />
@@ -95,7 +112,7 @@ const FormTurmas = forwardRef<FormTurmasRef, FormTurmasProps>(
             control={control}
             name="turno"
             render={({ field }) => (
-              <FormItem>
+              <FormItem className="p-1">
                 <MySelect
                   {...field}
                   label="Turno:"
@@ -107,11 +124,11 @@ const FormTurmas = forwardRef<FormTurmasRef, FormTurmasProps>(
                     { label: "Tarde", value: "Tarde" },
                     { label: "Noite", value: "Noite" },
                   ]}
-                  // error={!!erros}
+                  error={!!errors.turno}
                   value={field.value}
                   onValueChange={(value) => field.onChange(value)}
                 />
-                <FormMessage className="text-xs text-red-500" />
+                <FormMessage />
               </FormItem>
             )}
           />

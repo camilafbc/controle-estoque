@@ -3,6 +3,7 @@
 import { PlusCircle } from "lucide-react";
 import { useSession } from "next-auth/react";
 import { useRef, useState } from "react";
+import { SubmitHandler } from "react-hook-form";
 import { toast } from "react-toastify";
 
 import MyDialog from "@/components/MyDialog";
@@ -99,7 +100,7 @@ export default function TurmasContainer({ initialData }: TurmasContainerProps) {
     });
   };
 
-  const handleSubmit = (data: FormTurmasFields) => {
+  const handleSubmit: SubmitHandler<FormTurmasFields> = (data) => {
     if (idCurso) {
       const turma = {
         codigoTurma: data.codigo.trim(),
@@ -138,64 +139,50 @@ export default function TurmasContainer({ initialData }: TurmasContainerProps) {
         isLoading={isLoading}
       />
 
-      {openDialog && (
-        <MyDialog
-          size="lg"
-          open={openDialog}
-          setIsOpen={setOpenDialog}
-          title={
-            turma.data ? `Editando: ${turma.data.codigoTurma}` : "Cadastro"
+      <MyDialog
+        size="lg"
+        open={openDialog}
+        setIsOpen={setOpenDialog}
+        title={
+          turma.data ? `Turma: ${turma.data.codigoTurma}` : "Cadastro de Turmas"
+        }
+        footerChildren={
+          <div className="flex w-full items-center justify-end gap-2">
+            <Button
+              variant="outline"
+              type="button"
+              onClick={handleClose}
+              className="min-w-[120px]"
+            >
+              Cancelar
+            </Button>
+            <Button
+              type="submit"
+              loading={createTurma.isPending || updateTurma.isPending}
+              className="min-w-[120px] bg-primary hover:bg-primary/90"
+              onClick={() => formRef.current?.submitForm()}
+            >
+              {createTurma.isPending || updateTurma.isPending
+                ? "Salvando..."
+                : "Salvar"}
+            </Button>
+          </div>
+        }
+      >
+        <FormTurmas
+          ref={formRef}
+          initialValues={
+            turma.data
+              ? {
+                  ...turma.data,
+                  uuid: turma.data.uuid === undefined ? null : turma.data.uuid,
+                }
+              : undefined
           }
-          footerChildren={
-            <div className="flex w-full items-center justify-end gap-2">
-              <Button
-                variant="outline"
-                type="button"
-                onClick={handleClose}
-                className="min-w-[120px]"
-              >
-                Cancelar
-              </Button>
-              <Button
-                type="submit"
-                loading={createTurma.isPending || updateTurma.isPending}
-                className="min-w-[120px] bg-primary hover:bg-primary/90"
-                onClick={() => {
-                  const values = formRef.current?.getValues();
-                  if (
-                    values &&
-                    values.codigo &&
-                    values.turno &&
-                    typeof values.status !== "undefined"
-                  ) {
-                    handleSubmit(values);
-                  } else {
-                    toast.error("Preencha todos os campos obrigatórios.");
-                  }
-                }}
-              >
-                {createTurma.isPending || updateTurma.isPending
-                  ? "Salvando..."
-                  : "Salvar"}
-              </Button>
-            </div>
-          }
-        >
-          <FormTurmas
-            ref={formRef}
-            initialValues={
-              turma.data
-                ? {
-                    ...turma.data,
-                    uuid:
-                      turma.data.uuid === undefined ? null : turma.data.uuid,
-                  }
-                : undefined
-            }
-            isLoading={createTurma.isPending || updateTurma.isPending}
-          />
-        </MyDialog>
-      )}
+          isLoading={createTurma.isPending || updateTurma.isPending}
+          onSubmit={handleSubmit}
+        />
+      </MyDialog>
     </>
   );
 }

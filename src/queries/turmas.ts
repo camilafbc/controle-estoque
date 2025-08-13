@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 import { getCountTurmas, getTurmaById, getTurmas } from "@/api/turmas";
 import { Turma } from "@/types/Turma";
@@ -9,7 +9,7 @@ export const useTurmas = (idCurso: number, initialData: Turma[]) => {
     queryFn: () => getTurmas(idCurso),
     enabled: !!idCurso,
     initialData: initialData,
-    staleTime: Infinity,
+    staleTime: 5 * 60 * 1000,
   });
   return query;
 };
@@ -18,11 +18,16 @@ export const useGetTurmaById = (
   id: string,
   options?: { enabled?: boolean },
 ) => {
+  const queryClient = useQueryClient();
   const query = useQuery({
     queryKey: ["turmas", id],
     queryFn: () => getTurmaById(id),
     enabled: !!id && (options?.enabled ?? true),
-    staleTime: Infinity,
+    placeholderData: () => {
+      const turmas = queryClient.getQueryData<Turma[]>(["turmas"]);
+      return turmas?.find((turma) => turma.idTurma === +id);
+    },
+    staleTime: 5 * 60 * 1000,
   });
   return query;
 };
