@@ -2,9 +2,13 @@
 
 import { PlusCircle } from "lucide-react";
 import { useRef, useState } from "react";
+import { SubmitHandler } from "react-hook-form";
 import { toast } from "react-toastify";
 
-import FormCurso, { FormCursoRef } from "@/components/cursos/FormCurso";
+import FormCurso, {
+  FormCursoFields,
+  FormCursoRef,
+} from "@/components/cursos/FormCurso";
 import MyDialog from "@/components/MyDialog";
 import { Button } from "@/components/ui/button";
 import { DataTable } from "@/components/ui/data-table/data-table";
@@ -88,7 +92,7 @@ export default function CursosContainer({ cursos }: CursosContainerProps) {
     });
   };
 
-  const handleSubmit = (data: Partial<Curso>) => {
+  const handleSubmit: SubmitHandler<FormCursoFields> = (data) => {
     const curso = {
       nomeCurso: data.nomeCurso?.trim() || "",
       status: data.status || true,
@@ -122,42 +126,46 @@ export default function CursosContainer({ cursos }: CursosContainerProps) {
         data={cursosData || []}
         isLoading={cursosLoading}
       />
-      {openDialog && (
-        <MyDialog
-          size="lg"
-          open={openDialog}
-          setIsOpen={setOpenDialog}
-          title={cursoData?.nomeCurso ? cursoData.nomeCurso : "Cadastro"}
-          footerChildren={
-            <div className="flex w-full items-center justify-end gap-2">
-              <Button
-                variant="outline"
-                type="button"
-                onClick={handleClose}
-                className="min-w-[120px]"
-              >
-                Cancelar
-              </Button>
-              <Button
-                type="submit"
-                loading={createCurso.isPending || updateCurso.isPending}
-                className="min-w-[120px] bg-primary hover:bg-primary/90"
-                onClick={() => handleSubmit(formRef.current?.getValues() || {})}
-              >
-                {createCurso.isPending || updateCurso.isPending
-                  ? "Salvando..."
-                  : "Salvar"}
-              </Button>
-            </div>
-          }
-        >
-          <FormCurso
-            ref={formRef}
-            initialValues={cursoData}
-            isLoading={createCurso.isPending || updateCurso.isPending}
-          />
-        </MyDialog>
-      )}
+
+      <MyDialog
+        size="lg"
+        open={openDialog}
+        setIsOpen={setOpenDialog}
+        title={
+          cursoData?.nomeCurso
+            ? `Curso: ${cursoData.nomeCurso}`
+            : "Cadastro de Cursos"
+        }
+        footerChildren={
+          <div className="flex w-full items-center justify-end gap-2">
+            <Button
+              variant="outline"
+              type="button"
+              onClick={handleClose}
+              className="min-w-[120px]"
+            >
+              Cancelar
+            </Button>
+            <Button
+              type="submit"
+              loading={createCurso.isPending || updateCurso.isPending}
+              className="min-w-[120px] bg-primary hover:bg-primary/90"
+              onClick={() => formRef.current?.submitForm()}
+            >
+              {createCurso.isPending || updateCurso.isPending
+                ? "Salvando..."
+                : "Salvar"}
+            </Button>
+          </div>
+        }
+      >
+        <FormCurso
+          ref={formRef}
+          initialValues={cursoData}
+          onSubmit={handleSubmit}
+          isLoading={createCurso.isPending || updateCurso.isPending}
+        />
+      </MyDialog>
     </>
   );
 }

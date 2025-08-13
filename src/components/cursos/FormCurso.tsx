@@ -2,7 +2,7 @@
 
 import { yupResolver } from "@hookform/resolvers/yup";
 import { forwardRef, useEffect, useImperativeHandle } from "react";
-import { useForm } from "react-hook-form";
+import { SubmitHandler, useForm } from "react-hook-form";
 import * as yup from "yup";
 
 import { Form, FormField, FormItem, FormMessage } from "../ui/form";
@@ -15,21 +15,26 @@ const validationSchema = yup.object({
   status: yup.boolean().required("Campo obrigatório"),
 });
 
-type FormCursoFields = yup.InferType<typeof validationSchema>;
+export type FormCursoFields = yup.InferType<typeof validationSchema>;
 
 interface FormCursoProps {
   initialValues?: Partial<FormCursoFields>;
   isLoading?: boolean;
   defaultFocus?: keyof FormCursoFields;
+  onSubmit: SubmitHandler<FormCursoFields>;
 }
 
 export interface FormCursoRef {
   resetForm: () => void;
   getValues: () => FormCursoFields;
+  submitForm: () => void;
 }
 
 const FormCurso = forwardRef<FormCursoRef, FormCursoProps>(
-  ({ initialValues, isLoading = false, defaultFocus = "nomeCurso" }, ref) => {
+  (
+    { initialValues, isLoading = false, defaultFocus = "nomeCurso", onSubmit },
+    ref,
+  ) => {
     const form = useForm<FormCursoFields>({
       resolver: yupResolver(validationSchema),
       defaultValues: {
@@ -38,7 +43,14 @@ const FormCurso = forwardRef<FormCursoRef, FormCursoProps>(
       },
     });
 
-    const { control, setFocus, reset, getValues } = form;
+    const {
+      control,
+      setFocus,
+      reset,
+      getValues,
+      handleSubmit,
+      formState: { errors },
+    } = form;
 
     useImperativeHandle(ref, () => ({
       resetForm: () => {
@@ -48,6 +60,7 @@ const FormCurso = forwardRef<FormCursoRef, FormCursoProps>(
         });
       },
       getValues: () => getValues(),
+      submitForm: () => handleSubmit(onSubmit)(),
     }));
 
     useEffect(() => {
@@ -65,8 +78,10 @@ const FormCurso = forwardRef<FormCursoRef, FormCursoProps>(
 
     return (
       <Form {...form}>
-        <form className="grid grid-cols-1 gap-x-4 gap-y-6 py-8 lg:grid-cols-2">
-          {/* Campo do Curso */}
+        <form
+          onSubmit={handleSubmit(onSubmit)}
+          className="grid grid-cols-1 gap-x-4 gap-y-6 py-8 lg:grid-cols-2"
+        >
           <FormField
             control={control}
             name="nomeCurso"
@@ -79,11 +94,12 @@ const FormCurso = forwardRef<FormCursoRef, FormCursoProps>(
                   label="Nome do Curso"
                   placeholder="Digite o nome do curso"
                   disabled={isLoading}
+                  error={errors.nomeCurso ? true : false}
                   className="w-full"
-                  value={field.value || ""}
+                  value={field.value}
                   onChange={(value) => field.onChange(value)}
                 />
-                <FormMessage className="text-xs text-red-500" />
+                <FormMessage />
               </FormItem>
             )}
           />
