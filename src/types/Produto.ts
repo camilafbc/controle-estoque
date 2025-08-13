@@ -4,8 +4,11 @@ export type Produto = {
   prodDescricao: string;
   prodFabricante: string;
   prodQuantidade: number;
-  prodValidade: string;
+  prodValidade: Date | string;
   prodLote: string;
   prodTurma: number;
   prodCurso: number;
+  turma?: {
+    uuid: string;
+  };
 };

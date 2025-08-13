@@ -23,6 +23,13 @@ export const getProdutoById = async (uuidProduto: string) => {
     where: {
       uuid: uuidProduto,
     },
+    include: {
+      turma: {
+        select: {
+          uuid: true,
+        },
+      },
+    },
   });
   return produto;
 };
@@ -49,10 +56,10 @@ export const getEstoquePorCurso = async (idCurso: number) => {
   return produtos._sum.prodQuantidade || 0;
 };
 
-export const deleteProduto = async (idProduto: number) => {
+export const deleteProduto = async (uuidProduto: string) => {
   const produto = await prisma.produto.delete({
     where: {
-      idProduto: Number(idProduto),
+      uuid: uuidProduto,
     },
   });
   return produto;
@@ -83,10 +90,10 @@ export const createProduto = async (
   }
 };
 
-export const updateProduto = async (produto: Produto) => {
+export const updateProduto = async (produto: Omit<Produto, "idProduto">) => {
   const produtoUpdated = await prisma.produto.update({
     where: {
-      idProduto: produto.idProduto,
+      uuid: produto.uuid,
     },
     data: {
       prodDescricao: produto.prodDescricao.trim(),

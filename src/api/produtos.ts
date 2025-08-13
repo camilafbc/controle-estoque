@@ -17,8 +17,8 @@ export const getProdutos = async (
   return response.data;
 };
 
-export const getProduto = async (id: number): Promise<Produto> => {
-  const response = await api.get(`/api/user/produtos/${id}`);
+export const getProduto = async (uuid: string): Promise<Produto> => {
+  const response = await api.get(`/api/user/produtos/${uuid}`);
   return response.data;
 };
 
@@ -34,7 +34,7 @@ export const updateProduto = async (produto: Omit<Produto, "prodTurma">) => {
   return response.data;
 };
 
-export const deleteProdutos = async (id: number) => {
-  const response = await api.delete(`/api/user/produtos/${id}`);
+export const deleteProdutos = async (uuid: string) => {
+  const response = await api.delete(`/api/user/produtos/${uuid}`);
   return response.status;
 };

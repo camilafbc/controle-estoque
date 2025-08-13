@@ -16,8 +16,8 @@ import { Produto } from "@/types/Produto";
 
 export const columns = (
   handleMovimentacoes: (uuid: string) => void,
-  handleEdit: (id: number) => void,
-  handleDelete: (id: number) => void,
+  handleEdit: (uuid: string) => void,
+  handleDelete: (uuid: string) => void,
 ): ColumnDef<Produto>[] => [
   {
     accessorKey: "acoes",
@@ -37,12 +37,12 @@ export const columns = (
           />
         </MyTooltip>
         <DataTableEditAction
-          onClick={() => handleEdit(row.original.idProduto)}
+          onClick={() => handleEdit(row.original.uuid || "")}
         />
         <DataTableDeleteAction
           title="Produto"
           item={row.original.prodDescricao}
-          onClick={() => handleDelete(row.original.idProduto)}
+          onClick={() => handleDelete(row.original.uuid || "")}
         />
       </div>
     ),

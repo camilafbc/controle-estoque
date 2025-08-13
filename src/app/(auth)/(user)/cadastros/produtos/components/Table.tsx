@@ -10,8 +10,8 @@ interface ProductTableProps {
   isLoading: boolean;
   filterValue: string;
   onMovimentacoes: (uuidProduto: string) => void;
-  onEdit: (id: number) => void;
-  onDelete: (id: number) => void;
+  onEdit: (uuid: string) => void;
+  onDelete: (uuid: string) => void;
 }
 
 export default function ProductTable({

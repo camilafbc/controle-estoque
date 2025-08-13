@@ -12,7 +12,7 @@ import { Turma } from "@/types/Turma";
 
 import DatePickerInput from "../DatePickerInput";
 import { MySelect } from "../MySelect";
-import { Form, FormField, FormItem } from "../ui/form";
+import { Form, FormField, FormItem, FormMessage } from "../ui/form";
 import { Input } from "../ui/input";
 import { VirtualizedCombobox } from "../ui/virtualized-combobox/VirtualizedCombobox";
 
@@ -24,7 +24,8 @@ const validationSchema = yup.object({
     .string()
     .matches(/^\d+$/, "Quantidade deve ser um número inteiro")
     .required("Campo obrigatório"),
-  dataValidade: yup.string().required("Campo obrigatório"),
+  // dataValidade: yup.string().required("Campo obrigatório"),
+  dataValidade: yup.date().required("Campo obrigatório"),
   turma: yup.string().required("Campo obrigatório"),
 });
 
@@ -60,8 +61,7 @@ const FormProduto = forwardRef<FormProdutoRef, FormProdutoProps>(
         produto: "",
         fabricante: "",
         lote: "",
-        quantidade: "1",
-        dataValidade: "",
+        quantidade: "",
         turma: "",
       },
     });
@@ -81,8 +81,7 @@ const FormProduto = forwardRef<FormProdutoRef, FormProdutoProps>(
           produto: "",
           fabricante: "",
           lote: "",
-          quantidade: "0,000",
-          dataValidade: "",
+          quantidade: "",
           turma: "",
         });
       },
@@ -100,10 +99,8 @@ const FormProduto = forwardRef<FormProdutoRef, FormProdutoProps>(
           fabricante: initialValues.prodFabricante ?? "",
           lote: initialValues.prodLote ?? "",
           quantidade: initialValues.prodQuantidade.toString() ?? "",
-          dataValidade: initialValues.prodValidade
-            ? dayjs(initialValues.prodValidade).format("DD/MM/YYYY")
-            : "-",
-          turma: initialValues.prodTurma.toString() ?? "",
+          dataValidade: new Date(initialValues.prodValidade),
+          turma: initialValues?.turma?.uuid.toString() ?? "",
         });
       }
     }, [initialValues, reset]);
@@ -129,9 +126,7 @@ const FormProduto = forwardRef<FormProdutoRef, FormProdutoProps>(
                   value={field.value}
                   onChange={(value) => field.onChange(value)}
                 />
-                <span className="min-h-4 text-xs font-semibold text-destructive">
-                  {errors.produto && errors.produto.message}
-                </span>
+                <FormMessage />
               </FormItem>
             )}
           />
@@ -150,9 +145,7 @@ const FormProduto = forwardRef<FormProdutoRef, FormProdutoProps>(
                   value={field.value}
                   onChange={(value) => field.onChange(value)}
                 />
-                <span className="min-h-4 text-xs font-semibold text-destructive">
-                  {errors.fabricante && errors.fabricante.message}
-                </span>
+                <FormMessage />
               </FormItem>
             )}
           />
@@ -171,9 +164,7 @@ const FormProduto = forwardRef<FormProdutoRef, FormProdutoProps>(
                   value={field.value}
                   onChange={(value) => field.onChange(value)}
                 />
-                <span className="min-h-4 text-xs font-semibold text-destructive">
-                  {errors.lote && errors.lote.message}
-                </span>
+                <FormMessage />
               </FormItem>
             )}
           />
@@ -197,11 +188,7 @@ const FormProduto = forwardRef<FormProdutoRef, FormProdutoProps>(
                     field.onChange(value);
                   }}
                 />
-                {errors.quantidade && (
-                  <span className="text-xs font-semibold text-destructive">
-                    {errors.quantidade.message}
-                  </span>
-                )}
+                <FormMessage />
               </FormItem>
             )}
           />
@@ -218,9 +205,7 @@ const FormProduto = forwardRef<FormProdutoRef, FormProdutoProps>(
                   selected={field.value}
                   onSelect={field.onChange}
                 />
-                <span className="min-h-4 text-xs font-semibold text-destructive">
-                  {errors.dataValidade && errors.dataValidade.message}
-                </span>
+                <FormMessage />
               </FormItem>
             )}
           />
@@ -248,9 +233,6 @@ const FormProduto = forwardRef<FormProdutoRef, FormProdutoProps>(
                   value={field.value}
                   onChange={(value) => field.onChange(value ?? "")}
                 />
-                <span className="min-h-4 text-xs font-semibold text-destructive">
-                  {errors.turma && errors.turma.message}
-                </span>
               </FormItem>
             )}
           />

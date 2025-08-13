@@ -303,7 +303,7 @@ export const VirtualizedCombobox = forwardRef<
               <Label
                 className={cn(
                   error && "text-destructive",
-                  "text-sm font-semibold",
+                  "text-xs font-semibold",
                 )}
                 htmlFor={id}
               >

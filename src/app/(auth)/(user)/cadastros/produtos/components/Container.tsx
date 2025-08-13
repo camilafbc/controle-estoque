@@ -63,18 +63,18 @@ export default function ProductContainer({
 
       setSelectedTurma(currentTurma);
     }
-  }, [selectedTurma, currentTurma, router]);
+  }, [selectedTurma, currentTurma, router, setSelectedTurma]);
 
   // ref
   const formRef = useRef<FormProdutoRef>(null);
   // states
   const [filterValue, setFilterValue] = useState("");
   const [openDialog, setOpenDialog] = useState(false);
-  const [editingId, setEditingId] = useState<number | null>(null);
+  const [editingId, setEditingId] = useState<string>("");
   // queries e mutations
   const fetchTurmas = useTurmas(Number(idCurso), turmas);
   const produtos = useProdutos(currentTurma, Number(idCurso));
-  const produto = useProduto(Number(editingId));
+  const produto = useProduto(editingId, currentTurma, Number(idCurso));
   const deleteMutation = useDeleteProductMutation();
   const createProduto = useCreateProdutoMutation(currentTurma);
   const updateProduto = useUpdateProductMutation();
@@ -83,13 +83,13 @@ export default function ProductContainer({
     router.push(`/cadastros/produtos/${uuidProduto}/movimentacoes`);
   };
 
-  const handleEdit = (id: number) => {
-    setEditingId(id);
+  const handleEdit = (uuid: string) => {
+    setEditingId(uuid);
     setOpenDialog(true);
   };
 
-  const handleDelete = (id: number) => {
-    deleteMutation.mutate(id, {
+  const handleDelete = (uuid: string) => {
+    deleteMutation.mutate(uuid, {
       onSuccess: () => {
         toast.success("Produto excluído com sucesso!");
       },
@@ -100,12 +100,12 @@ export default function ProductContainer({
   };
 
   const handleNew = () => {
-    setEditingId(null);
+    setEditingId("");
     setOpenDialog(true);
   };
 
   const handleClose = () => {
-    setEditingId(null);
+    setEditingId("");
     setOpenDialog(false);
   };
 

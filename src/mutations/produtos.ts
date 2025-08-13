@@ -6,7 +6,7 @@ import { Produto } from "@/types/Produto";
 export const useDeleteProductMutation = () => {
   const queryClient = useQueryClient();
   const mutation = useMutation({
-    mutationFn: (id: number) => deleteProdutos(id),
+    mutationFn: (uuid: string) => deleteProdutos(uuid),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["produtos"] });
     },

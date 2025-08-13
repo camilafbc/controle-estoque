@@ -3,7 +3,7 @@
 import { cva, VariantProps } from "class-variance-authority";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
-import { CalendarDaysIcon, CalendarIcon } from "lucide-react";
+import { CalendarIcon } from "lucide-react";
 import { forwardRef, useState } from "react";
 
 import { cn } from "@/lib/utils";
@@ -43,8 +43,6 @@ export interface InputProps
   required?: boolean;
   selected: any;
   onSelect: VoidFunction;
-  // date: Date | undefined;
-  // setDate: (date: Date | undefined) => void;
 }
 
 const DatePickerInput = forwardRef<HTMLInputElement, InputProps>(
@@ -60,8 +58,6 @@ const DatePickerInput = forwardRef<HTMLInputElement, InputProps>(
       type,
       selected,
       onSelect,
-      // date,
-      // setDate,
       ...props
     },
     ref,
@@ -90,9 +86,8 @@ const DatePickerInput = forwardRef<HTMLInputElement, InputProps>(
             id={id}
             maxLength={props.maxLength}
             ref={ref}
-            type="text" // Sempre 'text' para o input do date picker
+            type="text"
             readOnly // Impede a edição manual do input
-            // value={date ? format(date, "dd/MM/yyyy", { locale: ptBR }) : ""}
             value={
               selected ? format(selected, "dd/MM/yyyy", { locale: ptBR }) : ""
             }
@@ -107,7 +102,7 @@ const DatePickerInput = forwardRef<HTMLInputElement, InputProps>(
                     ? "border-destructive shadow-destructive focus-visible:ring-destructive"
                     : "",
                 )}
-                type="button" // Importante para evitar submissão de formulário
+                type="button"
               >
                 <CalendarIcon className="size-5 text-white" />
               </Button>

@@ -44,7 +44,7 @@ export async function DELETE(
   }
 
   try {
-    const produto = await deleteProduto(+params.id);
+    const produto = await deleteProduto(params.id);
     if (produto) {
       return NextResponse.json(
         { message: "Produto deletado com sucesso!" },
@@ -91,7 +91,7 @@ export async function PUT(
       );
 
     const produto = {
-      idProduto: +params.id,
+      uuid: params.id,
       prodDescricao: body.prodDescricao.trim(),
       prodFabricante: body.prodFabricante.trim(),
       prodQuantidade: body.prodQuantidade.trim(),

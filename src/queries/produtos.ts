@@ -1,6 +1,7 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 import { getCountProdutos, getProduto, getProdutos } from "@/api/produtos";
+import { Produto } from "@/types/Produto";
 
 export const useProdutos = (turmaUuid: string, curso: number) => {
   const query = useQuery({
@@ -12,11 +13,20 @@ export const useProdutos = (turmaUuid: string, curso: number) => {
   return query;
 };
 
-export const useProduto = (id: number) => {
+export const useProduto = (uuid: string, turmaUuid: string, curso: number) => {
+  const queryClient = useQueryClient();
   const query = useQuery({
-    queryKey: ["produto", id],
-    queryFn: () => getProduto(id),
-    enabled: !!id,
+    queryKey: ["produto", uuid],
+    queryFn: () => getProduto(uuid),
+    placeholderData: () => {
+      const produtos = queryClient.getQueryData<Produto[]>([
+        "produtos",
+        turmaUuid,
+        curso,
+      ]);
+      return produtos?.find((produto) => produto.uuid === uuid);
+    },
+    enabled: !!uuid,
     staleTime: Infinity,
   });
   return query;
