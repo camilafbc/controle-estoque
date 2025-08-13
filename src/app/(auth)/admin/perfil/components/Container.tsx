@@ -3,7 +3,7 @@
 import { ChevronLeft } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { SubmitHandler } from "react-hook-form";
 import { toast } from "react-toastify";
 
@@ -24,11 +24,14 @@ import { getErrorMessage } from "@/utils/getErrorMessage";
 
 export default function Container() {
   const { data: session, update } = useSession();
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const formRef = useRef<FormUserProfileRef>(null);
   const router = useRouter();
 
   const handleSubmit: SubmitHandler<FormUserProfileFields> = async (data) => {
     try {
+      setIsLoading(true);
+
       const fetchUpdate = await updateProfile({
         ...data,
         idUser: Number(session?.user.id),
@@ -46,6 +49,8 @@ export default function Container() {
       toast.success(fetchUpdate.message);
     } catch (error) {
       toast.error(getErrorMessage(error));
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -77,7 +82,6 @@ export default function Container() {
       <CardContent>
         <FormUserProfile
           ref={formRef}
-          // initialValues={session?.user || []}
           initialValues={session}
           onSubmit={handleSubmit}
         />
@@ -95,11 +99,7 @@ export default function Container() {
         <Button
           type="button"
           // loading={updateUser.isPending}
-          onClick={(e) => {
-            e.preventDefault();
-            console.log("CLICANDO");
-            formRef.current?.submitForm();
-          }}
+          onClick={() => formRef.current?.submitForm()}
           className="hover:bg-orange-500/90"
         >
           Salvar Alterações

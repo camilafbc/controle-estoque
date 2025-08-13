@@ -48,19 +48,13 @@ const MyDialog = ({
   children,
   footerChildren,
   size = "default",
-  modal = false,
+  modal = true,
   className,
 }: MyDialogProps) => {
   return (
     <Dialog open={open} onOpenChange={setIsOpen} modal={modal}>
-      {open && !modal && (
-        <div
-          className="fixed inset-0 z-40 bg-black/50"
-          // onClick={() => setOpenAlert(false)}
-        />
-      )}
       <DialogContent
-        // className="min-w-sm max-w-5xl"
+        onWheelCapture={(e) => e.stopPropagation()}
         className={cn(DialogVariants({ size }), className)}
       >
         <DialogHeader>

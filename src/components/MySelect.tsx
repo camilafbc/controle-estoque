@@ -1,8 +1,6 @@
-import React, { forwardRef } from "react";
 import { SelectItemProps, SelectProps } from "@radix-ui/react-select";
 import { Info, Loader2 } from "lucide-react";
-
-import { cn } from "@/lib/utils";
+import React, { forwardRef } from "react";
 
 import { Label } from "@/components/ui/label";
 import {
@@ -17,6 +15,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { cn } from "@/lib/utils";
 
 export type SelectOptions = Omit<SelectItemProps, "value"> & {
   label: string;
@@ -84,7 +83,7 @@ const MySelect = forwardRef<HTMLDivElement, MySelectProps>(
             className={cn(
               className,
               error && "border-destructive",
-              "flex min-w-[200px] items-center justify-between",
+              "flex min-w-[200px] items-center justify-between px-2",
             )}
             id={id}
             size={size || "default"}
@@ -102,7 +101,7 @@ const MySelect = forwardRef<HTMLDivElement, MySelectProps>(
           </SelectTrigger>
         </div>
 
-        <SelectContent className="scrollbar-class pointer-events-auto h-[120px] overflow-y-scroll">
+        <SelectContent className="scrollbar-class pointer-events-auto overflow-y-scroll">
           {options.map((option) => (
             <SelectItem
               defaultValue={

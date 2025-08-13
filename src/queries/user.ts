@@ -5,7 +5,6 @@ import { getUserById, getUsers } from "@/api/users";
 import { User } from "@/types/User";
 
 export const useUsers = (initialData?: User[]) => {
-  // console.log("Chamou o useTurmas");
   const query = useQuery({
     queryKey: ["users"],
     queryFn: () => getUsers(),
@@ -23,7 +22,6 @@ export const useGetUser = (id: number) => {
     enabled: !!id,
     placeholderData: () => {
       const users = queryClient.getQueryData<User[]>(["users"]);
-      console.log("Placeholder data for user:", users);
       return users?.find((user) => user.idUser === id);
     },
     staleTime: 5 * 60 * 1000,

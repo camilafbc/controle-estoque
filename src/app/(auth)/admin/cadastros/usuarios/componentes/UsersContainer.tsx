@@ -3,6 +3,7 @@
 import { AxiosError } from "axios";
 import { PlusCircle } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
+import { SubmitHandler } from "react-hook-form";
 import { toast } from "react-toastify";
 
 import MyDialog from "@/components/MyDialog";
@@ -71,12 +72,7 @@ export default function UsersContainer({ users }: UsersContainerProps) {
         toast.success(response.data.message);
       },
       onError: (error) => {
-        const axiosError = error as AxiosError<Error>;
-        const errorMessage =
-          axiosError?.response?.data?.message ||
-          error.message ||
-          "Ocorreu um erro desconhecido";
-        toast.error(errorMessage);
+        toast.error(getErrorMessage(error));
       },
     });
   };
@@ -85,6 +81,7 @@ export default function UsersContainer({ users }: UsersContainerProps) {
     createUser.mutate(user, {
       onSuccess: (response) => {
         toast.success(response.message);
+        setOpenDialog(false);
       },
       onError: (error) => {
         toast.error(getErrorMessage(error));
@@ -96,6 +93,7 @@ export default function UsersContainer({ users }: UsersContainerProps) {
     updateUser.mutate(user, {
       onSuccess: (response) => {
         toast.success(response.message);
+        setOpenDialog(false);
       },
       onError: (error) => {
         toast.error(getErrorMessage(error));
@@ -103,7 +101,7 @@ export default function UsersContainer({ users }: UsersContainerProps) {
     });
   };
 
-  const handleSubmit = (data: FormUserFields) => {
+  const handleSubmit: SubmitHandler<FormUserFields> = (data) => {
     const userPayload = {
       nome: data.nome.trim(),
       email: data.email.trim(),
@@ -143,42 +141,39 @@ export default function UsersContainer({ users }: UsersContainerProps) {
         data={filteredData || []}
         isLoading={usersLoading}
       />
-      {openDialog && (
-        <MyDialog
-          size="xl"
-          open={openDialog}
-          setIsOpen={setOpenDialog}
-          title={usuario?.idUser ? `Editando: ${usuario.nome}` : "Cadastro"}
-          footerChildren={
-            <div className="grid grid-cols-1 justify-end gap-2 sm:grid-cols-2">
-              <Button variant={"outline"} onClick={handleClose}>
-                Cancelar
-              </Button>
-              <Button
-                type="submit"
-                loading={createUser.isPending || updateUser.isPending}
-                className="hover:bg-orange-500/90"
-                onClick={() => {
-                  const values = formRef.current?.getValues();
-                  if (values) {
-                    handleSubmit(values);
-                  }
-                }}
-              >
-                Salvar
-              </Button>
-            </div>
-          }
-        >
-          <FormUser
-            ref={formRef}
-            initialValues={usuario}
-            cursos={cursos || []}
-            cursosLoading={cursosLoading}
-            isLoading={createUser.isPending || updateUser.isPending}
-          />
-        </MyDialog>
-      )}
+
+      <MyDialog
+        size="xl"
+        open={openDialog}
+        setIsOpen={setOpenDialog}
+        title={
+          usuario?.idUser ? `Usuário: ${usuario.nome}` : "Cadastro de Usuários"
+        }
+        footerChildren={
+          <div className="grid grid-cols-1 justify-end gap-2 sm:grid-cols-2">
+            <Button variant={"outline"} onClick={handleClose}>
+              Cancelar
+            </Button>
+            <Button
+              type="submit"
+              loading={createUser.isPending || updateUser.isPending}
+              className="hover:bg-orange-500/90"
+              onClick={() => formRef.current?.submitForm()}
+            >
+              Salvar
+            </Button>
+          </div>
+        }
+      >
+        <FormUser
+          ref={formRef}
+          initialValues={usuario}
+          cursos={cursos || []}
+          cursosLoading={cursosLoading}
+          onSubmit={handleSubmit}
+          isLoading={createUser.isPending || updateUser.isPending}
+        />
+      </MyDialog>
     </>
   );
 }

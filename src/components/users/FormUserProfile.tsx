@@ -8,7 +8,7 @@ import { useForm } from "react-hook-form";
 import * as yup from "yup";
 
 import { Button } from "../ui/button";
-import { Form, FormField, FormItem } from "../ui/form";
+import { Form, FormField, FormItem, FormMessage } from "../ui/form";
 import { Input } from "../ui/input";
 
 const validationSchema = yup.object({
@@ -86,8 +86,6 @@ const FormUserProfile = forwardRef<FormUserProfileRef, FormUserProfileProps>(
       }
     }, [initialValues, reset]);
 
-    console.log("ERRORS: ", errors);
-
     return (
       <Form {...form}>
         <form className="space-y-8">
@@ -112,11 +110,7 @@ const FormUserProfile = forwardRef<FormUserProfileRef, FormUserProfileProps>(
                       value={field.value}
                       onChange={(value) => field.onChange(value)}
                     />
-                    {errors.nome && (
-                      <span className="text-xs font-semibold text-destructive">
-                        {errors.nome.message}
-                      </span>
-                    )}
+                    <FormMessage />
                   </FormItem>
                 )}
               />
@@ -125,7 +119,6 @@ const FormUserProfile = forwardRef<FormUserProfileRef, FormUserProfileProps>(
                 name="email"
                 render={({ field }) => (
                   <FormItem className="w-full p-1">
-                    {/* <Label>E-mail</Label> */}
                     <Input
                       {...field}
                       required
@@ -137,11 +130,7 @@ const FormUserProfile = forwardRef<FormUserProfileRef, FormUserProfileProps>(
                       disabled={initialValues ? true : false}
                       error={!!errors.email}
                     />
-                    {errors.email && (
-                      <span className="text-xs font-semibold text-destructive">
-                        {errors.email.message}
-                      </span>
-                    )}
+                    <FormMessage />
                   </FormItem>
                 )}
               />
@@ -180,9 +169,7 @@ const FormUserProfile = forwardRef<FormUserProfileRef, FormUserProfileProps>(
                         value={field.value}
                         onChange={(value) => field.onChange(value)}
                       />
-                      <span className="min-h-[16px] text-xs font-semibold text-destructive">
-                        {errors.senha?.message || ""}
-                      </span>
+                      <FormMessage />
                     </FormItem>
                   )}
                 />
@@ -203,9 +190,7 @@ const FormUserProfile = forwardRef<FormUserProfileRef, FormUserProfileProps>(
                         value={field.value}
                         onChange={(value) => field.onChange(value)}
                       />
-                      <span className="min-h-[16px] text-xs font-semibold text-destructive">
-                        {errors.confirmaSenha?.message || ""}
-                      </span>
+                      <FormMessage />
                     </FormItem>
                   )}
                 />

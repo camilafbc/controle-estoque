@@ -4,7 +4,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { Key } from "lucide-react";
 import { forwardRef, useImperativeHandle } from "react";
 import { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
+import { SubmitHandler, useForm } from "react-hook-form";
 import * as yup from "yup";
 
 import "react-toastify/dist/ReactToastify.css";
@@ -16,18 +16,28 @@ import { Switch } from "@/components/ui/switch";
 import { Curso } from "@/types/Curso";
 import { User } from "@/types/User";
 
-import { Form, FormField, FormItem } from "../ui/form";
+import { Form, FormField, FormItem, FormMessage } from "../ui/form";
+import { VirtualizedCombobox } from "../ui/virtualized-combobox/VirtualizedCombobox";
 
 const validationSchema = yup.object({
-  nome: yup.string().required("Campo obrigatório"),
+  nome: yup
+    .string()
+    .min(2, "Mínimo 2 caracteres")
+    .required("Campo obrigatório"),
   email: yup.string().email("E-mail inválido").required("Campo obrigatório"),
   role: yup.string().required("Campo obrigatório"),
-  idCurso: yup.string().nullable(),
+  idCurso: yup
+    .string()
+    .nullable()
+    .when("role", {
+      is: "user",
+      then: (schema) => schema.required("Campo obrigatório"),
+      otherwise: (schema) => schema.notRequired(),
+    }),
   status: yup.boolean().required("Campo obrigatório"),
   senha: yup
     .string()
     .test("senha-required", "Campo obrigatório", function (value) {
-      // senha não é obrigatória se for edição
       const isRequired = !this.options?.context?.isEdit;
       if (isRequired && !value) {
         return this.createError({ message: "Senha é obrigatória" });
@@ -55,11 +65,13 @@ interface FormUserProps {
   cursosLoading: boolean;
   isLoading?: boolean;
   defaultFocus?: keyof FormUserFields;
+  onSubmit: SubmitHandler<FormUserFields>;
 }
 
 export interface FormUserRef {
   resetForm: () => void;
   getValues: () => FormUserFields;
+  submitForm: () => void;
 }
 
 const FormUser = forwardRef<FormUserRef, FormUserProps>(
@@ -68,13 +80,13 @@ const FormUser = forwardRef<FormUserRef, FormUserProps>(
       initialValues,
       cursos,
       cursosLoading,
+      onSubmit,
       defaultFocus = "nome",
       isLoading = false,
     }: FormUserProps,
     ref,
   ) => {
     const [showPasswordContainer, setShowPasswordContainer] = useState(true);
-    const [userRole, setUserRole] = useState("user");
 
     const form = useForm<FormUserFields>({
       resolver: yupResolver(validationSchema),
@@ -83,11 +95,12 @@ const FormUser = forwardRef<FormUserRef, FormUserProps>(
         email: "",
         role: "user",
         status: true,
+        idCurso: "",
         senha: "",
         confirmaSenha: "",
       },
       context: {
-        isEdit: initialValues?.idUser || undefined,
+        isEdit: !!initialValues?.idUser,
       },
     });
 
@@ -97,8 +110,11 @@ const FormUser = forwardRef<FormUserRef, FormUserProps>(
       reset,
       setFocus,
       getValues,
+      watch,
       formState: { errors },
     } = form;
+
+    const userRole = watch("role");
 
     useImperativeHandle(ref, () => ({
       resetForm: () => {
@@ -107,42 +123,56 @@ const FormUser = forwardRef<FormUserRef, FormUserProps>(
           email: "",
           role: "user",
           status: true,
+          idCurso: "",
           senha: "",
           confirmaSenha: "",
         });
-        setShowPasswordContainer(false);
-        setUserRole("");
+        setShowPasswordContainer(true);
       },
       getValues: () => getValues(),
+      submitForm: () => handleSubmit(onSubmit)(),
     }));
 
     useEffect(() => {
       setFocus(defaultFocus);
     }, [defaultFocus, setFocus]);
 
-    // console.log("INITIAL VALUES: ", initialValues);
-
     useEffect(() => {
-      setUserRole("");
-
       if (initialValues) {
+        const isUser = initialValues.role === "user";
+        // setUserRole(isUser ? "user" : initialValues.role);
+
         reset({
           nome: initialValues.nome,
           email: initialValues.email,
           role: initialValues.role,
           status: initialValues.status,
+          idCurso:
+            isUser && initialValues.curso
+              ? initialValues.curso.idCurso.toString()
+              : "",
+          senha: "",
+          confirmaSenha: "",
         });
-        if (initialValues.role === "user") {
-          setUserRole("user");
-          reset({ idCurso: initialValues?.curso?.idCurso.toString() });
-        }
+
         setShowPasswordContainer(false);
+      } else {
+        reset({
+          nome: "",
+          email: "",
+          role: "user",
+          status: true,
+          idCurso: "",
+          senha: "",
+          confirmaSenha: "",
+        });
+        setShowPasswordContainer(true);
       }
     }, [initialValues, reset]);
 
     return (
       <Form {...form}>
-        <form className="w-full space-y-6">
+        <form onSubmit={handleSubmit(onSubmit)} className="w-full space-y-6">
           <fieldset>
             <legend className="mb-4 w-full border-b-2 font-bold">
               Dados do Usuário
@@ -164,9 +194,7 @@ const FormUser = forwardRef<FormUserRef, FormUserProps>(
                       value={field.value}
                       onChange={(value) => field.onChange(value)}
                     />
-                    <span className="min-h-[16px] text-xs font-semibold text-destructive">
-                      {errors.nome?.message || ""}
-                    </span>
+                    <FormMessage />
                   </FormItem>
                 )}
               />
@@ -183,16 +211,12 @@ const FormUser = forwardRef<FormUserRef, FormUserProps>(
                       label="E-mail"
                       placeholder="email@email.com"
                       required
-                      disabled={
-                        initialValues?.email ? true : false || isLoading
-                      }
+                      disabled={!!initialValues?.email || isLoading}
                       error={!!errors.email}
                       value={field.value}
                       onChange={(value) => field.onChange(value)}
                     />
-                    <span className="min-h-[16px] text-xs font-semibold text-destructive">
-                      {errors.email?.message || ""}
-                    </span>
+                    <FormMessage />
                   </FormItem>
                 )}
               />
@@ -207,6 +231,7 @@ const FormUser = forwardRef<FormUserRef, FormUserProps>(
                       label="Tipo:"
                       id="select-option"
                       placeholder="Selecione uma opção"
+                      size="lg"
                       options={[
                         {
                           value: "admin",
@@ -221,14 +246,9 @@ const FormUser = forwardRef<FormUserRef, FormUserProps>(
                       disabled={isLoading}
                       error={!!errors.idCurso}
                       value={field.value}
-                      onValueChange={(value) => {
-                        field.onChange(value);
-                        setUserRole(value);
-                      }}
+                      onValueChange={(value) => field.onChange(value)}
                     />
-                    <span className="min-h-[16px] text-xs font-semibold text-destructive">
-                      {errors.idCurso?.message || ""}
-                    </span>
+                    <FormMessage />
                   </FormItem>
                 )}
               />
@@ -238,27 +258,25 @@ const FormUser = forwardRef<FormUserRef, FormUserProps>(
                   name="idCurso"
                   render={({ field }) => (
                     <FormItem className="p-1">
-                      <MySelect
+                      <VirtualizedCombobox
                         {...field}
-                        label="Curso:"
-                        id="select-option"
-                        placeholder="Selecione uma opção"
+                        required
+                        label="Curso"
+                        id="select-curso"
+                        size="lg"
+                        height={100}
                         options={
-                          cursos?.map((curso: Curso) => ({
-                            value: curso.idCurso.toString(),
-                            label: curso.nomeCurso,
+                          cursos.map((curso: Curso) => ({
+                            label: curso.nomeCurso.toString(),
+                            id: curso.idCurso.toString(),
                           })) || []
                         }
-                        required
-                        disabled={isLoading}
+                        placeholder="Buscar curso"
                         loading={cursosLoading}
-                        error={!!errors.idCurso}
-                        value={field.value || ""}
-                        onValueChange={(value) => field.onChange(value)}
+                        error={errors.idCurso?.message}
+                        value={field.value}
+                        onChange={(value) => field.onChange(value)}
                       />
-                      <span className="min-h-[16px] text-xs font-semibold text-destructive">
-                        {errors.idCurso?.message || ""}
-                      </span>
                     </FormItem>
                   )}
                 />
@@ -286,6 +304,7 @@ const FormUser = forwardRef<FormUserRef, FormUserProps>(
             {!showPasswordContainer && (
               <Button
                 variant={"secondary"}
+                type="button"
                 onClick={() => setShowPasswordContainer(true)}
                 className="flex items-center gap-2"
               >
@@ -311,9 +330,7 @@ const FormUser = forwardRef<FormUserRef, FormUserProps>(
                         value={field.value}
                         onChange={(value) => field.onChange(value)}
                       />
-                      <span className="min-h-[16px] text-xs font-semibold text-destructive">
-                        {errors.senha?.message || ""}
-                      </span>
+                      <FormMessage />
                     </FormItem>
                   )}
                 />
@@ -334,9 +351,7 @@ const FormUser = forwardRef<FormUserRef, FormUserProps>(
                         value={field.value}
                         onChange={(value) => field.onChange(value)}
                       />
-                      <span className="min-h-[16px] text-xs font-semibold text-destructive">
-                        {errors.confirmaSenha?.message || ""}
-                      </span>
+                      <FormMessage />
                     </FormItem>
                   )}
                 />

@@ -81,7 +81,7 @@ export async function PUT(
       password: body.password ? body.password : null,
     };
 
-    if (!user.nome || !user.email || !user.status || !user.role) {
+    if (!user.nome || !user.email || user.status == undefined || !user.role) {
       return NextResponse.json(
         { error: "Todos os campos são obrigatórios!" },
         { status: 400 },
