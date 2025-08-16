@@ -45,7 +45,7 @@ model User {
 
 model Turma {
   idTurma     Int      @id @default(autoincrement())
-  uuid        String?  @default(uuid()) @unique
+  uuid        String  @default(uuid()) @unique
   codigoTurma String   @unique @db.VarChar(50)
   turnoTurma  String   @db.VarChar(50)
   idCurso     Int
@@ -58,7 +58,7 @@ model Turma {
 
 model Produto {
   idProduto       Int      @id @default(autoincrement())
-  uuid            String?   @default(uuid()) @unique
+  uuid            String  @default(uuid()) @unique
   prodDescricao   String   @unique @db.VarChar(255)
   prodFabricante  String   @db.VarChar(255)
   prodQuantidade  Int
