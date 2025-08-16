@@ -78,7 +78,7 @@ export async function PUT(
       !body.prodQuantidade ||
       !body.prodValidade ||
       !body.prodLote ||
-      !body.prodTurma ||
+      !body.turmaUuid ||
       !body.prodCurso
     )
       return NextResponse.json(
@@ -94,22 +94,21 @@ export async function PUT(
       uuid: params.id,
       prodDescricao: body.prodDescricao.trim(),
       prodFabricante: body.prodFabricante.trim(),
-      prodQuantidade: body.prodQuantidade.trim(),
-      prodValidade: body.prodValidade.trim(),
+      prodQuantidade: body.prodQuantidade,
+      prodValidade: body.prodValidade,
       prodLote: body.prodLote.trim(),
-      prodTurma: body.prodTurma,
       prodCurso: body.prodCurso,
     };
 
-    const updated = await updateProduto(produto);
+    const uuidTurma = body.turmaUuid;
+
+    const updated = await updateProduto(produto, uuidTurma);
     if (updated) {
       return NextResponse.json(
-        { message: "Produto atualizado com sucesso!" },
+        { updated, message: "Produto atualizado com sucesso!" },
         { status: 200 },
       );
     }
-
-    return NextResponse.json(produto, { status: 200 });
   } catch (error) {
     const { status, message } = handleDatabaseError(error);
     return NextResponse.json({ error: true, message }, { status });

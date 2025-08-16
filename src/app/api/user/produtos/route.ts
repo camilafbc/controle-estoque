@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 
 import { authOptions } from "@/lib/auth";
+import { createOperacao } from "@/services/operacoes";
 import { createProduto } from "@/services/produtos";
 import { handleDatabaseError } from "@/utils/handleDbError";
 
@@ -17,6 +18,7 @@ export async function POST(req: NextRequest) {
 
   try {
     const body = await req.json();
+    const idUser = session.user.id;
 
     if (
       !body.prodDescricao ||
@@ -46,6 +48,15 @@ export async function POST(req: NextRequest) {
     };
 
     const newProduto = await createProduto(produto, body.turmaUuid);
+
+    if (newProduto) {
+      const operacao = await createOperacao(
+        +idUser,
+        +newProduto.idProduto,
+        +1,
+        newProduto.prodQuantidade,
+      );
+    }
     return NextResponse.json(
       { produto: newProduto, message: "Produto cadastrado com sucesso!" },
       { status: 201 },

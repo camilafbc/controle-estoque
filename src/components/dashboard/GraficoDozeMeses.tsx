@@ -1,7 +1,13 @@
 "use client";
 import { ReloadIcon } from "@radix-ui/react-icons";
 import { motion } from "framer-motion";
-import { Bar, BarChart, CartesianGrid, XAxis } from "recharts";
+import {
+  Bar,
+  BarChart,
+  CartesianGrid,
+  ResponsiveContainer,
+  XAxis,
+} from "recharts";
 
 import {
   Card,
@@ -131,7 +137,7 @@ export default function GraficoDozeMeses({
     >
       <Card className="shadow-md">
         <CardHeader>
-          <CardTitle className="text-xl">
+          <CardTitle className="text-lg">
             Entradas e Saídas dos Últimos 12 Meses
           </CardTitle>
           <CardDescription className="text-xs">
@@ -140,30 +146,32 @@ export default function GraficoDozeMeses({
         </CardHeader>
         <CardContent>
           <ChartContainer config={chartConfig}>
-            <BarChart accessibilityLayer data={chartData}>
-              <CartesianGrid vertical={false} />
-              <XAxis
-                dataKey="month"
-                tickLine={false}
-                tickMargin={10}
-                axisLine={false}
-                tickFormatter={(value) => value.slice(0, 3)}
-              />
-              <ChartTooltip content={<ChartTooltipContent hideLabel />} />
-              <ChartLegend content={<ChartLegendContent />} />
-              <Bar
-                dataKey="entradas"
-                stackId="a"
-                fill="var(--color-entradas)"
-                radius={[0, 0, 4, 4]}
-              />
-              <Bar
-                dataKey="saidas"
-                stackId="a"
-                fill="var(--color-saidas)"
-                radius={[4, 4, 0, 0]}
-              />
-            </BarChart>
+            <ResponsiveContainer width="100%" height="100%" className="flex-1">
+              <BarChart accessibilityLayer data={chartData}>
+                <CartesianGrid vertical={false} />
+                <XAxis
+                  dataKey="month"
+                  tickLine={false}
+                  tickMargin={10}
+                  axisLine={false}
+                  tickFormatter={(value) => value.slice(0, 3)}
+                />
+                <ChartTooltip content={<ChartTooltipContent hideLabel />} />
+                <ChartLegend content={<ChartLegendContent />} />
+                <Bar
+                  dataKey="entradas"
+                  stackId="a"
+                  fill="var(--color-entradas)"
+                  radius={[0, 0, 4, 4]}
+                />
+                <Bar
+                  dataKey="saidas"
+                  stackId="a"
+                  fill="var(--color-saidas)"
+                  radius={[4, 4, 0, 0]}
+                />
+              </BarChart>
+            </ResponsiveContainer>
           </ChartContainer>
         </CardContent>
       </Card>

@@ -35,7 +35,7 @@ const validationSchema = yup.object({
       otherwise: (schema) => schema.notRequired(),
     }),
   status: yup.boolean().required("Campo obrigatório"),
-  senha: yup
+  password: yup
     .string()
     .test("senha-required", "Campo obrigatório", function (value) {
       const isRequired = !this.options?.context?.isEdit;
@@ -52,8 +52,8 @@ const validationSchema = yup.object({
   confirmaSenha: yup
     .string()
     .test("confirmaSenha", "As senhas não coincidem", function (value) {
-      const { senha } = this.parent;
-      return !senha || senha === value;
+      const { password } = this.parent;
+      return !password || password === value;
     }),
 });
 
@@ -96,7 +96,7 @@ const FormUser = forwardRef<FormUserRef, FormUserProps>(
         role: "user",
         status: true,
         idCurso: "",
-        senha: "",
+        password: "",
         confirmaSenha: "",
       },
       context: {
@@ -124,7 +124,7 @@ const FormUser = forwardRef<FormUserRef, FormUserProps>(
           role: "user",
           status: true,
           idCurso: "",
-          senha: "",
+          password: "",
           confirmaSenha: "",
         });
         setShowPasswordContainer(true);
@@ -151,7 +151,7 @@ const FormUser = forwardRef<FormUserRef, FormUserProps>(
             isUser && initialValues.curso
               ? initialValues.curso.idCurso.toString()
               : "",
-          senha: "",
+          password: "",
           confirmaSenha: "",
         });
 
@@ -163,7 +163,7 @@ const FormUser = forwardRef<FormUserRef, FormUserProps>(
           role: "user",
           status: true,
           idCurso: "",
-          senha: "",
+          password: "",
           confirmaSenha: "",
         });
         setShowPasswordContainer(true);
@@ -316,17 +316,17 @@ const FormUser = forwardRef<FormUserRef, FormUserProps>(
               <>
                 <FormField
                   control={control}
-                  name="senha"
+                  name="password"
                   render={({ field }) => (
                     <FormItem className="p-1">
                       <Input
                         {...field}
                         required
-                        id="input-senha"
+                        id="input-password"
                         type="password"
                         label="Senha"
                         placeholder="Informe uma senha"
-                        error={!!errors.senha}
+                        error={!!errors.password}
                         value={field.value}
                         onChange={(value) => field.onChange(value)}
                       />

@@ -1,8 +1,8 @@
-import { cn } from "@/lib/utils";
-import { Button } from "../button";
-import { Tooltip, TooltipContent, TooltipTrigger } from "../tooltip";
 import { Edit, Eye, MousePointer, Trash2, TriangleAlert } from "lucide-react";
 import { useState } from "react";
+
+import { cn } from "@/lib/utils";
+
 import {
   AlertDialog,
   AlertDialogContent,
@@ -10,6 +10,8 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
 } from "../alert-dialog";
+import { Button } from "../button";
+import { Tooltip, TooltipContent, TooltipTrigger } from "../tooltip";
 
 interface DataTableActionsProps {
   children?: React.ReactNode;

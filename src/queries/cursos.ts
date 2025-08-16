@@ -9,7 +9,7 @@ export const useCursos = (initialData?: Curso[]) => {
     queryKey: ["cursos"],
     queryFn: () => getCursos(),
     initialData: initialData,
-    staleTime: 1000 * 60 * 5,
+    staleTime: 5 * 60 * 1000,
   });
   return query;
 };

@@ -21,7 +21,7 @@ const validationSchema = yup.object({
 export type FormTurmasFields = yup.InferType<typeof validationSchema>;
 
 interface FormTurmasProps {
-  initialValues?: Turma;
+  initialValues?: any;
   isLoading?: boolean;
   defaultFocus?: keyof FormTurmasFields;
   onSubmit: SubmitHandler<FormTurmasFields>;

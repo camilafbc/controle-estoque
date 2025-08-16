@@ -2,8 +2,6 @@ export function handleDatabaseError(error: any): {
   status: number;
   message: string;
 } {
-  console.error("Erro capturado: ", error);
-
   // Tratamento de erros do Prisma
   if (error.code) {
     switch (error.code) {

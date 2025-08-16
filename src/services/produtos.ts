@@ -14,6 +14,9 @@ export const getProdutos = async (idCurso: number, turmaUuid: string) => {
       prodCurso: Number(idCurso),
       prodTurma: Number(turma?.idTurma),
     },
+    orderBy: {
+      idProduto: "desc",
+    },
   });
   return produtos;
 };
@@ -90,22 +93,39 @@ export const createProduto = async (
   }
 };
 
-export const updateProduto = async (produto: Omit<Produto, "idProduto">) => {
+export const updateProduto = async (
+  produto: Partial<Produto>,
+  uuidTurma: string,
+) => {
+  const turma = await prisma.turma.findUnique({
+    where: {
+      uuid: uuidTurma,
+    },
+    select: {
+      idTurma: true,
+      uuid: true,
+    },
+  });
+
+  if (!turma) {
+    throw new Error("Turma não encontrada");
+  }
+
   const produtoUpdated = await prisma.produto.update({
     where: {
       uuid: produto.uuid,
     },
     data: {
-      prodDescricao: produto.prodDescricao.trim(),
-      prodFabricante: produto.prodFabricante.trim(),
-      prodLote: produto.prodLote.trim(),
+      prodDescricao: produto?.prodDescricao?.trim(),
+      prodFabricante: produto?.prodFabricante?.trim(),
+      prodLote: produto?.prodLote?.trim(),
       prodQuantidade: produto.prodQuantidade,
       prodValidade: produto.prodValidade,
       prodCurso: produto.prodCurso,
-      prodTurma: produto.prodTurma,
+      prodTurma: turma.idTurma,
     },
   });
-  return produtoUpdated;
+  return { ...produtoUpdated, turma: { uuid: turma.uuid } };
 };
 
 export const updateQuantidadeProduto = async (

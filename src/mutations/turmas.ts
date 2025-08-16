@@ -17,7 +17,7 @@ export const useUpdateTurmaMutation = () => {
   const queryClient = useQueryClient();
   const mutation = useMutation({
     mutationFn: (turma: any) => updateTurma(turma),
-    onSuccess: () => {
+    onSuccess: (_, variables, ctx) => {
       queryClient.invalidateQueries({ queryKey: ["turmas"] });
     },
   });

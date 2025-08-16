@@ -8,6 +8,7 @@ import Link from "next/link";
 import MyTooltip from "@/components/Tooltip";
 import { Button } from "@/components/ui/button";
 import {
+  DataTableAction,
   DataTableDeleteAction,
   DataTableEditAction,
 } from "@/components/ui/data-table/data-table-action-buttons";
@@ -30,12 +31,12 @@ export const columns = (
     ),
     cell: ({ row }) => (
       <div className="flex items-center justify-center px-2">
-        <MyTooltip content="Movimentações">
-          <ListPlus
-            onClick={() => handleMovimentacoes(row.original.uuid || "")}
-            className="size-5 cursor-pointer hover:text-orange-500/90 dark:text-yellow-600"
-          />
-        </MyTooltip>
+        <DataTableAction
+          tooltipText="Movimentações"
+          onClick={() => handleMovimentacoes(row.original.uuid || "")}
+        >
+          <ListPlus className="size-4 text-orange-500 hover:text-orange-500/90 dark:text-yellow-600" />
+        </DataTableAction>
         <DataTableEditAction
           onClick={() => handleEdit(row.original.uuid || "")}
         />
@@ -47,47 +48,8 @@ export const columns = (
       </div>
     ),
     enableSorting: false,
-    size: 7,
-  },
-  {
-    accessorKey: "prodLote",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Lote" />
-    ),
-    enableSorting: true,
-    meta: { type: "string", minWidth: "30" },
     size: 10,
-  },
-  {
-    accessorKey: "prodValidade",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Validade" />
-    ),
-    enableSorting: true,
-    meta: { type: "date", minWidth: "20" },
-    size: 8,
-  },
-  {
-    accessorKey: "prodFabricante",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Fabricante" />
-    ),
-    enableSorting: true,
-    meta: { type: "string", minWidth: "20" },
-    size: 10,
-  },
-
-  {
-    accessorKey: "prodQuantidade",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Qtd." />
-    ),
-    // cell: ({ row }) => (
-    //   <p className="pe-4 text-end">{row.getValue("prodQuantidade")}</p>
-    // ),
-    enableSorting: true,
-    meta: { type: "number", minWidth: "20" },
-    size: 7,
+    meta: { minWidth: "60" },
   },
   {
     accessorKey: "prodDescricao",
@@ -95,10 +57,55 @@ export const columns = (
       <DataTableColumnHeader
         column={column}
         title="Produto"
-        className="w-[200px]"
+        // className="w-[200px]"
       />
     ),
     enableSorting: true,
-    meta: { type: "string" },
+    meta: { type: "string", minWidth: "180" },
+    // size: 200,
+  },
+  {
+    accessorKey: "prodFabricante",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Fabricante" />
+    ),
+    enableSorting: true,
+    meta: { type: "string", minWidth: "120" },
+    // size: 140,
+  },
+  {
+    accessorKey: "prodLote",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Lote" />
+    ),
+    enableSorting: true,
+    meta: { type: "string", minWidth: "80" },
+    // size: 100,
+  },
+  {
+    accessorKey: "prodValidade",
+    header: ({ column }) => (
+      <DataTableColumnHeader
+        column={column}
+        title="Validade"
+        className="justify-center"
+      />
+    ),
+    enableSorting: true,
+    meta: { type: "date", minWidth: "90" },
+    // size: 110,
+  },
+
+  {
+    accessorKey: "prodQuantidade",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Estoque" />
+    ),
+    // cell: ({ row }) => (
+    //   <p className="pe-4 text-end">{row.getValue("prodQuantidade")}</p>
+    // ),
+    enableSorting: true,
+    meta: { type: "number", minWidth: "70" },
+    // size: 90,
   },
 ];

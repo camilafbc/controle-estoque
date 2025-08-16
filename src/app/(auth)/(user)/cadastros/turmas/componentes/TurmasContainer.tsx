@@ -7,6 +7,7 @@ import { SubmitHandler } from "react-hook-form";
 import { toast } from "react-toastify";
 
 import MyDialog from "@/components/MyDialog";
+import { SearchInput } from "@/components/SearchInput";
 import FormTurmas, {
   FormTurmasFields,
   FormTurmasRef,
@@ -82,6 +83,7 @@ export default function TurmasContainer({ initialData }: TurmasContainerProps) {
     createTurma.mutate(data, {
       onSuccess: (response) => {
         toast.success(response.message);
+        setOpenDialog(false);
       },
       onError: (error) => {
         toast.error(getErrorMessage(error));
@@ -93,6 +95,7 @@ export default function TurmasContainer({ initialData }: TurmasContainerProps) {
     updateTurma.mutate(data, {
       onSuccess: (response) => {
         toast.success(response.message);
+        setOpenDialog(false);
       },
       onError: (error) => {
         toast.error(getErrorMessage(error));
@@ -118,17 +121,16 @@ export default function TurmasContainer({ initialData }: TurmasContainerProps) {
   return (
     <>
       <div className="mb-8 flex flex-col items-start justify-between gap-2 md:flex-row md:items-center">
-        <Input
+        <SearchInput
           placeholder="Buscar Turma"
           value={filterValue}
           onChange={(event) => setFilterValue(event.target.value)}
-          className="h-9 max-w-[200px] bg-card"
         />
         <Button
           onClick={handleNew}
           className="flex items-center gap-2 hover:bg-orange-500/90"
         >
-          <PlusCircle className="size-4 md:size-8" />
+          <PlusCircle className="size-4" />
           Nova Turma
         </Button>
       </div>
@@ -171,14 +173,15 @@ export default function TurmasContainer({ initialData }: TurmasContainerProps) {
       >
         <FormTurmas
           ref={formRef}
-          initialValues={
-            turma.data
-              ? {
-                  ...turma.data,
-                  uuid: turma.data.uuid === undefined ? null : turma.data.uuid,
-                }
-              : undefined
-          }
+          // initialValues={
+          //   turma.data
+          //     ? {
+          //         ...turma.data,
+          //         uuid: turma.data.uuid === undefined ? null : turma.data.uuid,
+          //       }
+          //     : undefined
+          // }
+          initialValues={turma.data}
           isLoading={createTurma.isPending || updateTurma.isPending}
           onSubmit={handleSubmit}
         />

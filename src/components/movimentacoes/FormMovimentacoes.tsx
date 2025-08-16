@@ -8,7 +8,7 @@ import * as yup from "yup";
 
 import { MySelect } from "../MySelect";
 import { Button } from "../ui/button";
-import { Form, FormField, FormItem } from "../ui/form";
+import { Form, FormField, FormItem, FormMessage } from "../ui/form";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
 
@@ -122,11 +122,13 @@ const FormMovimentacoes = forwardRef<
                   </Button>
                   <Input
                     id="input-quantidade"
-                    // {...register("quantidade")}
                     value={field.value}
-                    onChange={(e) =>
-                      setValue("quantidade", Number(e.target.value))
-                    }
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      if (/^\d*$/.test(value)) {
+                        setValue("quantidade", Number(value));
+                      }
+                    }}
                     className="h-9 rounded-none text-center focus:border focus:ring"
                   />
                   <Button
@@ -137,9 +139,7 @@ const FormMovimentacoes = forwardRef<
                     <Plus />
                   </Button>
                 </div>
-                <span className="min-h-4 text-xs font-semibold text-destructive">
-                  {errors.quantidade && errors.quantidade.message}
-                </span>
+                <FormMessage />
               </FormItem>
             )}
           />

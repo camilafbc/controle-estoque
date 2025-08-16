@@ -1,18 +1,19 @@
 "use client";
 
 import { yupResolver } from "@hookform/resolvers/yup";
-import { getSession, signIn } from "next-auth/react";
+import { Loader2, LogIn } from "lucide-react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { getSession, signIn } from "next-auth/react";
 import { useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import * as yup from "yup";
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
-import { Checkbox } from "@/components/ui/checkbox";
+
 import { Button } from "@/components/ui/button";
-import { Loader2, LogIn } from "lucide-react";
-import Link from "next/link";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Form, FormField, FormItem } from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 interface FormInputs {
   email: string;
@@ -48,8 +49,6 @@ export default function LoginForm() {
         email: data.email.trim(),
         password: data.password.trim(),
       });
-
-      console.log("RESULT LOGIN: ", result);
 
       if (result?.ok) {
         // aguarda a sessão ser atualizada
@@ -95,7 +94,7 @@ export default function LoginForm() {
                 placeholder="Informe seu e-mail"
                 disabled={loading}
                 error={!!errors.email}
-                className="text-zinc-900 focus:bg-white dark:bg-white"
+                className="text-zinc-900 focus:bg-white dark:border-orange-500 dark:bg-white"
               />
               <span className="text-xs font-semibold text-destructive">
                 {errors?.email && errors?.email?.message}
@@ -118,7 +117,7 @@ export default function LoginForm() {
                 disabled={loading}
                 type="password"
                 error={!!errors.password}
-                className="text-zinc-900 focus:bg-white dark:bg-white"
+                className="text-zinc-900 focus:bg-white dark:border-primary dark:bg-white"
               />
               <span className="text-xs font-semibold text-destructive">
                 {errors?.password && errors?.password?.message}
@@ -126,7 +125,7 @@ export default function LoginForm() {
             </FormItem>
           )}
         />
-        <div className="flex items-center justify-between">
+        {/* <div className="flex items-center justify-between">
           <div className="flex gap-1">
             <Checkbox />
             <Label className="text-sm font-normal text-zinc-500 dark:text-zinc-500">
@@ -141,7 +140,7 @@ export default function LoginForm() {
               Esqueci minha senha
             </Button>
           </Link>
-        </div>
+        </div> */}
         <Button
           type="submit"
           size="lg"

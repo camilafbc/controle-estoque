@@ -10,9 +10,16 @@ export const useCreateOperacaoMutation = () => {
       tipoOp: number;
       quantidade: number;
     }) => createOperacao(operacao),
-    onSuccess: (_data, variables) => {
+    onSuccess: (data) => {
       queryClient.invalidateQueries({
-        queryKey: ["operacoes", variables.uuidProduto],
+        queryKey: ["operacoes", data.operacao.produto.uuid],
+      });
+      queryClient.invalidateQueries({
+        queryKey: [
+          "produtos",
+          data.operacao.produto.turma.uuid,
+          data.operacao.produto.prodCurso,
+        ],
       });
     },
   });

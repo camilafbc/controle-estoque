@@ -20,6 +20,17 @@ export const createOperacao = async (
       data: new Date(currentData),
       quantidade: qtd,
     },
+    include: {
+      produto: {
+        select: {
+          prodCurso: true,
+          uuid: true,
+          turma: {
+            select: { uuid: true },
+          },
+        },
+      },
+    },
   });
 
   return operacao;

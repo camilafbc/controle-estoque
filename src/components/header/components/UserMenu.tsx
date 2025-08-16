@@ -83,7 +83,6 @@ export default function UserMenu({
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger>
-        {/* <UserAvatar /> */}
         <Avatar className="h-[50px] w-[50px]">
           {avatarImage && <AvatarImage src={avatarImage} alt="profile-image" />}
           <AvatarFallback className="bg-primary text-center text-lg font-semibold text-white">

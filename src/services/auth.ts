@@ -1,6 +1,7 @@
-import prisma from "@/lib/prisma";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
+
+import prisma from "@/lib/prisma";
 
 export const hasEmail = async (email: string) => {
   const user = await prisma.user.findUnique({
@@ -22,6 +23,7 @@ export const validateAuth = async (email: string, password: string) => {
     email: user.email,
     curso: user.idCurso,
     role: user.role,
+    status: user.status,
   };
 };
 

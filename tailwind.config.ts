@@ -80,7 +80,7 @@ const config = {
         sans: ["var(--font-sans)", ...fontFamily.sans],
       },
       backgroundImage: {
-        pattern: "url(/squares-in-squares.svg)",
+        pattern: "url('/squares-in-squares.svg')",
       },
     },
   },

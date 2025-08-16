@@ -50,10 +50,12 @@ export const useDashRelatorioDozeMeses = (
   return query;
 };
 
-export const useDashLastOperacoes = () => {
+export const useDashLastOperacoes = (idCurso: number, initialData?: any) => {
   const query = useQuery({
     queryKey: ["dashLastOperacoes"],
-    queryFn: () => getDashLastOperacoes(),
+    queryFn: () => getDashLastOperacoes(idCurso),
+    enabled: !!idCurso,
+    initialData: initialData,
   });
   return query;
 };

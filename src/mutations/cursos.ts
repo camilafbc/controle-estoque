@@ -18,10 +18,10 @@ export const useUpdateCursoMutation = () => {
   const queryClient = useQueryClient();
   const mutation = useMutation({
     mutationFn: (curso: Curso) => updateCurso(curso),
-    onSuccess: (updatedCurso) => {
+    onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ["cursos"] });
       queryClient.invalidateQueries({
-        queryKey: ["cursos", updatedCurso.idCurso],
+        queryKey: ["cursos", variables.idCurso],
       });
     },
   });

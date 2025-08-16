@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import { AuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 
@@ -17,33 +17,56 @@ export const authOptions: AuthOptions = {
       authorize: async (credentials) => {
         if (!credentials) return null;
 
-        const response = await fetch(
-          `${process.env.NEXTAUTH_URL}/api/auth/signin`,
-          {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              email: credentials.email,
-              password: credentials.password,
-            }),
-            credentials: "include",
-          },
-        );
+        try {
+          const response = await fetch(
+            `${process.env.NEXTAUTH_URL}/api/auth/signin`,
+            {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                email: credentials.email,
+                password: credentials.password,
+              }),
+              credentials: "include",
+            },
+          );
 
-        if (!response.ok) return null;
+          if (!response.ok) return null;
 
-        const data = await response.json();
+          const data = await response.json();
 
-        if (data.user) {
-          return {
-            id: data.user.id,
-            name: data.user.name,
-            email: data.user.email,
-            curso: data.user.curso,
-            role: data.user.role,
-          };
+          if (data.user) {
+            return {
+              id: data.user.id,
+              name: data.user.name,
+              email: data.user.email,
+              curso: data.user.curso,
+              role: data.user.role,
+            };
+          }
+
+          return null;
+        } catch (error) {
+          const axiosError = error as AxiosError<Error>;
+
+          if (
+            axiosError.code === "ECONNREFUSED" ||
+            "ERR_BAD_RESPONSE" ||
+            "ERR_BAD_REQUEST"
+          ) {
+            throw new Error("Erro de conexão com o servidor. Tente novamente.");
+          }
+
+          if (axiosError.code === "ECONNABORTED") {
+            throw new Error("Tempo de espera excedido. Tente novamente.");
+          }
+
+          if (axiosError.response?.data.message) {
+            throw new Error(axiosError.response?.data.message);
+          }
+
+          return null;
         }
-        return null;
       },
     }),
   ],
@@ -59,21 +82,6 @@ export const authOptions: AuthOptions = {
       }
 
       if (trigger == "update") {
-        //console.log("SESSION TRIGGER: ", session);
-        // if (session?.user) {
-        //   const decodedToken = jwtDecode<CustomJwtPayload>(
-        //     session.data.accessToken,
-        //   );
-        //   console.log("DECODED no UPDATE: ", decodedToken);
-        //   token = {
-        //     ...token,
-        //     id: decodedToken.id,
-        //     name: session.user.name,
-        //     email: decodedToken.email,
-        //     accessToken: session.data.accessToken,
-        //     role: decodedToken.role,
-        //   };
-        // }
         token.name = session.user.name;
       }
 

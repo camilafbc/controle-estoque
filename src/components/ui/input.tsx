@@ -9,7 +9,7 @@ import { Label } from "./label";
 import { Tooltip, TooltipContent, TooltipTrigger } from "./tooltip";
 
 const inputVariants = cva(
-  "flex h-9 w-full rounded-md border border-input bg-card px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-primary file:rounded-md file:p-1 file:text-primary-foreground file:cursor-pointer file:text-xs file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:bg-muted disabled:text-muted-foreground placeholder:disabled:text-muted-foreground/50",
+  "flex h-9 w-full rounded-md border border-input bg-card px-2 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-primary file:rounded-md file:p-1 file:text-primary-foreground file:cursor-pointer file:text-xs file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:bg-muted disabled:text-muted-foreground placeholder:disabled:text-muted-foreground/50",
   {
     defaultVariants: {
       error: false,
@@ -21,9 +21,9 @@ const inputVariants = cva(
         true: "border-destructive focus-visible:ring-destructive shadow-destructive",
       },
       size: {
-        default: "h-9 px-4 py-2",
-        lg: "h-10 rounded-md px-3",
-        sm: "h-8 rounded-md px-3 text-xs",
+        default: "h-9  py-2",
+        lg: "h-10 rounded-md ",
+        sm: "h-8 rounded-md  text-xs",
       },
     },
   },
@@ -98,7 +98,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
           {isTypePassword && (
             <Button
               className={cn(
-                "h-auto rounded-l-none border-[1px] border-l-0 bg-primary text-primary-foreground shadow-sm hover:bg-primary/90 group-focus-within:ring-1 group-focus-within:ring-ring",
+                "h-auto rounded-l-none border-[1px] border-l-0 bg-primary text-primary-foreground shadow-sm hover:bg-primary/90 group-focus-within:ring-1 group-focus-within:ring-ring dark:border-primary",
                 error
                   ? "border-destructive shadow-destructive focus-visible:ring-destructive"
                   : "",

@@ -11,6 +11,7 @@ import {
   FormProdutoFields,
   FormProdutoRef,
 } from "@/components/produtos/FormProduto";
+import { SearchInput } from "@/components/SearchInput";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { VirtualizedCombobox } from "@/components/ui/virtualized-combobox/VirtualizedCombobox";
@@ -127,6 +128,7 @@ export default function ProductContainer({
     updateProduto.mutate(data, {
       onSuccess: (response) => {
         toast.success(response.message);
+        setOpenDialog(false);
       },
       onError: (error) => {
         toast.error(getErrorMessage(error));
@@ -136,6 +138,7 @@ export default function ProductContainer({
 
   const onSubmit: SubmitHandler<FormProdutoFields> = (data) => {
     const payload = {
+      uuid: produto.data?.uuid,
       prodDescricao: data.produto.trim(),
       prodFabricante: data.fabricante.trim(),
       prodQuantidade: +data.quantidade,
@@ -182,11 +185,10 @@ export default function ProductContainer({
               )}
             />
           </div>
-          <Input
-            placeholder="Filtrar produtos"
+          <SearchInput
+            placeholder="Buscar produto"
             value={filterValue}
             onChange={(event) => setFilterValue(event.target.value)}
-            className="h-9 max-w-sm bg-card"
           />
         </form>
         <Button

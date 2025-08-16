@@ -76,7 +76,7 @@ export default function DashboardCard({
                 <p className="text-xl font-extrabold lg:text-2xl">
                   {typeof data === "number"
                     ? data.toLocaleString("pt-BR")
-                    : data}
+                    : data.toString()}
                 </p>
               )
             )}

@@ -30,7 +30,7 @@ export const createProduto = async (
 };
 
 export const updateProduto = async (produto: Omit<Produto, "prodTurma">) => {
-  const response = await api.put("/api/user/produtos", { produto });
+  const response = await api.put(`/api/user/produtos/${produto.uuid}`, produto);
   return response.data;
 };
 

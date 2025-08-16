@@ -99,7 +99,12 @@ const FormProduto = forwardRef<FormProdutoRef, FormProdutoProps>(
           fabricante: initialValues.prodFabricante ?? "",
           lote: initialValues.prodLote ?? "",
           quantidade: initialValues.prodQuantidade.toString() ?? "",
-          dataValidade: new Date(initialValues.prodValidade),
+          // dataValidade: new Date(initialValues.prodValidade),
+          dataValidade: initialValues.prodValidade
+            ? dayjs(initialValues.prodValidade).isValid()
+              ? dayjs(initialValues.prodValidade).toDate()
+              : undefined
+            : undefined,
           turma: initialValues?.turma?.uuid.toString() ?? "",
         });
       }
@@ -202,6 +207,7 @@ const FormProduto = forwardRef<FormProdutoRef, FormProdutoProps>(
                   label="Validade"
                   placeholder="dd/mm/aaaa"
                   required
+                  error={!!errors.dataValidade}
                   selected={field.value}
                   onSelect={field.onChange}
                 />

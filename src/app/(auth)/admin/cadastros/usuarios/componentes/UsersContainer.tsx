@@ -7,6 +7,7 @@ import { SubmitHandler } from "react-hook-form";
 import { toast } from "react-toastify";
 
 import MyDialog from "@/components/MyDialog";
+import { SearchInput } from "@/components/SearchInput";
 import { Button } from "@/components/ui/button";
 import { DataTable } from "@/components/ui/data-table/data-table";
 import { Input } from "@/components/ui/input";
@@ -108,7 +109,7 @@ export default function UsersContainer({ users }: UsersContainerProps) {
       role: data.role.trim(),
       status: data.status,
       idCurso: Number(data.idCurso),
-      ...(data.senha && { senha: data.senha.trim() }),
+      ...(data.password && { password: data.password.trim() }),
     };
 
     if (editingId) {
@@ -122,17 +123,16 @@ export default function UsersContainer({ users }: UsersContainerProps) {
   return (
     <>
       <div className="mb-8 flex flex-col items-start justify-between gap-2 md:flex-row md:items-center">
-        <Input
+        <SearchInput
           placeholder="Buscar Usuário"
           value={filterValue}
           onChange={(event) => setFilterValue(event.target.value)}
-          className="h-9 max-w-sm bg-card"
         />
         <Button
           onClick={handleAddButton}
           className="flex items-center gap-2 hover:bg-orange-500/90"
         >
-          <PlusCircle className="size-4 md:size-8" />
+          <PlusCircle className="size-4" />
           Novo Usuário
         </Button>
       </div>

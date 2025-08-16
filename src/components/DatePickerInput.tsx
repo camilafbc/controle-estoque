@@ -41,7 +41,7 @@ export interface InputProps
   infoText?: string;
   label?: string;
   required?: boolean;
-  selected: any;
+  selected: Date;
   onSelect: VoidFunction;
 }
 
@@ -62,7 +62,7 @@ const DatePickerInput = forwardRef<HTMLInputElement, InputProps>(
     },
     ref,
   ) => {
-    const [open, setOpen] = useState(false); // Estado para controlar a abertura do popover
+    const [open, setOpen] = useState(false);
 
     return (
       <div className="flex w-full flex-col gap-1">
@@ -107,17 +107,21 @@ const DatePickerInput = forwardRef<HTMLInputElement, InputProps>(
                 <CalendarIcon className="size-5 text-white" />
               </Button>
             </PopoverTrigger>
-            <PopoverContent className="w-auto p-0 capitalize" align="start">
+            <PopoverContent
+              onPointerDownOutside={(e) => e.preventDefault()}
+              className="pointer-events-auto w-auto p-0 capitalize"
+              align="start"
+            >
               <Calendar
                 mode="single"
                 locale={ptBR}
                 captionLayout="dropdown"
-                defaultMonth={new Date()}
+                defaultMonth={selected ?? new Date()}
                 startMonth={new Date(2024, 6)}
                 endMonth={new Date(2050, 9)}
                 selected={selected}
                 onSelect={onSelect}
-                disabled={(date) => date < new Date("1900-01-01")}
+                disabled={(date) => date < new Date()}
               />
             </PopoverContent>
           </Popover>

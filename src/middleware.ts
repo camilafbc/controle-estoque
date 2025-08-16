@@ -46,5 +46,7 @@ export async function middleware(req: NextRequest) {
 
 // Configuração para aplicar em todas as rotas exceto arquivos estáticos
 export const config = {
-  matcher: ["/((?!_next/static|_next/image|favicon.ico).*)"],
+  matcher: [
+    "/((?!_next/static|_next/image|favicon.ico|logo.png|squares-in-squares.svg|.*\\.svg|.*\\.png|.*\\.jpg|.*\\.jpeg|.*\\.webp|.*\\.ico).*)",
+  ],
 };

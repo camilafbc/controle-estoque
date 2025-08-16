@@ -6,6 +6,9 @@ export const getTurmas = async (idCurso: number) => {
     where: {
       idCurso: Number(idCurso),
     },
+    orderBy: {
+      idTurma: "desc",
+    },
   });
   return turmas;
 };

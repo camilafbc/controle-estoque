@@ -10,6 +10,7 @@ import FormCurso, {
   FormCursoRef,
 } from "@/components/cursos/FormCurso";
 import MyDialog from "@/components/MyDialog";
+import { SearchInput } from "@/components/SearchInput";
 import { Button } from "@/components/ui/button";
 import { DataTable } from "@/components/ui/data-table/data-table";
 import { Input } from "@/components/ui/input";
@@ -74,6 +75,7 @@ export default function CursosContainer({ cursos }: CursosContainerProps) {
     createCurso.mutate(curso, {
       onSuccess: (response) => {
         toast.success(response.message);
+        setOpenDialog(false);
       },
       onError: (error) => {
         toast.error(getErrorMessage(error));
@@ -85,6 +87,7 @@ export default function CursosContainer({ cursos }: CursosContainerProps) {
     updateCurso.mutate(curso, {
       onSuccess: (response) => {
         toast.success(response.message);
+        setOpenDialog(false);
       },
       onError: (error) => {
         toast.error(getErrorMessage(error));
@@ -94,8 +97,8 @@ export default function CursosContainer({ cursos }: CursosContainerProps) {
 
   const handleSubmit: SubmitHandler<FormCursoFields> = (data) => {
     const curso = {
-      nomeCurso: data.nomeCurso?.trim() || "",
-      status: data.status || true,
+      nomeCurso: data.nomeCurso?.trim(),
+      status: data.status,
     };
 
     editingId
@@ -103,27 +106,31 @@ export default function CursosContainer({ cursos }: CursosContainerProps) {
       : handleCreateCurso(curso);
   };
 
+  const filteredData = cursosData
+    ? cursosData.filter((curso: Curso) =>
+        curso.nomeCurso.toLowerCase().includes(filterValue.toLowerCase()),
+      )
+    : [];
+
   return (
     <>
       <div className="mb-8 flex flex-col items-start justify-between gap-2 md:flex-row md:items-center">
-        <Input
+        <SearchInput
           placeholder="Buscar curso"
           value={filterValue}
           onChange={(event) => setFilterValue(event.target.value)}
-          className="h-9 max-w-sm bg-card"
-          size={"lg"}
         />
         <Button
           onClick={handleAddButton}
           className="flex items-center gap-2 hover:bg-orange-500/90"
         >
-          <PlusCircle className="size-4 md:size-8" />
+          <PlusCircle className="size-4" />
           Novo Curso
         </Button>
       </div>
       <DataTable
         columns={columns(handleEdit, handleDelete)}
-        data={cursosData || []}
+        data={filteredData || []}
         isLoading={cursosLoading}
       />
 

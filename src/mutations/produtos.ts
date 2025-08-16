@@ -23,6 +23,7 @@ export const useCreateProdutoMutation = (uuidTurma: string) => {
       queryClient.invalidateQueries({
         queryKey: ["produtos", uuidTurma, variables.prodCurso],
       });
+      console.log("CHAVE CREATE>: ", uuidTurma, variables.prodCurso);
     },
   });
   return mutation;
@@ -32,8 +33,10 @@ export const useUpdateProductMutation = () => {
   const queryClient = useQueryClient();
   const mutation = useMutation({
     mutationFn: (produto: Omit<Produto, "prodTurma">) => updateProduto(produto),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["produtos"] });
+    onSuccess: (data, variables) => {
+      queryClient.invalidateQueries({
+        queryKey: ["produtos", data.updated.turma.uuid, variables.prodCurso],
+      });
     },
   });
   return mutation;

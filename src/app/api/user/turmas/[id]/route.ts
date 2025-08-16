@@ -78,10 +78,10 @@ export async function PUT(
       !turma.codigoTurma ||
       !turma.idCurso ||
       !turma.turnoTurma ||
-      !turma.status
+      turma.status == undefined
     ) {
       return NextResponse.json(
-        { error: "Nome e descrição são obrigatórios" },
+        { error: "Dados incompletos! Verifique as informações!" },
         { status: 400 },
       );
     }

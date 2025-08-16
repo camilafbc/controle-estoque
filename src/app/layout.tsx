@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Inter as FontSans } from "next/font/google";
 
 import "./globals.css";
@@ -11,10 +11,51 @@ const fontSans = FontSans({
   variable: "--font-sans",
 });
 
+const APP_NAME = "Estoque - Senac Lavras";
+const APP_DEFAULT_TITLE = "Estoque - Senac Lavras";
+const APP_TITLE_TEMPLATE = "%s - PWA App";
+const APP_DESCRIPTION = "";
+
 export const metadata: Metadata = {
-  title: "Gestão de Estoque",
-  description: "Gestão de estoque - Senac Lavras",
-  icons: "/favicon.png",
+  applicationName: APP_NAME,
+  title: {
+    default: APP_DEFAULT_TITLE,
+    template: APP_TITLE_TEMPLATE,
+  },
+  description: APP_DESCRIPTION,
+  manifest: "/manifest.json",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: APP_DEFAULT_TITLE,
+  },
+  other: {
+    "mobile-web-app-capable": "yes",
+  },
+  formatDetection: {
+    telephone: false,
+  },
+  openGraph: {
+    type: "website",
+    siteName: APP_NAME,
+    title: {
+      default: APP_DEFAULT_TITLE,
+      template: APP_TITLE_TEMPLATE,
+    },
+    description: APP_DESCRIPTION,
+  },
+  twitter: {
+    card: "summary",
+    title: {
+      default: APP_DEFAULT_TITLE,
+      template: APP_TITLE_TEMPLATE,
+    },
+    description: APP_DESCRIPTION,
+  },
+};
+
+export const viewport: Viewport = {
+  themeColor: "#ffffff",
 };
 
 export default function RootLayout({

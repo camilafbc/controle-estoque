@@ -36,9 +36,9 @@ export async function POST(request: Request) {
   try {
     const body = await request.json();
 
-    const { nome, email, role, status, idCurso, senha } = body;
+    const { nome, email, role, status, idCurso, password } = body;
 
-    if (!nome || !email || !role || status == undefined || !senha) {
+    if (!nome || !email || !role || status == undefined || !password) {
       return NextResponse.json(
         { error: "Todos os campos são obrigatórios." },
         { status: 400 },
@@ -65,7 +65,7 @@ export async function POST(request: Request) {
     const newUser = await createUser(
       nome,
       email,
-      senha,
+      password,
       role,
       createdBy,
       status,

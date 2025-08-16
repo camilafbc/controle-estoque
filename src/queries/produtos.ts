@@ -7,7 +7,7 @@ export const useProdutos = (turmaUuid: string, curso: number) => {
   const query = useQuery({
     queryKey: ["produtos", turmaUuid, curso],
     queryFn: () => getProdutos(turmaUuid, curso),
-    enabled: !!turmaUuid && !!curso,
+    enabled: !!turmaUuid || !!curso,
     staleTime: Infinity,
   });
   return query;

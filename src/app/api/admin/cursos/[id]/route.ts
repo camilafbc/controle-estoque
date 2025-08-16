@@ -79,7 +79,7 @@ export async function PUT(
   try {
     const { nomeCurso, status } = await request.json();
 
-    if (!nomeCurso || status === undefined) {
+    if (!nomeCurso || status == undefined) {
       return NextResponse.json(
         { error: "Todos os campos são obrigatórios!" },
         { status: 400 },
@@ -95,7 +95,7 @@ export async function PUT(
     const updatedCurso = await updateCurso(curso);
 
     return NextResponse.json(
-      { message: "Dados atualizados com sucesso!", curso: updatedCurso },
+      { updatedCurso, message: "Dados atualizados com sucesso!" },
       { status: 200 },
     );
   } catch (error) {

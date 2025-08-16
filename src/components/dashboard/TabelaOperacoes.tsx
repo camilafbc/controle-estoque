@@ -60,49 +60,51 @@ export default function TableOperacoes({
         <CardHeader>
           <CardTitle className="text-lg">Últimas Movimentações</CardTitle>
           <CardDescription className="text-xs">
-            Últimas 7 movimentações realizadas
+            Últimas movimentações realizadas
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead className="w-[100px]">Produto</TableHead>
-                <TableHead>Operação</TableHead>
-                <TableHead className="text-center">Data</TableHead>
-                <TableHead className="text-right">Quantidade</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {data.length > 0 ? (
-                data.map((linha: any, i: number) => (
-                  <TableRow key={i} className="text-xs">
-                    <TableCell className="whitespace-nowrap font-medium">
-                      {linha.prodDescricao}
-                    </TableCell>
-                    <TableCell>
-                      {linha.tipoOperacao === 0 ? "Saída" : "Entrada"}
-                    </TableCell>
-                    <TableCell className="text-center">
-                      {dayjs(linha.data?.split(" ")[0]).format("DD/MM/YYYY")}
-                    </TableCell>
-                    <TableCell className="text-right">
-                      {linha.quantidade}
+          <div className="max-h-[346px] overflow-y-auto">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead className="w-[100px]">Produto</TableHead>
+                  <TableHead>Operação</TableHead>
+                  <TableHead className="text-center">Data</TableHead>
+                  <TableHead className="text-right">Quantidade</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {data.length > 0 ? (
+                  data.map((linha: any, i: number) => (
+                    <TableRow key={i} className="text-xs">
+                      <TableCell className="whitespace-nowrap font-medium">
+                        {linha.prodDescricao}
+                      </TableCell>
+                      <TableCell>
+                        {linha.tipoOperacao === 0 ? "Saída" : "Entrada"}
+                      </TableCell>
+                      <TableCell className="text-center">
+                        {dayjs(linha.data?.split(" ")[0]).format("DD/MM/YYYY")}
+                      </TableCell>
+                      <TableCell className="text-right">
+                        {linha.quantidade}
+                      </TableCell>
+                    </TableRow>
+                  ))
+                ) : (
+                  <TableRow>
+                    <TableCell
+                      colSpan={4}
+                      className="w-full text-center font-medium"
+                    >
+                      Ainda não há dados a serem exibidos
                     </TableCell>
                   </TableRow>
-                ))
-              ) : (
-                <TableRow>
-                  <TableCell
-                    colSpan={4}
-                    className="w-full text-center font-medium"
-                  >
-                    Ainda não há dados a serem exibidos
-                  </TableCell>
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
+                )}
+              </TableBody>
+            </Table>
+          </div>
         </CardContent>
       </Card>
     </motion.div>

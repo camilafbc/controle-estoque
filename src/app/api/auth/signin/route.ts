@@ -15,23 +15,16 @@ export async function POST(request: Request) {
     }
 
     const user = await validateAuth(email, password);
-    if (!user)
+    if (!user) {
       return NextResponse.json(
         { error: "E-mail ou senha inválidos." },
         { status: 401 },
       );
+    }
 
-    const token = await createAccessToken(user.id);
-
-    // const response = NextResponse.json({ user }, { status: 200 });
-
-    // response.cookies.set("token", token, {
-    //   httpOnly: true,
-    //   secure: process.env.NODE_ENV === "production",
-    //   sameSite: "lax",
-    //   path: "/",
-    //   maxAge: 60 * 60 * 4, // 4h, por exemplo
-    // });
+    if (user && user.status == false) {
+      return NextResponse.json({ error: "Usuário inativo." }, { status: 401 });
+    }
 
     return NextResponse.json({ user }, { status: 200 });
   } catch (error) {

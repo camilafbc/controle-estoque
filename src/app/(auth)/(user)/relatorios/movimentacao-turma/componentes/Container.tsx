@@ -114,14 +114,14 @@ export default function MovTurmaContainer({
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
-      className="p-y-8 flex w-full flex-col gap-24"
+      className="p-y-8 flex w-full flex-1 flex-col gap-28"
     >
       <div className="flex flex-wrap items-start gap-6">
         <FormField
           name="turma"
           control={control}
           render={({ field }) => (
-            <FormItem className="relative w-[200px]">
+            <FormItem className="relative w-[300px]">
               <VirtualizedCombobox
                 {...field}
                 required
