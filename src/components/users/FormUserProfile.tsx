@@ -14,7 +14,7 @@ import { Input } from "../ui/input";
 const validationSchema = yup.object({
   nome: yup.string().required("Campo obrigatório"),
   email: yup.string().email("E-mail inválido").required("Campo obrigatório"),
-  senha: yup
+  password: yup
     .string()
     .test(
       "min-length",
@@ -24,8 +24,8 @@ const validationSchema = yup.object({
   confirmaSenha: yup
     .string()
     .test("confirmaSenha", "As senhas não coincidem", function (value) {
-      const { senha } = this.parent;
-      return !senha || senha === value;
+      const { password } = this.parent;
+      return !password || password === value;
     }),
 });
 
@@ -51,7 +51,7 @@ const FormUserProfile = forwardRef<FormUserProfileRef, FormUserProfileProps>(
       defaultValues: {
         nome: "",
         email: "",
-        senha: "",
+        password: "",
         confirmaSenha: "",
       },
     });
@@ -67,9 +67,7 @@ const FormUserProfile = forwardRef<FormUserProfileRef, FormUserProfileProps>(
     useImperativeHandle(ref, () => ({
       resetForm: () => {
         reset({
-          nome: "",
-          email: "",
-          senha: "",
+          password: "",
           confirmaSenha: "",
         });
         setShowPasswordContainer(false);
@@ -153,18 +151,18 @@ const FormUserProfile = forwardRef<FormUserProfileRef, FormUserProfileProps>(
               <>
                 <FormField
                   control={control}
-                  name="senha"
+                  name="password"
                   render={({ field }) => (
                     <FormItem className="col-span-1 p-1">
                       <Input
                         {...field}
                         required
-                        id="input-senha"
+                        id="input-password"
                         type="password"
                         label="Senha"
                         size="lg"
                         placeholder="Informe uma senha"
-                        error={!!errors.senha}
+                        error={!!errors.password}
                         value={field.value}
                         onChange={(value) => field.onChange(value)}
                       />

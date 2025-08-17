@@ -45,6 +45,7 @@ export default function ContainerProfile() {
           },
         });
       }
+      formRef.current?.resetForm();
 
       toast.success(fetchUpdate.message);
     } catch (error) {
