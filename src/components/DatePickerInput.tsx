@@ -35,14 +35,18 @@ const inputVariants = cva(
 );
 
 export interface InputProps
-  extends Omit<React.InputHTMLAttributes<HTMLInputElement>, "size">,
+  extends Omit<
+      React.InputHTMLAttributes<HTMLInputElement>,
+      "size" | "onSelect"
+    >,
     VariantProps<typeof inputVariants> {
   error?: boolean;
   infoText?: string;
   label?: string;
   required?: boolean;
   selected: Date;
-  onSelect: VoidFunction;
+  // onSelect: VoidFunction;
+  onSelect: (date: Date | undefined) => void;
 }
 
 const DatePickerInput = forwardRef<HTMLInputElement, InputProps>(
@@ -120,7 +124,10 @@ const DatePickerInput = forwardRef<HTMLInputElement, InputProps>(
                 startMonth={new Date(2024, 6)}
                 endMonth={new Date(2050, 9)}
                 selected={selected}
-                onSelect={onSelect}
+                onSelect={(value) => {
+                  onSelect(value);
+                  setOpen(false);
+                }}
                 disabled={(date) => date < new Date()}
               />
             </PopoverContent>
