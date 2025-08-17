@@ -1,4 +1,3 @@
-import { redirect } from "next/dist/server/api-utils";
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { getToken } from "next-auth/jwt";
@@ -15,7 +14,7 @@ export async function middleware(req: NextRequest) {
     return NextResponse.redirect(new URL(newUrl, req.url));
   }
 
-  // // 1. Rotas públicas (acesso sem autenticação)
+  // Rotas públicas (acesso sem autenticação)
   const publicPaths = ["/", "/api/auth/signin", "/recuperar-senha"];
 
   // se a rota desejada está inclusa no array de rotas públicas, deixa acesar
@@ -28,7 +27,7 @@ export async function middleware(req: NextRequest) {
     return NextResponse.redirect(new URL("/", req.url));
   }
 
-  // // 2. Proteção para rotas administrativas (frontend e backend)
+  // Proteção para rotas administrativas
   const isAdminRoute =
     path.startsWith("/admin") || path.startsWith("/api/admin");
 
@@ -36,7 +35,7 @@ export async function middleware(req: NextRequest) {
     return NextResponse.redirect(new URL("/", req.url));
   }
 
-  // // 3. Proteção para outras rotas autenticadas (não-admin)
+  // Proteção para outras rotas autenticadas (não-admin)
   if (!token && !publicPaths.includes(path)) {
     return NextResponse.redirect(new URL("/login", req.url));
   }
