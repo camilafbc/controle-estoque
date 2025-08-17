@@ -56,7 +56,7 @@ export default function TableOperacoes({
       }}
       className={cn("w-full", className)}
     >
-      <Card className="shadow-md">
+      <Card className="h-full shadow-md">
         <CardHeader>
           <CardTitle className="text-lg">Últimas Movimentações</CardTitle>
           <CardDescription className="text-xs">

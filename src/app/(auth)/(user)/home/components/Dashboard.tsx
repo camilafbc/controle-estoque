@@ -36,7 +36,7 @@ export default function Dashboard({ initialData, idCurso }: DashboardProps) {
           title="Turmas"
           description="cadastradas e ativas"
           loading={false}
-          data={initialData.turmas}
+          data={initialData.turmas.toString()}
           icon={
             <div className="rounded-md bg-lime-500 p-2 text-white dark:bg-lime-900">
               <GraduationCap />
@@ -50,7 +50,7 @@ export default function Dashboard({ initialData, idCurso }: DashboardProps) {
           title="Produtos"
           description="cadastrados para esse curso"
           loading={false}
-          data={initialData.produtos}
+          data={initialData.produtos.toString()}
           icon={
             <div className="rounded-md bg-yellow-500 p-2 text-white dark:bg-yellow-900">
               <Package />
@@ -78,7 +78,7 @@ export default function Dashboard({ initialData, idCurso }: DashboardProps) {
           title="Estoque"
           description="produtos em estoque"
           loading={false}
-          data={initialData.estoque}
+          data={initialData.estoque.toString()}
           icon={
             <div className="rounded-md bg-blue-600 p-2 text-white dark:bg-blue-900">
               <Boxes />

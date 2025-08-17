@@ -18,7 +18,7 @@ export default async function Dashboard({ initialData }: DashboardProps) {
         title="Cursos"
         description="cadastrados e ativos"
         loading={false}
-        data={initialData.cursos}
+        data={initialData.cursos.toString()}
         icon={
           <div className="rounded-md bg-lime-500 p-2 text-white dark:bg-lime-900">
             <GraduationCap />
@@ -32,7 +32,7 @@ export default async function Dashboard({ initialData }: DashboardProps) {
         title="Usuários"
         description="cadastrados e ativos"
         loading={false}
-        data={initialData.users}
+        data={initialData.users.toString()}
         icon={
           <div className="rounded-md bg-yellow-500 p-2 text-white dark:bg-yellow-900">
             <User />
