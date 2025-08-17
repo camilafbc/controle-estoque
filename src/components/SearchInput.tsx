@@ -20,7 +20,7 @@ export function SearchInput({
 }: SearchInputProps) {
   return (
     <div
-      className={`group flex min-w-[300px] max-w-[400px] items-center rounded-md border border-input bg-card px-2 shadow-sm focus-within:ring-1 focus-within:ring-orange-500 ${containerClassName}`}
+      className={`group flex w-full max-w-[400px] items-center rounded-md border border-input bg-card px-2 shadow-sm focus-within:ring-1 focus-within:ring-orange-500 ${containerClassName}`}
     >
       {icon && <span className="text-muted-foreground">{icon}</span>}
       <Input

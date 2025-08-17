@@ -1,5 +1,6 @@
 "use client";
 
+import { ChevronRight } from "lucide-react";
 import Link from "next/link";
 
 import { SheetClose } from "@/components/ui/sheet";
@@ -11,53 +12,78 @@ interface NavbarProps {
 export default function MobileMenu({ role }: NavbarProps) {
   if (role === "admin")
     return (
-      <div className="mt-8 flex w-full flex-col p-2">
-        <div className="mb-4">
-          <h3 className="text-lg font-semibold">Cadastros</h3>
-          <SheetClose
-            className="w-full items-center justify-start gap-1 bg-transparent text-blue-senac shadow-none hover:text-blue-950/50"
-            asChild
-          >
-            <Link href={"/admin/cadastros/cursos"}>Cursos</Link>
-          </SheetClose>
-          <SheetClose
-            className="w-full items-center justify-start gap-1 bg-transparent text-blue-senac shadow-none hover:text-blue-950/50"
-            asChild
-          >
-            <Link href={"/admin/cadastros/usuarios"}>Usuários</Link>
-          </SheetClose>
+      <div className="mt-8 flex w-full flex-col space-y-6 p-4">
+        <div className="space-y-2">
+          <h3 className="text-sm font-medium uppercase tracking-wider text-gray-500 dark:text-white">
+            Cadastros
+          </h3>
+          <div className="space-y-1">
+            <SheetClose
+              className="flex w-full items-center rounded-md px-3 py-2 text-sm font-medium text-gray-900 transition-colors hover:bg-gray-100 dark:text-zinc-100"
+              asChild
+            >
+              <Link href={"/admin/cadastros/cursos"}>
+                <ChevronRight className="mr-2 h-4 w-4 text-blue-senac" />
+                Cursos
+              </Link>
+            </SheetClose>
+            <SheetClose
+              className="flex w-full items-center rounded-md px-3 py-2 text-sm font-medium text-gray-900 transition-colors hover:bg-gray-100 dark:text-zinc-100"
+              asChild
+            >
+              <Link href={"/admin/cadastros/usuarios"}>
+                <ChevronRight className="mr-2 h-4 w-4 text-blue-senac" />
+                Usuários
+              </Link>
+            </SheetClose>
+          </div>
         </div>
       </div>
     );
 
   if (role === "user")
     return (
-      <div className="mt-8 flex w-full flex-col p-2">
-        <div className="mb-4">
-          <h3 className="text-lg font-semibold">Cadastros</h3>
-          <SheetClose
-            className="w-full items-center justify-start gap-1 bg-transparent text-blue-senac shadow-none hover:text-blue-950/50"
-            asChild
-          >
-            <Link href={"/cadastros/produtos"}>Produtos</Link>
-          </SheetClose>
-          <SheetClose
-            className="w-full items-center justify-start gap-1 bg-transparent text-blue-senac shadow-none hover:text-blue-950/50"
-            asChild
-          >
-            <Link href={"/cadastros/turmas"}>Turmas</Link>
-          </SheetClose>
+      <div className="mt-8 flex w-full flex-col space-y-6 p-4">
+        <div className="space-y-2">
+          <h3 className="text-sm font-medium uppercase tracking-wider text-gray-500 dark:text-white">
+            Cadastros
+          </h3>
+          <div className="space-y-1">
+            <SheetClose
+              className="flex w-full items-center rounded-md px-3 py-2 text-sm font-medium text-gray-900 transition-colors hover:bg-gray-100 dark:text-zinc-100"
+              asChild
+            >
+              <Link href={"/cadastros/produtos"}>
+                <ChevronRight className="mr-2 h-4 w-4 text-blue-senac" />
+                Produtos
+              </Link>
+            </SheetClose>
+            <SheetClose
+              className="flex w-full items-center rounded-md px-3 py-2 text-sm font-medium text-gray-900 transition-colors hover:bg-gray-100 dark:text-zinc-100"
+              asChild
+            >
+              <Link href={"/cadastros/turmas"}>
+                <ChevronRight className="mr-2 h-4 w-4 text-blue-senac" />
+                Turmas
+              </Link>
+            </SheetClose>
+          </div>
         </div>
-        <div>
-          <h3 className="text-lg font-semibold">Relatórios</h3>
-          <SheetClose
-            className="w-full items-center justify-start gap-1 bg-transparent text-blue-senac shadow-none hover:text-blue-950/50"
-            asChild
-          >
-            <Link href={"/relatorios/movimentacao-turma"}>
-              Movimentação por Turma
-            </Link>
-          </SheetClose>
+        <div className="space-y-2">
+          <h3 className="text-sm font-medium uppercase tracking-wider text-gray-500 dark:text-white">
+            Relatórios
+          </h3>
+          <div className="space-y-1">
+            <SheetClose
+              className="flex w-full items-center rounded-md px-3 py-2 text-sm font-medium text-gray-900 transition-colors hover:bg-gray-100 dark:text-zinc-100"
+              asChild
+            >
+              <Link href={"/relatorios/movimentacao-turma"}>
+                <ChevronRight className="mr-2 h-4 w-4 text-blue-senac" />
+                Movimentação por Turma
+              </Link>
+            </SheetClose>
+          </div>
         </div>
       </div>
     );
