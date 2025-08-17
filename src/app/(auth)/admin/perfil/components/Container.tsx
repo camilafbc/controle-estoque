@@ -98,9 +98,8 @@ export default function Container() {
         </Button>
         <Button
           type="button"
-          // loading={updateUser.isPending}
+          loading={isLoading}
           onClick={() => formRef.current?.submitForm()}
-          className="hover:bg-orange-500/90"
         >
           Salvar Alterações
         </Button>

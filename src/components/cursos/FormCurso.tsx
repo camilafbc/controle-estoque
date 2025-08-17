@@ -93,6 +93,7 @@ const FormCurso = forwardRef<FormCursoRef, FormCursoProps>(
                   id="input-curso"
                   label="Nome do Curso"
                   placeholder="Digite o nome do curso"
+                  size="lg"
                   disabled={isLoading}
                   error={errors.nomeCurso ? true : false}
                   className="w-full"

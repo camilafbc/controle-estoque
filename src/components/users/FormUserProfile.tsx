@@ -182,6 +182,7 @@ const FormUserProfile = forwardRef<FormUserProfileRef, FormUserProfileProps>(
                       <Input
                         {...field}
                         required
+                        size="lg"
                         type="password"
                         id="input-confirma-senha"
                         label="Confirmar Senha"

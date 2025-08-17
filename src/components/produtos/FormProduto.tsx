@@ -99,7 +99,6 @@ const FormProduto = forwardRef<FormProdutoRef, FormProdutoProps>(
           fabricante: initialValues.prodFabricante ?? "",
           lote: initialValues.prodLote ?? "",
           quantidade: initialValues.prodQuantidade.toString() ?? "",
-          // dataValidade: new Date(initialValues.prodValidade),
           dataValidade: initialValues.prodValidade
             ? dayjs(initialValues.prodValidade).isValid()
               ? dayjs(initialValues.prodValidade).toDate()
@@ -126,7 +125,8 @@ const FormProduto = forwardRef<FormProdutoRef, FormProdutoProps>(
                   id="input-produto"
                   label="Produto"
                   placeholder="Informe a descrição do produto"
-                  required={true}
+                  size="lg"
+                  required
                   error={!!errors.produto}
                   value={field.value}
                   onChange={(value) => field.onChange(value)}
@@ -145,7 +145,8 @@ const FormProduto = forwardRef<FormProdutoRef, FormProdutoProps>(
                   id="input-fabricante"
                   label="Fabricante"
                   placeholder="Informe o fabricante do produto"
-                  required={true}
+                  size="lg"
+                  required
                   error={!!errors.fabricante}
                   value={field.value}
                   onChange={(value) => field.onChange(value)}
@@ -164,7 +165,8 @@ const FormProduto = forwardRef<FormProdutoRef, FormProdutoProps>(
                   id="input-lote"
                   label="Lote"
                   placeholder="Informe o lote do produto"
-                  required={true}
+                  size="lg"
+                  required
                   error={!!errors.lote}
                   value={field.value}
                   onChange={(value) => field.onChange(value)}
@@ -183,7 +185,8 @@ const FormProduto = forwardRef<FormProdutoRef, FormProdutoProps>(
                   id="input-quantidade"
                   label="Quantidade"
                   placeholder="Informe as unidades do produto"
-                  required={true}
+                  size="lg"
+                  required
                   error={!!errors.quantidade}
                   {...register("quantidade")}
                   value={field.value}
@@ -206,6 +209,7 @@ const FormProduto = forwardRef<FormProdutoRef, FormProdutoProps>(
                 <DatePickerInput
                   label="Validade"
                   placeholder="dd/mm/aaaa"
+                  size="lg"
                   required
                   error={!!errors.dataValidade}
                   selected={field.value}
@@ -226,6 +230,7 @@ const FormProduto = forwardRef<FormProdutoRef, FormProdutoProps>(
                   required
                   label="Turma"
                   id="select-turma"
+                  size="lg"
                   height={100}
                   options={
                     turmas.map((turma: Turma) => ({

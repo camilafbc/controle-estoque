@@ -97,6 +97,7 @@ const FormTurmas = forwardRef<FormTurmasRef, FormTurmasProps>(
                   label="Código"
                   infoText="Dígitos que identificam a turma"
                   placeholder="Informe o código da turma"
+                  size="lg"
                   disabled={isLoading}
                   error={!!errors.codigo}
                   className="w-full"
@@ -118,6 +119,7 @@ const FormTurmas = forwardRef<FormTurmasRef, FormTurmasProps>(
                   label="Turno:"
                   id="select-option"
                   placeholder="Selecione uma opção"
+                  size="lg"
                   required={true}
                   options={[
                     { label: "Manhã", value: "Manhã" },

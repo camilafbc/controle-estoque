@@ -95,6 +95,7 @@ const FormMovimentacoes = forwardRef<
                     { label: "Saída", value: 0 },
                   ]}
                   placeholder="Selecione uma opção"
+                  size="lg"
                   error={!!errors.tipo}
                   required={true}
                   value={field.value}
@@ -122,6 +123,7 @@ const FormMovimentacoes = forwardRef<
                   </Button>
                   <Input
                     id="input-quantidade"
+                    size="lg"
                     value={field.value}
                     onChange={(e) => {
                       const value = e.target.value;
