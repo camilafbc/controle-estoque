@@ -37,7 +37,7 @@ export async function PUT(
     if (user.password) {
       if (user.password.length < 6) {
         return NextResponse.json(
-          { error: "A senha deve ter pelo menos 6 caracteres." },
+          { error: "A senha deve conter pelo menos 6 caracteres!" },
           { status: 400 },
         );
       }

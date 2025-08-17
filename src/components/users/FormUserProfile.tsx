@@ -99,7 +99,6 @@ const FormUserProfile = forwardRef<FormUserProfileRef, FormUserProfileProps>(
                 name="nome"
                 render={({ field }) => (
                   <FormItem className="w-full p-1">
-                    {/* <Label>Nome</Label> */}
                     <Input
                       {...field}
                       required
@@ -196,7 +195,7 @@ const FormUserProfile = forwardRef<FormUserProfileRef, FormUserProfileProps>(
                   )}
                 />
                 <p className="col-span-1 text-xs text-muted-foreground md:col-span-2 lg:col-span-4">
-                  - A senha deve conter entre 4 e 6 caracteres
+                  - A senha deve conter ao menos 6 caracteres
                 </p>
               </>
             )}

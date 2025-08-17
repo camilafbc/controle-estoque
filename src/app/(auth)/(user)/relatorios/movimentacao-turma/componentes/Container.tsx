@@ -6,15 +6,16 @@ import { addDays } from "date-fns";
 import { FileText } from "lucide-react";
 import { useSession } from "next-auth/react";
 import { useState } from "react";
-import { Controller, SubmitHandler, useForm } from "react-hook-form";
+import { SubmitHandler, useForm } from "react-hook-form";
 import * as yup from "yup";
 
 import { createRelatorioMovimentacoes } from "@/api/relatorio";
 import { DatePickerWithRange } from "@/components/DatePickerWithRange";
 import { Button } from "@/components/ui/button";
-import { FormField, FormItem } from "@/components/ui/form";
+import { Form, FormField, FormItem, FormMessage } from "@/components/ui/form";
 import { Label } from "@/components/ui/label";
 import { VirtualizedCombobox } from "@/components/ui/virtualized-combobox/VirtualizedCombobox";
+import { cn } from "@/lib/utils";
 import { useTurmas } from "@/queries/turmas";
 import { Turma } from "@/types/Turma";
 
@@ -53,17 +54,19 @@ export default function MovTurmaContainer({
     turmas,
   );
 
-  const {
-    control,
-    handleSubmit,
-    watch,
-    formState: { errors },
-  } = useForm({
+  const form = useForm({
     resolver: yupResolver(validationSchema),
     defaultValues: {
       turma: turmas.at(0)?.idTurma.toString(),
     },
   });
+
+  const {
+    control,
+    handleSubmit,
+    watch,
+    formState: { errors },
+  } = form;
 
   const onSubmit: SubmitHandler<FormData> = async (data) => {
     try {
@@ -112,45 +115,42 @@ export default function MovTurmaContainer({
   };
 
   return (
-    <form
-      onSubmit={handleSubmit(onSubmit)}
-      className="p-y-8 flex w-full flex-1 flex-col gap-28"
-    >
-      <div className="flex flex-wrap items-start gap-6">
-        <FormField
-          name="turma"
-          control={control}
-          render={({ field }) => (
-            <FormItem className="relative w-[300px]">
-              <VirtualizedCombobox
-                {...field}
-                required
-                label="Turma"
-                id="select-turma"
-                height={100}
-                // size="lg"
-                options={
-                  turmasData.map((turma: Turma) => ({
-                    label: `${turma.codigoTurma} - ${turma.turnoTurma}`,
-                    id: turma.idTurma.toString(),
-                  })) || []
-                }
-                placeholder="Buscar turma"
-                loading={turmasLoading}
-                error={errors.turma?.message}
-                value={field.value}
-                onChange={(value) => field.onChange(value ?? "")}
-              />
-              <span className="min-h-[16px] text-xs font-semibold text-destructive">
-                {errors.turma && errors.turma.message}
-              </span>
-            </FormItem>
-          )}
-        />
+    <Form {...form}>
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        className="p-y-8 flex w-full flex-1 flex-col gap-28"
+      >
+        <div className="flex flex-wrap items-start gap-6">
+          <FormField
+            name="turma"
+            control={control}
+            render={({ field }) => (
+              <FormItem className="relative w-[300px]">
+                <VirtualizedCombobox
+                  {...field}
+                  required
+                  label="Turma"
+                  id="select-turma"
+                  size="lg"
+                  height={100}
+                  options={
+                    turmasData.map((turma: Turma) => ({
+                      label: `${turma.codigoTurma} - ${turma.turnoTurma}`,
+                      id: turma.idTurma.toString(),
+                    })) || []
+                  }
+                  placeholder="Buscar turma"
+                  loading={turmasLoading}
+                  error={errors.turma?.message}
+                  value={field.value}
+                  onChange={(value) => field.onChange(value ?? "")}
+                />
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
-        <div>
-          <Label>Data</Label>
-          <Controller
+          <FormField
             name="dateRange"
             control={control}
             defaultValue={{
@@ -159,42 +159,48 @@ export default function MovTurmaContainer({
               //to: undefined,
             }}
             render={({ field }) => (
-              <DatePickerWithRange
-                // onChange={field.onChange}
-                // value={field.value}
-                onChange={(value) => {
-                  // Normaliza `null` para `undefined`
-                  field.onChange({
-                    from: value?.from,
-                    to: value?.to ?? undefined,
-                  });
-                }}
-                value={{
-                  from: field.value?.from,
-                  to: field.value?.to ?? undefined,
-                }}
-                className={
-                  errors.dateRange && "rounded-md border border-destructive"
-                }
-              />
+              <FormItem className="flex flex-col gap-1">
+                <div className="flex h-[20px] items-center">
+                  <Label>Data</Label>
+                </div>
+
+                <DatePickerWithRange
+                  onChange={(value) => {
+                    field.onChange({
+                      from: value?.from,
+                      to: value?.to ?? undefined,
+                    });
+                  }}
+                  value={{
+                    from: field.value?.from,
+                    to: field.value?.to ?? undefined,
+                  }}
+                  className={cn(
+                    "!mt-0 h-10",
+                    errors.dateRange && "rounded-md border border-destructive",
+                  )}
+                />
+              </FormItem>
             )}
           />
-          <span className="min-h-4 text-xs font-semibold text-destructive">
-            {errors.dateRange && errors.dateRange.from?.message}
-          </span>
+          <FormMessage />
         </div>
-      </div>
-      <div className="flex w-full justify-end">
-        <Button
-          type="submit"
-          loading={isLoading}
-          className="flex items-center gap-2 hover:bg-orange-500/90"
-        >
-          <FileText className="size-5" />
-          Gerar Relatório
-        </Button>
-      </div>
-      <Alert open={openAlert} onOpenChange={setOpenAlert} text={alertMessage} />
-    </form>
+        <div className="flex w-full justify-end">
+          <Button
+            type="submit"
+            loading={isLoading}
+            className="flex items-center gap-2 hover:bg-orange-500/90"
+          >
+            <FileText className="size-5" />
+            Gerar Relatório
+          </Button>
+        </div>
+        <Alert
+          open={openAlert}
+          onOpenChange={setOpenAlert}
+          text={alertMessage}
+        />
+      </form>
+    </Form>
   );
 }

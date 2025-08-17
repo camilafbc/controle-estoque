@@ -60,6 +60,13 @@ export async function POST(request: Request) {
       );
     }
 
+    if (password.length < 6) {
+      return NextResponse.json(
+        { error: "A senha deve conter ao menos 6 caracteres!" },
+        { status: 400 },
+      );
+    }
+
     const createdBy = session.user.id;
 
     const newUser = await createUser(

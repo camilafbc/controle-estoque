@@ -355,7 +355,7 @@ const FormUser = forwardRef<FormUserRef, FormUserProps>(
                     </FormItem>
                   )}
                 />
-                <span className="text-sm text-muted-foreground">
+                <span className="text-xs text-muted-foreground">
                   - A senha deve conter ao menos 6 caracteres
                 </span>
               </>
