@@ -1,10 +1,10 @@
-# 📋 Controle de Estoque - Projeto Integrador - EM REFATORAÇÃO
+# 📋 Controle de Estoque - Projeto Integrador SENAC MG
 
 Este projeto é uma aplicação de controle de estoque desenvolvida como parte do projeto integrador do curso Técnico em Desenvolvimento de Sistemas do SENAC MG, unidade Lavras. A aplicação foi criada para atender a uma demanda dos cursos de Estética e Cabeleireiro da instituição, que precisavam de um sistema para registrar a entrada e saída de produtos por turma, visando o controle de estoque e o acompanhamento do consumo de produtos por turma e por período.
 
-<img width="100%" src="https://raw.githubusercontent.com/camilafbc/controle-estoque/refs/heads/main/toreadme.jpeg"/>
+<img width="100%" src="https://raw.githubusercontent.com/camilafbc/controle-estoque/refs/heads/main/to_readme.jpeg"/>
 
-<!-- # Visão Geral
+# Visão Geral
 
 A aplicação conta com uma área administrativa para o cadastro de usuários e cursos, permitindo que o sistema seja usado por outros cursos. A área comum do sistema possibilita o cadastro de turmas e produtos, além de registrar entradas e saídas de produtos, gerando relatórios de movimentação.
 
@@ -18,13 +18,19 @@ A aplicação conta com uma área administrativa para o cadastro de usuários e 
     - Registro de movimentações de entrada e saída de produtos por turma.
     - Geração de relatório de movimentação por turma, com controle de consumo de produtos por período.
 * Geral:
+    - Suporte PWA para acesso e uso em dispositivos móveis
     - Edição de dados de perfil
     - Escolha de tema (Claro, Escuro ou Sistema)
  
 # Tecnologias Utilizadas
 
-* Front-end: Next.js, React, TypeScript, Tailwind, Shadcn, TanStackQuery, React-Hook-Form, Yup
-* Back-end: Node.js, Express, bcrypt, jwt
+* Frontend: Next.js, React, TypeScript, Tailwind CSS, Shadcn/UI, Framer Motion
+* Backend: APIs integradas no Next.js, Node.js, Express, Prisma
+* Banco de Dados: PostgreSQL
+* Consumo de dados otimizado com fetch do Next.js e TanStack Query
+* Validações e segurança com React Hook Form, Yup e BCrypt
+* Zustand para gerenciamento de estado
+* Relatórios em PDF com React PDF
 
 
 # Instalação
@@ -70,10 +76,16 @@ MYSQL_URL=                 # URL de conexão com o banco de dados MySQL
 No diretório frontend, renomeie o arquivo .env.example para .env.local e preencha os seguintes valores:
 
 ````bash
-NEXTAUTH_SECRET=           # Gerar com `openssl rand -base64 32`
-NEXTAUTH_URL=http://localhost:3000   # URL base para autenticação
-NEXT_PUBLIC_BASE_URL=http://localhost:5000  # URL do backend
+NEXT_PUBLIC_BASE_URL= #
+NEXT_PUBLIC_CUSTOM_COOKIE= #
+NEXT_CUSTOM_COOKIE= #
+NEXTAUTH_URL= http://localhost:3000
+NEXTAUTH_SECRET= #
+JWT_KEY= #
+DATABASE_URL= #
 ````
+
+Preencha também as variáveis do arquivo seed.ts para criar um usuário na base
 
 4. Rodando o Projeto
 
@@ -84,14 +96,8 @@ cd ../controle-estoque
 npm start
 ````
 
-O frontend estará disponível em http://localhost:3000, e o backend em http://localhost:5000.
-
-5. Login
-
-A SQL presente logo após a criação da tabela 'user' em UserModel deve criar um usuário padrão com as seguintes credenciais:
-- user@email.com
-- user123
+A aplicação estará disponível em http://localhost:3000
 
 # Licença
 
-Este projeto está licenciado sob a Licença [MIT](https://choosealicense.com/licenses/mit/) -->
+Este projeto está licenciado sob a Licença [MIT](https://choosealicense.com/licenses/mit/) 
