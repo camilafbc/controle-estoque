@@ -8,26 +8,29 @@
 import bcrypt from "bcryptjs";
 
 import { PrismaClient } from "../src/generated/prisma";
-// const { PrismaClient } = require('@/generated/prisma');
 
 const prisma = new PrismaClient();
+const nome = "";
+const email = "";
+const password = "";
 
 async function main() {
   // Hash da senha
-  const passwordHash = await bcrypt.hash("@admin123", 10);
+  const passwordHash = await bcrypt.hash(password, 10);
 
   // Criação do usuário admin sem curso vinculado
   await prisma.user.upsert({
     where: { email: "camiladev19@gmail.com" },
     update: {},
     create: {
-      nome: "Camila Dev",
-      email: "camiladev19@gmail.com",
+      // INSERIR NOME
+      nome: nome,
+      email: email,
       password: passwordHash,
       role: "admin",
       status: true,
-      idCurso: null, // <- Sem curso
-      created_by: 0, // Pode ser 0 ou null se preferir
+      idCurso: null,
+      created_by: 0,
     },
   });
 
