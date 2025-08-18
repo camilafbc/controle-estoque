@@ -118,7 +118,7 @@ export default function MovTurmaContainer({
     <Form {...form}>
       <form
         onSubmit={handleSubmit(onSubmit)}
-        className="p-y-8 flex w-full flex-1 flex-col gap-28"
+        className="p-y-8 flex w-full flex-1 flex-col"
       >
         <div className="flex flex-wrap items-start gap-6">
           <FormField
@@ -185,7 +185,7 @@ export default function MovTurmaContainer({
           />
           <FormMessage />
         </div>
-        <div className="flex w-full justify-end">
+        <div className="mt-72 flex w-full justify-end">
           <Button
             type="submit"
             loading={isLoading}

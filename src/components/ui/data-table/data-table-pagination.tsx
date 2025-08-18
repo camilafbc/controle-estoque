@@ -5,7 +5,6 @@
 //   DoubleArrowRightIcon,
 // } from "@components/react-icons"
 import { Table } from "@tanstack/react-table";
-
 import {
   ChevronLeftIcon,
   ChevronRight,
@@ -13,6 +12,8 @@ import {
   ChevronsLeft,
   ChevronsRight,
 } from "lucide-react";
+
+import { Button } from "../button";
 import {
   Select,
   SelectContent,
@@ -20,7 +21,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../select";
-import { Button } from "../button";
 
 interface DataTablePaginationProps<TData> {
   table: Table<TData>;
@@ -56,7 +56,7 @@ export function DataTablePagination<TData>({
             </SelectContent>
           </Select>
         </div>
-        <div className="flex w-[100px] items-center justify-center text-sm font-medium">
+        <div className="hidden w-[100px] items-center justify-center text-sm font-medium sm:inline-flex">
           Pág. {table.getState().pagination.pageIndex + 1} de{" "}
           {table.getPageCount()}
         </div>

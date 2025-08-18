@@ -172,7 +172,10 @@ const FormUser = forwardRef<FormUserRef, FormUserProps>(
 
     return (
       <Form {...form}>
-        <form onSubmit={handleSubmit(onSubmit)} className="w-full space-y-6">
+        <form
+          onSubmit={handleSubmit(onSubmit)}
+          className="w-full space-y-6 overflow-y-auto"
+        >
           <fieldset>
             <legend className="mb-4 w-full border-b-2 font-bold">
               Dados do Usuário

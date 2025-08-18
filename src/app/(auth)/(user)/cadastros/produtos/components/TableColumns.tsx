@@ -1,12 +1,8 @@
 "use client";
 
 import { ColumnDef } from "@tanstack/react-table";
-import dayjs from "dayjs";
-import { Eye, ListPlus, SquarePen, Trash2 } from "lucide-react";
-import Link from "next/link";
+import { ListPlus } from "lucide-react";
 
-import MyTooltip from "@/components/Tooltip";
-import { Button } from "@/components/ui/button";
 import {
   DataTableAction,
   DataTableDeleteAction,
@@ -54,15 +50,10 @@ export const columns = (
   {
     accessorKey: "prodDescricao",
     header: ({ column }) => (
-      <DataTableColumnHeader
-        column={column}
-        title="Produto"
-        // className="w-[200px]"
-      />
+      <DataTableColumnHeader column={column} title="Produto" />
     ),
     enableSorting: true,
     meta: { type: "string", minWidth: "180" },
-    // size: 200,
   },
   {
     accessorKey: "prodFabricante",
@@ -71,7 +62,6 @@ export const columns = (
     ),
     enableSorting: true,
     meta: { type: "string", minWidth: "120" },
-    // size: 140,
   },
   {
     accessorKey: "prodLote",
@@ -80,7 +70,6 @@ export const columns = (
     ),
     enableSorting: true,
     meta: { type: "string", minWidth: "80" },
-    // size: 100,
   },
   {
     accessorKey: "prodValidade",
@@ -88,12 +77,11 @@ export const columns = (
       <DataTableColumnHeader
         column={column}
         title="Validade"
-        className="justify-center"
+        className="justify-end"
       />
     ),
     enableSorting: true,
     meta: { type: "date", minWidth: "90" },
-    // size: 110,
   },
 
   {
@@ -101,11 +89,7 @@ export const columns = (
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Estoque" />
     ),
-    // cell: ({ row }) => (
-    //   <p className="pe-4 text-end">{row.getValue("prodQuantidade")}</p>
-    // ),
     enableSorting: true,
     meta: { type: "number", minWidth: "70" },
-    // size: 90,
   },
 ];

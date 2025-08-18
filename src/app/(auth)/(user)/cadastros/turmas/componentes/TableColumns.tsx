@@ -51,15 +51,11 @@ export const columns = (
   {
     accessorKey: "turnoTurma",
     header: ({ column }) => (
-      <DataTableColumnHeader
-        column={column}
-        title="Turno"
-        className="items-start"
-      />
+      <DataTableColumnHeader column={column} title="Turno" />
     ),
     enableSorting: true,
-    meta: { type: "string", minWidth: "20" },
-    size: 5,
+    meta: { type: "string", minWidth: "10" },
+    size: 10,
   },
   {
     accessorKey: "codigoTurma",

@@ -165,14 +165,16 @@ export default function UsersContainer({ users }: UsersContainerProps) {
           </div>
         }
       >
-        <FormUser
-          ref={formRef}
-          initialValues={usuario}
-          cursos={cursos || []}
-          cursosLoading={cursosLoading}
-          onSubmit={handleSubmit}
-          isLoading={createUser.isPending || updateUser.isPending}
-        />
+        <div className="h-full overflow-hidden">
+          <FormUser
+            ref={formRef}
+            initialValues={usuario}
+            cursos={cursos || []}
+            cursosLoading={cursosLoading}
+            onSubmit={handleSubmit}
+            isLoading={createUser.isPending || updateUser.isPending}
+          />
+        </div>
       </MyDialog>
     </>
   );

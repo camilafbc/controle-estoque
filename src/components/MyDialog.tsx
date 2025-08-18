@@ -13,20 +13,23 @@ import {
 } from "./ui/dialog";
 import { Separator } from "./ui/separator";
 
-const DialogVariants = cva("m-2 min-w-wd  bg-white dark:bg-background ", {
-  variants: {
-    size: {
-      default: "max-w-lg max-h-[95vh]",
-      sm: "max-w-md max-h-[95vh]",
-      lg: "max-w-3xl max-h-[95vh]",
-      xl: "max-w-5xl max-h-[95vh]",
-      xxl: "max-w-[80vw] max-h-[95vh]",
+const DialogVariants = cva(
+  "m-2 min-w-wd   bg-white dark:bg-background flex flex-col",
+  {
+    variants: {
+      size: {
+        default: "max-w-lg max-h-[95vh]",
+        sm: "max-w-md max-h-[95vh]",
+        lg: "max-w-3xl max-h-[95vh]",
+        xl: "max-w-5xl max-h-[95vh]",
+        xxl: "max-w-[80vw] max-h-[95vh]",
+      },
+    },
+    defaultVariants: {
+      size: "default",
     },
   },
-  defaultVariants: {
-    size: "default",
-  },
-});
+);
 
 interface MyDialogProps extends VariantProps<typeof DialogVariants> {
   open: boolean;
@@ -62,7 +65,7 @@ const MyDialog = ({
           {description && <DialogDescription>{description}</DialogDescription>}
         </DialogHeader>
         <Separator orientation="horizontal" />
-        <div className="flex-1 overflow-y-auto py-4">{children}</div>
+        <div className="min-h-0 flex-1 overflow-y-auto py-4">{children}</div>
         {footerChildren && <DialogFooter>{footerChildren}</DialogFooter>}
       </DialogContent>
     </Dialog>

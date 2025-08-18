@@ -157,7 +157,7 @@ export function DataTable<TData, TValue>({
                         (cell.column.columnDef as any).meta?.type ===
                           "boolean" && "text-center",
                         (cell.column.columnDef as any).meta?.type === "date" &&
-                          "pe-4 text-center",
+                          "pe-4 text-right",
                         (cell.column.columnDef as any).meta?.type ===
                           "string" && "ps-4",
                       )}
