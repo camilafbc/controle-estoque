@@ -1,9 +1,8 @@
-import { getServerSession } from "next-auth";
+"use client";
+import { useSession } from "next-auth/react";
 
-import { authOptions } from "@/lib/auth";
-
-export default async function GreetingUser() {
-  const session = await getServerSession(authOptions);
+export default function GreetingUser() {
+  const { data: session } = useSession();
 
   const hour = new Date().getHours();
 

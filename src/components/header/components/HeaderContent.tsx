@@ -2,9 +2,8 @@
 
 import { CircleUserRound, MenuIcon } from "lucide-react";
 import Link from "next/link";
-import { Session } from "next-auth";
+import { useSession } from "next-auth/react";
 
-// import UserMenu from "./UserMenu";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 
@@ -13,11 +12,8 @@ import MobileMenu from "./MobileMenu";
 import Navbar from "./Navbar";
 import UserMenu from "./UserMenu";
 
-interface HeaderContentProps {
-  session: Session | null;
-}
-
-export default function HeaderContent({ session }: HeaderContentProps) {
+export default function HeaderContent() {
+  const { data: session } = useSession();
   return (
     <div className="container flex items-center justify-between">
       <div className="sm:hidden">
