@@ -233,10 +233,12 @@ const FormProduto = forwardRef<FormProdutoRef, FormProdutoProps>(
                   size="lg"
                   height={100}
                   options={
-                    turmas.map((turma: Turma) => ({
-                      label: `${turma.codigoTurma} - ${turma.turnoTurma}`,
-                      id: turma.uuid?.toString() || "",
-                    })) || []
+                    turmas
+                      .filter((turma: Turma) => turma.status === true)
+                      .map((turma: Turma) => ({
+                        label: `${turma.codigoTurma} - ${turma.turnoTurma}`,
+                        id: turma.uuid?.toString() || "",
+                      })) || []
                   }
                   placeholder="Buscar turma"
                   loading={turmasLoading}

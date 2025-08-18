@@ -44,7 +44,10 @@ export default function ProductContainer({
   const { selectedTurma, setSelectedTurma } = useTurmaStore();
 
   const initialTurma =
-    selectedTurma || params.get("turma") || turmas.at(0)?.uuid || "";
+    selectedTurma ||
+    params.get("turma") ||
+    turmas.filter((turma: Turma) => turma.status === true).at(0)?.uuid ||
+    "";
 
   const {
     control,
@@ -171,10 +174,12 @@ export default function ProductContainer({
                   id="select-turma"
                   height={100}
                   options={
-                    fetchTurmas.data.map((turma: Turma) => ({
-                      label: `${turma.codigoTurma} - ${turma.turnoTurma}`,
-                      id: turma.uuid,
-                    })) || []
+                    fetchTurmas.data
+                      .filter((turma: Turma) => turma.status === true)
+                      .map((turma: Turma) => ({
+                        label: `${turma.codigoTurma} - ${turma.turnoTurma}`,
+                        id: turma.uuid,
+                      })) || []
                   }
                   placeholder="Buscar turma"
                   loading={fetchTurmas.isFetching}

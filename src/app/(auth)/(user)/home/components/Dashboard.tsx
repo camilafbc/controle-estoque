@@ -78,7 +78,7 @@ export default function Dashboard({ initialData, idCurso }: DashboardProps) {
           title="Estoque"
           description="produtos em estoque"
           loading={false}
-          data={initialData.estoque}
+          data={initialData.estoque.toString()}
           icon={
             <div className="rounded-md bg-blue-600 p-2 text-white dark:bg-blue-900">
               <Boxes />

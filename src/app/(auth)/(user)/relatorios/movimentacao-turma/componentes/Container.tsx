@@ -57,7 +57,10 @@ export default function MovTurmaContainer({
   const form = useForm({
     resolver: yupResolver(validationSchema),
     defaultValues: {
-      turma: turmas.at(0)?.idTurma.toString(),
+      turma: turmasData
+        .filter((turma: Turma) => turma.status === true)
+        .at(0)
+        ?.idTurma.toString(),
     },
   });
 
@@ -134,10 +137,12 @@ export default function MovTurmaContainer({
                   size="lg"
                   height={100}
                   options={
-                    turmasData.map((turma: Turma) => ({
-                      label: `${turma.codigoTurma} - ${turma.turnoTurma}`,
-                      id: turma.idTurma.toString(),
-                    })) || []
+                    turmasData
+                      .filter((turma: Turma) => turma.status === true)
+                      .map((turma: Turma) => ({
+                        label: `${turma.codigoTurma} - ${turma.turnoTurma}`,
+                        id: turma.idTurma.toString(),
+                      })) || []
                   }
                   placeholder="Buscar turma"
                   loading={turmasLoading}
