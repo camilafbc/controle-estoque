@@ -25,7 +25,7 @@ export default function Movimentacao({
   return (
     <>
       <FormMovimentacoes ref={formRef} onSubmit={onSubmit} />
-      <div className="flex justify-end gap-4">
+      <div className="mt-6 flex justify-end gap-4">
         <Button variant={"outline"} type="button" onClick={onClickBack}>
           Voltar
         </Button>

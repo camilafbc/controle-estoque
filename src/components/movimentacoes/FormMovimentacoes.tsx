@@ -80,7 +80,7 @@ const FormMovimentacoes = forwardRef<
   return (
     <Form {...form}>
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-        <div className="flex gap-4">
+        <div className="flex flex-wrap gap-4">
           <FormField
             control={control}
             name="tipo"
@@ -95,7 +95,6 @@ const FormMovimentacoes = forwardRef<
                     { label: "Saída", value: 0 },
                   ]}
                   placeholder="Selecione uma opção"
-                  size="lg"
                   error={!!errors.tipo}
                   required={true}
                   value={field.value}
