@@ -11,7 +11,7 @@ import * as yup from "yup";
 
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Form, FormField, FormItem } from "@/components/ui/form";
+import { Form, FormField, FormItem, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
@@ -94,11 +94,9 @@ export default function LoginForm() {
                 placeholder="Informe seu e-mail"
                 disabled={loading}
                 error={!!errors.email}
-                className="text-zinc-900 focus:bg-white dark:border-orange-500 dark:bg-white"
+                className="border-primary text-zinc-900 focus:bg-white dark:border-primary dark:bg-white"
               />
-              <span className="text-xs font-semibold text-destructive">
-                {errors?.email && errors?.email?.message}
-              </span>
+              <FormMessage />
             </FormItem>
           )}
         />
@@ -117,11 +115,9 @@ export default function LoginForm() {
                 disabled={loading}
                 type="password"
                 error={!!errors.password}
-                className="text-zinc-900 focus:bg-white dark:border-primary dark:bg-white"
+                className="border-primary text-zinc-900 focus:bg-white dark:border-primary dark:bg-white"
               />
-              <span className="text-xs font-semibold text-destructive">
-                {errors?.password && errors?.password?.message}
-              </span>
+              <FormMessage />
             </FormItem>
           )}
         />
