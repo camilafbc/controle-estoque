@@ -59,9 +59,11 @@ export default function LoginForm() {
 
         const role = session?.user.role;
 
-        role === "admin"
-          ? router.replace("/admin/home")
-          : router.replace("/home");
+        const destino = role === "admin" ? "/admin/home" : "/home";
+
+        router.prefetch(destino);
+
+        router.replace(destino);
       } else {
         setError("password", {
           type: "login",
