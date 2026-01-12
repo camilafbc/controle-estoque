@@ -1,3 +1,8 @@
+import {
+  dehydrate,
+  HydrationBoundary,
+  QueryClient,
+} from "@tanstack/react-query";
 import { Users } from "lucide-react";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
@@ -8,6 +13,7 @@ import MyBreadcrumb from "@/components/MyBreadcrumb";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { authOptions } from "@/lib/auth";
+import { getUsers } from "@/services/users";
 
 import UsersContainer from "./componentes/UsersContainer";
 
@@ -19,34 +25,43 @@ export default async function Page() {
   if (!session || session.user?.role !== "admin") {
     redirect("/acesso-negado");
   }
-  const cookieStore = cookies();
-  const sessionCookie = cookieStore.get(customCookie || "");
+  // const cookieStore = cookies();
+  // const sessionCookie = cookieStore.get(customCookie || "");
 
-  const users = await fetch(`${process.env.NEXTAUTH_URL}/api/admin/users`, {
-    cache: "no-store",
-    headers: {
-      Cookie: `${sessionCookie?.name}=${sessionCookie?.value}`,
-    },
-  }).then((res) => res.json());
+  // const users = await fetch(`${process.env.NEXTAUTH_URL}/api/admin/users`, {
+  //   cache: "no-store",
+  //   headers: {
+  //     Cookie: `${sessionCookie?.name}=${sessionCookie?.value}`,
+  //   },
+  // }).then((res) => res.json());
+
+  const queryClient = new QueryClient();
+
+  const users = await queryClient.prefetchQuery({
+    queryKey: ["users"],
+    queryFn: async () => await getUsers(),
+  });
 
   return (
-    <div className="space-y-6">
-      <MyBreadcrumb
-        listItems={[
-          { label: "Cadastros" },
-          { label: "Usuários", href: "/admin/cadastros/usuarios" },
-        ]}
-        homeHref="/admin/home"
-      />
-      <Card>
-        <CardHeader className="flex flex-row items-end gap-2">
-          <Users size={28} className="font-bold text-orange-500" />
-          <CardTitle>Usuários</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <UsersContainer users={users} />
-        </CardContent>
-      </Card>
-    </div>
+    <HydrationBoundary state={dehydrate(queryClient)}>
+      <div className="space-y-6">
+        <MyBreadcrumb
+          listItems={[
+            { label: "Cadastros" },
+            { label: "Usuários", href: "/admin/cadastros/usuarios" },
+          ]}
+          homeHref="/admin/home"
+        />
+        <Card>
+          <CardHeader className="flex flex-row items-end gap-2">
+            <Users size={28} className="font-bold text-orange-500" />
+            <CardTitle>Usuários</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <UsersContainer />
+          </CardContent>
+        </Card>
+      </div>
+    </HydrationBoundary>
   );
 }
