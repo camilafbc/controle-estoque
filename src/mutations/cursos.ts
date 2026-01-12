@@ -1,6 +1,9 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
-import { createCurso, deleteCurso, updateCurso } from "@/api/cursos";
+// import { createCurso, deleteCurso, updateCurso } from "@/api/cursos";
+import { createCurso } from "@/actions/cursos/create-curso";
+import { deleteCurso } from "@/actions/cursos/delete-cursos";
+import { updateCurso } from "@/actions/cursos/update-cursos";
 import { Curso } from "@/types/Curso";
 
 export const useCreateCursoMutation = () => {
