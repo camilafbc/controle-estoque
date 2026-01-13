@@ -22,6 +22,7 @@ import {
 import { useCursos, useGetCurso } from "@/queries/cursos";
 import { Curso } from "@/types/Curso";
 import { getErrorMessage } from "@/utils/getErrorMessage";
+import { getErrorMessageFromAction } from "@/utils/getErrorMessageFromAction";
 
 import { columns } from "./TableColumns";
 
@@ -58,7 +59,12 @@ export default function CursosContainer() {
 
   const handleDelete = (id: number) => {
     deleteCurso.mutate(id, {
-      onSuccess() {
+      onSuccess(data) {
+        if ("error" in data && data.error) {
+          const msg = getErrorMessageFromAction(data);
+          toast.error(`Erro: ${msg}`);
+          return;
+        }
         toast.success("Dados excluídos com sucesso!");
       },
       onError(error) {
@@ -73,7 +79,12 @@ export default function CursosContainer() {
 
   const handleCreateCurso = (curso: Omit<Curso, "idCurso">) => {
     createCurso.mutate(curso, {
-      onSuccess: () => {
+      onSuccess: (data) => {
+        if ("error" in data && data.error) {
+          const msg = getErrorMessageFromAction(data);
+          toast.error(`Erro: ${msg}`);
+          return;
+        }
         toast.success("Curso cadastrado com sucesso!");
         setOpenDialog(false);
       },
@@ -85,12 +96,18 @@ export default function CursosContainer() {
 
   const handleUpdateCurso = (curso: Curso) => {
     updateCurso.mutate(curso, {
-      onSuccess: () => {
+      onSuccess: (data) => {
+        if ("error" in data && data.error) {
+          const msg = getErrorMessageFromAction(data);
+          toast.error(`Erro: ${msg}`);
+          return;
+        }
+
         toast.success("Dados atualizados com sucesso!");
         setOpenDialog(false);
       },
-      onError: (error) => {
-        toast.error(getErrorMessage(error));
+      onError: (result) => {
+        toast.error(getErrorMessage(result.message));
       },
     });
   };
