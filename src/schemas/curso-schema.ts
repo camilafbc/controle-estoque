@@ -13,3 +13,5 @@ export const cursoUpdateSchema = cursoValidationSchema.concat(
     idCurso: yup.number().required("ID é necessário para atualizar"),
   }),
 );
+
+export type FormCursoFields = yup.InferType<typeof cursoValidationSchema>;

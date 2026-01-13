@@ -1,6 +1,6 @@
 import * as yup from "yup";
 
-// Schema para validação no formulário (com confirmaSenha)
+// Schema para validação no formulário e update
 export const userValidationSchema = yup.object({
   nome: yup
     .string()
@@ -39,7 +39,9 @@ export const userValidationSchema = yup.object({
     }),
 });
 
-// Schema para validação na server action (sem confirmaSenha, idCurso como number)
+export type FormUserFields = yup.InferType<typeof userValidationSchema>;
+
+// Schema para validação na server action (criação de usuário)
 export const userActionValidationSchema = yup.object({
   nome: yup
     .string()
@@ -61,5 +63,3 @@ export const userActionValidationSchema = yup.object({
     .required("Senha é obrigatória")
     .min(6, "A senha deve ter no mínimo 6 caracteres"),
 });
-
-export type FormUserFields = yup.InferType<typeof userValidationSchema>;

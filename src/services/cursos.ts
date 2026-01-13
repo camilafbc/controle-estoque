@@ -17,3 +17,13 @@ export const getCursoById = async (idCurso: number) => {
   });
   return curso;
 };
+
+export const countCursos = async () => {
+  const count = await prisma.user.count({
+    where: {
+      status: true,
+    },
+  });
+
+  return count;
+};

@@ -9,19 +9,18 @@ import MyDialog from "@/components/MyDialog";
 import { SearchInput } from "@/components/SearchInput";
 import { Button } from "@/components/ui/button";
 import { DataTable } from "@/components/ui/data-table/data-table";
-import FormUser, {
-  FormUserFields,
-  FormUserRef,
-} from "@/components/users/FormUser";
+import FormUser, { FormUserRef } from "@/components/users/FormUser";
 import {
   useDeleteUserMutation,
-  useInsertUserMutation,
+  useCreatetUserMutation,
   useUpdateUserMutation,
 } from "@/mutations/users";
 import { useCursos } from "@/queries/cursos";
 import { useGetUser, useUsers } from "@/queries/user";
+import { FormUserFields } from "@/schemas/user-schema";
 import { User } from "@/types/User";
 import { getErrorMessage } from "@/utils/getErrorMessage";
+import { getErrorMessageFromAction } from "@/utils/getErrorMessageFromAction";
 
 import { columns } from "./TableColumns";
 
@@ -38,7 +37,7 @@ export default function UsersContainer() {
   const { data: cursos, isLoading: cursosLoading } = useCursos();
   // mutations
   const deleteMutation = useDeleteUserMutation();
-  const createUser = useInsertUserMutation();
+  const createUser = useCreatetUserMutation();
   const updateUser = useUpdateUserMutation();
 
   const filteredData = usersData
@@ -63,7 +62,12 @@ export default function UsersContainer() {
 
   const handleDelete = (id: number) => {
     deleteMutation.mutate(id, {
-      onSuccess: () => {
+      onSuccess: (data) => {
+        if ("error" in data && data.error) {
+          const msg = getErrorMessageFromAction(data);
+          toast.error(`Erro: ${msg}`);
+          return;
+        }
         toast.success("Dados excluídos com sucesso!");
       },
       onError: (error) => {
@@ -74,8 +78,14 @@ export default function UsersContainer() {
 
   const handleCreateUser = (user: Omit<User, "idUser">) => {
     createUser.mutate(user, {
-      onSuccess: () => {
+      onSuccess: (data) => {
+        if ("error" in data && data.error) {
+          const msg = getErrorMessageFromAction(data);
+          toast.error(`Erro: ${msg}`);
+          return;
+        }
         toast.success("Usuário criado com sucesso!");
+        formRef.current?.resetForm();
         setOpenDialog(false);
       },
       onError: (error) => {
@@ -85,18 +95,20 @@ export default function UsersContainer() {
   };
 
   const handleUpdateUser = (user: Partial<User>) => {
-    updateUser.mutate(
-      { user, idUser: user.idUser as number },
-      {
-        onSuccess: (response) => {
-          toast.success("Dados atualizados com sucesso!");
-          setOpenDialog(false);
-        },
-        onError: (error) => {
-          toast.error(getErrorMessage(error));
-        },
+    updateUser.mutate(user, {
+      onSuccess: (data) => {
+        if ("error" in data && data.error) {
+          const msg = getErrorMessageFromAction(data);
+          toast.error(`Erro: ${msg}`);
+          return;
+        }
+        toast.success("Dados atualizados com sucesso!");
+        setOpenDialog(false);
       },
-    );
+      onError: (error) => {
+        toast.error(getErrorMessage(error));
+      },
+    });
   };
 
   const handleSubmit: SubmitHandler<FormUserFields> = (data) => {
@@ -105,7 +117,7 @@ export default function UsersContainer() {
       email: data.email.trim(),
       role: data.role.trim() as "admin" | "user",
       status: data.status,
-      idCurso: Number(data.idCurso),
+      idCurso: data.role === "user" ? Number(data.idCurso) : undefined,
       ...(data.password && { password: data.password.trim() }),
     };
 
@@ -113,7 +125,6 @@ export default function UsersContainer() {
       handleUpdateUser({ ...userPayload, idUser: usuario?.idUser });
     } else {
       handleCreateUser(userPayload);
-      formRef.current?.resetForm();
     }
   };
 

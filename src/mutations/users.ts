@@ -5,7 +5,7 @@ import { deleteUser } from "@/actions/users/delete-user";
 import { updateUser } from "@/actions/users/update-user";
 import { User } from "@/types/User";
 
-export const useInsertUserMutation = () => {
+export const useCreatetUserMutation = () => {
   const queryClient = useQueryClient();
   const mutation = useMutation({
     mutationFn: (user: Omit<User, "idUser">) => createUser(user),
@@ -19,8 +19,7 @@ export const useInsertUserMutation = () => {
 export const useUpdateUserMutation = () => {
   const queryClient = useQueryClient();
   const mutation = useMutation({
-    mutationFn: ({ user, idUser }: { user: Partial<User>; idUser: number }) =>
-      updateUser(user, idUser),
+    mutationFn: (user: Partial<User>) => updateUser(user),
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ["users"] });
       queryClient.invalidateQueries({ queryKey: ["users", variables.idUser] });

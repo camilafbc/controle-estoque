@@ -5,10 +5,7 @@ import { useRef, useState } from "react";
 import { SubmitHandler } from "react-hook-form";
 import { toast } from "react-toastify";
 
-import FormCurso, {
-  FormCursoFields,
-  FormCursoRef,
-} from "@/components/cursos/FormCurso";
+import FormCurso, { FormCursoRef } from "@/components/cursos/FormCurso";
 import { FormCursoSkeleton } from "@/components/cursos/FormCursoSkeleton";
 import MyDialog from "@/components/MyDialog";
 import { SearchInput } from "@/components/SearchInput";
@@ -20,6 +17,7 @@ import {
   useUpdateCursoMutation,
 } from "@/mutations/cursos";
 import { useCursos, useGetCurso } from "@/queries/cursos";
+import { FormCursoFields } from "@/schemas/curso-schema";
 import { Curso } from "@/types/Curso";
 import { getErrorMessage } from "@/utils/getErrorMessage";
 import { getErrorMessageFromAction } from "@/utils/getErrorMessageFromAction";
