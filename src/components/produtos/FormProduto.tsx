@@ -7,6 +7,10 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import { NumericFormat } from "react-number-format";
 import * as yup from "yup";
 
+import {
+  FormProdutoFields,
+  produtoValidationSchema,
+} from "@/schemas/produto-schema";
 import { Produto } from "@/types/Produto";
 import { Turma } from "@/types/Turma";
 
@@ -16,20 +20,20 @@ import { Form, FormField, FormItem, FormMessage } from "../ui/form";
 import { Input } from "../ui/input";
 import { VirtualizedCombobox } from "../ui/virtualized-combobox/VirtualizedCombobox";
 
-const validationSchema = yup.object({
-  produto: yup.string().required("Campo obrigatório"),
-  fabricante: yup.string().required("Campo obrigatório"),
-  lote: yup.string().required("Campo obrigatório"),
-  quantidade: yup
-    .string()
-    .matches(/^\d+$/, "Quantidade deve ser um número inteiro")
-    .required("Campo obrigatório"),
-  // dataValidade: yup.string().required("Campo obrigatório"),
-  dataValidade: yup.date().required("Campo obrigatório"),
-  turma: yup.string().required("Campo obrigatório"),
-});
+// const validationSchema = yup.object({
+//   produto: yup.string().required("Campo obrigatório"),
+//   fabricante: yup.string().required("Campo obrigatório"),
+//   lote: yup.string().required("Campo obrigatório"),
+//   quantidade: yup
+//     .string()
+//     .matches(/^\d+$/, "Quantidade deve ser um número inteiro")
+//     .required("Campo obrigatório"),
+//   // dataValidade: yup.string().required("Campo obrigatório"),
+//   dataValidade: yup.date().required("Campo obrigatório"),
+//   turma: yup.string().required("Campo obrigatório"),
+// });
 
-export type FormProdutoFields = yup.InferType<typeof validationSchema>;
+// export type FormProdutoFields = yup.InferType<typeof validationSchema>;
 
 export interface FormProdutoRef {
   resetForm: () => void;
@@ -50,18 +54,18 @@ const FormProduto = forwardRef<FormProdutoRef, FormProdutoProps>(
       initialValues,
       turmas,
       turmasLoading,
-      defaultFocus = "produto",
+      defaultFocus = "prodDescricao",
       onSubmit,
     },
     ref,
   ) => {
     const form = useForm<FormProdutoFields>({
-      resolver: yupResolver(validationSchema),
+      resolver: yupResolver(produtoValidationSchema),
       defaultValues: {
-        produto: "",
-        fabricante: "",
-        lote: "",
-        quantidade: "",
+        prodDescricao: "",
+        prodFabricante: "",
+        prodLote: "",
+        prodQuantidade: "",
         turma: "",
       },
     });
@@ -78,10 +82,10 @@ const FormProduto = forwardRef<FormProdutoRef, FormProdutoProps>(
     useImperativeHandle(ref, () => ({
       resetForm: () => {
         reset({
-          produto: "",
-          fabricante: "",
-          lote: "",
-          quantidade: "",
+          prodDescricao: "",
+          prodFabricante: "",
+          prodLote: "",
+          prodQuantidade: "",
           turma: "",
         });
       },
@@ -95,11 +99,11 @@ const FormProduto = forwardRef<FormProdutoRef, FormProdutoProps>(
     useEffect(() => {
       if (initialValues) {
         reset({
-          produto: initialValues.prodDescricao ?? "",
-          fabricante: initialValues.prodFabricante ?? "",
-          lote: initialValues.prodLote ?? "",
-          quantidade: initialValues.prodQuantidade.toString() ?? "",
-          dataValidade: initialValues.prodValidade
+          prodDescricao: initialValues.prodDescricao ?? "",
+          prodFabricante: initialValues.prodFabricante ?? "",
+          prodLote: initialValues.prodLote ?? "",
+          prodQuantidade: initialValues.prodQuantidade.toString() ?? "",
+          prodValidade: initialValues.prodValidade
             ? dayjs(initialValues.prodValidade).isValid()
               ? dayjs(initialValues.prodValidade).toDate()
               : undefined
@@ -117,7 +121,7 @@ const FormProduto = forwardRef<FormProdutoRef, FormProdutoProps>(
         >
           <FormField
             control={control}
-            name="produto"
+            name="prodDescricao"
             render={({ field }) => (
               <FormItem className="col-span-1 p-1 lg:col-span-2">
                 <Input
@@ -127,7 +131,7 @@ const FormProduto = forwardRef<FormProdutoRef, FormProdutoProps>(
                   placeholder="Informe a descrição do produto"
                   size="lg"
                   required
-                  error={!!errors.produto}
+                  error={!!errors.prodDescricao}
                   value={field.value}
                   onChange={(value) => field.onChange(value)}
                 />
@@ -138,7 +142,7 @@ const FormProduto = forwardRef<FormProdutoRef, FormProdutoProps>(
 
           <FormField
             control={control}
-            name="fabricante"
+            name="prodFabricante"
             render={({ field }) => (
               <FormItem className="col-span-1 p-1 lg:col-span-2">
                 <Input
@@ -147,7 +151,7 @@ const FormProduto = forwardRef<FormProdutoRef, FormProdutoProps>(
                   placeholder="Informe o fabricante do produto"
                   size="lg"
                   required
-                  error={!!errors.fabricante}
+                  error={!!errors.prodFabricante}
                   value={field.value}
                   onChange={(value) => field.onChange(value)}
                 />
@@ -158,7 +162,7 @@ const FormProduto = forwardRef<FormProdutoRef, FormProdutoProps>(
 
           <FormField
             control={control}
-            name="lote"
+            name="prodLote"
             render={({ field }) => (
               <FormItem className="col-span-1 p-1">
                 <Input
@@ -167,7 +171,7 @@ const FormProduto = forwardRef<FormProdutoRef, FormProdutoProps>(
                   placeholder="Informe o lote do produto"
                   size="lg"
                   required
-                  error={!!errors.lote}
+                  error={!!errors.prodLote}
                   value={field.value}
                   onChange={(value) => field.onChange(value)}
                 />
@@ -178,7 +182,7 @@ const FormProduto = forwardRef<FormProdutoRef, FormProdutoProps>(
 
           <FormField
             control={control}
-            name="quantidade"
+            name="prodQuantidade"
             render={({ field }) => (
               <FormItem className="col-span-1 p-1">
                 <Input
@@ -187,8 +191,8 @@ const FormProduto = forwardRef<FormProdutoRef, FormProdutoProps>(
                   placeholder="Informe as unidades do produto"
                   size="lg"
                   required
-                  error={!!errors.quantidade}
-                  {...register("quantidade")}
+                  error={!!errors.prodQuantidade}
+                  // {...register("quantidade")}
                   value={field.value}
                   onInput={(ev) => {
                     const value = ev.currentTarget.value.replace(/\D/g, "");
@@ -203,7 +207,7 @@ const FormProduto = forwardRef<FormProdutoRef, FormProdutoProps>(
 
           <FormField
             control={control}
-            name="dataValidade"
+            name="prodValidade"
             render={({ field }) => (
               <FormItem className="col-span-1 p-1">
                 <DatePickerInput
@@ -211,7 +215,7 @@ const FormProduto = forwardRef<FormProdutoRef, FormProdutoProps>(
                   placeholder="dd/mm/aaaa"
                   size="lg"
                   required
-                  error={!!errors.dataValidade}
+                  error={!!errors.prodValidade}
                   selected={field.value}
                   onSelect={field.onChange}
                 />

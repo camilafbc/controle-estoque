@@ -7,10 +7,7 @@ import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 
 import { MySelect } from "@/components/MySelect";
-import {
-  FormProdutoFields,
-  FormProdutoRef,
-} from "@/components/produtos/FormProduto";
+import { FormProdutoRef } from "@/components/produtos/FormProduto";
 import { SearchInput } from "@/components/SearchInput";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -22,32 +19,34 @@ import {
 } from "@/mutations/produtos";
 import { useProduto, useProdutos } from "@/queries/produtos";
 import { useTurmas } from "@/queries/turmas";
+import { FormProdutoFields } from "@/schemas/produto-schema";
 import { useTurmaStore } from "@/stores/useTurmaStore";
 import { Produto } from "@/types/Produto";
 import { Turma } from "@/types/Turma";
 import { getErrorMessage } from "@/utils/getErrorMessage";
+import { getErrorMessageFromAction } from "@/utils/getErrorMessageFromAction";
 
 import ProductDialog from "./Dialog";
 import ProductTable from "./Table";
 
 interface ProductContainerProps {
-  turmas: Turma[];
   idCurso: number;
 }
 
-export default function ProductContainer({
-  turmas,
-  idCurso,
-}: ProductContainerProps) {
+export default function ProductContainer({ idCurso }: ProductContainerProps) {
   const router = useRouter();
   const params = useSearchParams();
   const { selectedTurma, setSelectedTurma } = useTurmaStore();
 
-  const initialTurma =
-    selectedTurma ||
-    params.get("turma") ||
-    turmas.filter((turma: Turma) => turma.status === true).at(0)?.uuid ||
-    "";
+  const turmas = ["3469c6d4-a12a-4768-be0f-cfe3bc75ae0b"];
+
+  // const initialTurma =
+  //   selectedTurma ||
+  //   params.get("turma") ||
+  //   turmas.filter((turma: Turma) => turma.status === true).at(0)?.uuid ||
+  //   "";
+
+  const initialTurma = turmas[0];
 
   const {
     control,
@@ -76,11 +75,11 @@ export default function ProductContainer({
   const [openDialog, setOpenDialog] = useState(false);
   const [editingId, setEditingId] = useState<string>("");
   // queries e mutations
-  const fetchTurmas = useTurmas(Number(idCurso), turmas);
+  const fetchTurmas = useTurmas(Number(idCurso));
   const produtos = useProdutos(currentTurma, Number(idCurso));
   const produto = useProduto(editingId, currentTurma, Number(idCurso));
   const deleteMutation = useDeleteProductMutation();
-  const createProduto = useCreateProdutoMutation(currentTurma);
+  const createProduto = useCreateProdutoMutation();
   const updateProduto = useUpdateProductMutation();
 
   const handleMovimentacoes = (uuidProduto: string) => {
@@ -94,7 +93,12 @@ export default function ProductContainer({
 
   const handleDelete = (uuid: string) => {
     deleteMutation.mutate(uuid, {
-      onSuccess: () => {
+      onSuccess: (data) => {
+        if ("error" in data && data.error) {
+          const msg = getErrorMessageFromAction(data);
+          toast.error(`Erro: ${msg}`);
+          return;
+        }
         toast.success("Produto excluído com sucesso!");
       },
       onError: () => {
@@ -114,45 +118,65 @@ export default function ProductContainer({
   };
 
   const handleCreateProduto = (
-    data: Omit<Produto, "idProduto" | "prodTurma">,
+    data: Omit<Produto, "idProduto" | "prodTurma"> & { turmaUuid: string },
   ) => {
-    createProduto.mutate(data, {
-      onSuccess: (response) => {
-        toast.success(response.message);
-        formRef.current?.resetForm();
+    const { turmaUuid, ...produto } = data;
+    createProduto.mutate(
+      { produto, uuidTurma: turmaUuid },
+      {
+        onSuccess: (data) => {
+          if ("error" in data && data.error) {
+            const msg = getErrorMessageFromAction(data);
+            toast.error(`Erro: ${msg}`);
+            return;
+          }
+          toast.success("Produto criado com sucesso!");
+          formRef.current?.resetForm();
+        },
+        onError: (error) => {
+          toast.error(getErrorMessage(error));
+        },
       },
-      onError: (error) => {
-        toast.error(getErrorMessage(error));
-      },
-    });
+    );
   };
 
-  const handleUpdateProduto = (data: Omit<Produto, "prodTurma">) => {
-    updateProduto.mutate(data, {
-      onSuccess: (response) => {
-        toast.success(response.message);
-        setOpenDialog(false);
+  const handleUpdateProduto = (
+    data: Omit<Produto, "idProduto" | "prodTurma"> & { turmaUuid: string },
+  ) => {
+    const { turmaUuid, ...produto } = data;
+    updateProduto.mutate(
+      { produto, uuidTurma: turmaUuid },
+      {
+        onSuccess: (data) => {
+          if ("error" in data && data.error) {
+            const msg = getErrorMessageFromAction(data);
+            toast.error(`Erro: ${msg}`);
+            return;
+          }
+          toast.success("Dados atualizados com sucesso!");
+          setOpenDialog(false);
+        },
+        onError: (error) => {
+          toast.error(getErrorMessage(error));
+        },
       },
-      onError: (error) => {
-        toast.error(getErrorMessage(error));
-      },
-    });
+    );
   };
 
   const onSubmit: SubmitHandler<FormProdutoFields> = (data) => {
     const payload = {
       uuid: produto.data?.uuid,
-      prodDescricao: data.produto.trim(),
-      prodFabricante: data.fabricante.trim(),
-      prodQuantidade: +data.quantidade,
-      prodValidade: data.dataValidade,
-      prodLote: data.lote.trim(),
+      prodDescricao: data.prodDescricao.trim(),
+      prodFabricante: data.prodFabricante.trim(),
+      prodQuantidade: +data.prodQuantidade,
+      prodValidade: data.prodValidade,
+      prodLote: data.prodLote.trim(),
       turmaUuid: data.turma,
       prodCurso: Number(idCurso),
     };
 
     if (editingId) {
-      handleUpdateProduto({ ...payload, idProduto: +editingId });
+      handleUpdateProduto(payload);
     } else {
       handleCreateProduto(payload);
     }
@@ -173,14 +197,20 @@ export default function ProductContainer({
                   label="Turma"
                   id="select-turma"
                   height={100}
-                  options={
-                    fetchTurmas.data
-                      .filter((turma: Turma) => turma.status === true)
-                      .map((turma: Turma) => ({
-                        label: `${turma.codigoTurma} - ${turma.turnoTurma}`,
-                        id: turma.uuid,
-                      })) || []
-                  }
+                  // options={
+                  //   fetchTurmas.data
+                  //     .filter((turma: Turma) => turma.status === true)
+                  //     .map((turma: Turma) => ({
+                  //       label: `${turma.codigoTurma} - ${turma.turnoTurma}`,
+                  //       id: turma.uuid,
+                  //     })) || []
+                  // }
+                  options={[
+                    {
+                      id: "3469c6d4-a12a-4768-be0f-cfe3bc75ae0b",
+                      label: "teste build 2",
+                    },
+                  ]}
                   placeholder="Buscar turma"
                   loading={fetchTurmas.isFetching}
                   error={errors.turma?.message}

@@ -1,12 +1,14 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
-import { deleteProdutos, createProduto, updateProduto } from "@/api/produtos";
+import { createProduto } from "@/actions/produtos/create-produto";
+import { deleteProduto } from "@/actions/produtos/delete-produto";
+import { updateProduto } from "@/actions/produtos/update-produtos";
 import { Produto } from "@/types/Produto";
 
 export const useDeleteProductMutation = () => {
   const queryClient = useQueryClient();
   const mutation = useMutation({
-    mutationFn: (uuid: string) => deleteProdutos(uuid),
+    mutationFn: (uuid: string) => deleteProduto(uuid),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["produtos"] });
     },
@@ -14,16 +16,20 @@ export const useDeleteProductMutation = () => {
   return mutation;
 };
 
-export const useCreateProdutoMutation = (uuidTurma: string) => {
+export const useCreateProdutoMutation = () => {
   const queryClient = useQueryClient();
   const mutation = useMutation({
-    mutationFn: (produto: Omit<Produto, "idProduto" | "prodTurma">) =>
-      createProduto(produto),
-    onSuccess: (_, variables) => {
+    mutationFn: ({
+      produto,
+      uuidTurma,
+    }: {
+      produto: Omit<Produto, "idProduto" | "prodTurma">;
+      uuidTurma: string;
+    }) => createProduto(produto, uuidTurma),
+    onSuccess: (data, variables) => {
       queryClient.invalidateQueries({
-        queryKey: ["produtos", uuidTurma, variables.prodCurso],
+        queryKey: ["produtos", variables.uuidTurma, variables.produto.prodCurso],
       });
-      console.log("CHAVE CREATE>: ", uuidTurma, variables.prodCurso);
     },
   });
   return mutation;
@@ -32,10 +38,16 @@ export const useCreateProdutoMutation = (uuidTurma: string) => {
 export const useUpdateProductMutation = () => {
   const queryClient = useQueryClient();
   const mutation = useMutation({
-    mutationFn: (produto: Omit<Produto, "prodTurma">) => updateProduto(produto),
+    mutationFn: ({
+      produto,
+      uuidTurma,
+    }: {
+      produto: Omit<Produto, "idProduto" | "prodTurma">;
+      uuidTurma: string;
+    }) => updateProduto(produto, uuidTurma),
     onSuccess: (data, variables) => {
       queryClient.invalidateQueries({
-        queryKey: ["produtos", data.updated.turma.uuid, variables.prodCurso],
+        queryKey: ["produtos", variables.uuidTurma, variables.produto.prodCurso],
       });
     },
   });

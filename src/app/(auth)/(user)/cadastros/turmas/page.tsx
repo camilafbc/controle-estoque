@@ -31,7 +31,7 @@ export default async function Page() {
 
   const queryClient = new QueryClient();
 
-  const turmas = await queryClient.prefetchQuery({
+  await queryClient.prefetchQuery({
     queryKey: ["turmas", idCurso],
     queryFn: async () => await getTurmas(idCurso),
   });
