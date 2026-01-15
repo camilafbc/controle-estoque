@@ -8,11 +8,11 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getServerSession } from "next-auth";
 
-import { getOperacoesByProduto } from "@/api/operacoes";
 import MyBreadcrumb from "@/components/MyBreadcrumb";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { authOptions } from "@/lib/auth";
+import { getOperacoesPorProduto } from "@/services/operacoes";
 import { getProdutoById, getProdutos } from "@/services/produtos";
 import { getTurmas } from "@/services/turmas";
 
@@ -76,7 +76,7 @@ export default async function ProdutosPage({
   if (turma && produto) {
     await queryClient.prefetchQuery({
       queryKey: ["operacoes", produto],
-      queryFn: async () => await getOperacoesByProduto(produto),
+      queryFn: async () => await getOperacoesPorProduto(produto),
     });
 
     const produtoData = await getProdutoById(produto);

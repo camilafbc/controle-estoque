@@ -16,6 +16,7 @@ import { DataTable } from "@/components/ui/data-table/data-table";
 import { useCreateOperacaoMutation } from "@/mutations/operacoes";
 import { useOperacoes } from "@/queries/operacoes";
 import { getErrorMessage } from "@/utils/getErrorMessage";
+import { getErrorMessageFromAction } from "@/utils/getErrorMessageFromAction";
 
 import { columns } from "./TableMovimentacoesColumns";
 
@@ -51,8 +52,13 @@ export default function Movimentacoes({ turma, produto }: MovimentacoesProps) {
     };
 
     createMovimentacao.mutate(payload, {
-      onSuccess: (response) => {
-        toast.success(response.message);
+      onSuccess: (data) => {
+        if ("error" in data && data.error) {
+          const msg = getErrorMessageFromAction(data);
+          toast.error(`Erro: ${msg}`);
+          return;
+        }
+        toast.success(data.message);
       },
       onError: (error) => {
         toast.error(getErrorMessage(error));

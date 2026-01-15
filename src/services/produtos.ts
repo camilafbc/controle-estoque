@@ -1,7 +1,4 @@
-import dayjs from "dayjs";
-
 import prisma from "@/lib/prisma";
-import { Produto } from "@/types/Produto";
 
 export const getProdutos = async (idCurso: number, turmaUuid: string) => {
   const turma = await prisma.turma.findUnique({
@@ -128,36 +125,36 @@ export const getEstoquePorCurso = async (idCurso: number) => {
 //   return { ...produtoUpdated, turma: { uuid: turma.uuid } };
 // };
 
-export const updateQuantidadeProduto = async (
-  idProduto: number,
-  quantidade: number,
-  tipo: "increment" | "decrement",
-) => {
-  const produto = await prisma.produto.findUnique({
-    where: {
-      idProduto: idProduto,
-    },
-  });
+// export const updateQuantidadeProduto = async (
+//   idProduto: number,
+//   quantidade: number,
+//   tipo: "increment" | "decrement",
+// ) => {
+//   const produto = await prisma.produto.findUnique({
+//     where: {
+//       idProduto: idProduto,
+//     },
+//   });
 
-  if (!produto) throw new Error("Produto não encontrado.");
+//   if (!produto) throw new Error("Produto não encontrado.");
 
-  // impedir valores negativos
-  if (tipo === "decrement" && produto.prodQuantidade < quantidade) {
-    throw new Error("Quantidade insuficiente para retirada.");
-  }
+//   // impedir valores negativos
+//   if (tipo === "decrement" && produto.prodQuantidade < quantidade) {
+//     throw new Error("Quantidade insuficiente para retirada.");
+//   }
 
-  const produtoUpdated = await prisma.produto.update({
-    where: {
-      idProduto: produto.idProduto,
-    },
-    data: {
-      prodQuantidade: {
-        [tipo]: Number(quantidade),
-      },
-    },
-  });
-  return produtoUpdated;
-};
+//   const produtoUpdated = await prisma.produto.update({
+//     where: {
+//       idProduto: produto.idProduto,
+//     },
+//     data: {
+//       prodQuantidade: {
+//         [tipo]: Number(quantidade),
+//       },
+//     },
+//   });
+//   return produtoUpdated;
+// };
 
 export const countProdutos = async (idCurso: number) => {
   const produtos = await prisma.produto.count({

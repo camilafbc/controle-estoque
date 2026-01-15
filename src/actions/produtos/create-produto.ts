@@ -12,8 +12,6 @@ export const createProduto = async (
   produto: Omit<Produto, "idProduto" | "prodTurma">,
   uuidTurma: string,
 ) => {
-  console.log("PRODUTO CHEGANDO: ", produto);
-  console.log("uuid turma chegando: ", uuidTurma);
   try {
     const session = await getServerSession(authOptions);
 
