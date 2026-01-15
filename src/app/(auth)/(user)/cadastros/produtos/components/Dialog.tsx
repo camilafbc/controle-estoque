@@ -2,11 +2,9 @@ import { RefObject } from "react";
 import { SubmitHandler } from "react-hook-form";
 
 import MyDialog from "@/components/MyDialog";
-import FormProduto, {
-  FormProdutoFields,
-  FormProdutoRef,
-} from "@/components/produtos/FormProduto";
+import FormProduto, { FormProdutoRef } from "@/components/produtos/FormProduto";
 import { Button } from "@/components/ui/button";
+import { FormProdutoFields } from "@/schemas/produto-schema";
 import { Produto } from "@/types/Produto";
 import { Turma } from "@/types/Turma";
 

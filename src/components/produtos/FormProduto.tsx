@@ -2,6 +2,7 @@
 
 import { yupResolver } from "@hookform/resolvers/yup";
 import dayjs from "dayjs";
+import { useSearchParams } from "next/navigation";
 import { forwardRef, ReactNode, useEffect, useImperativeHandle } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { NumericFormat } from "react-number-format";
@@ -59,6 +60,9 @@ const FormProduto = forwardRef<FormProdutoRef, FormProdutoProps>(
     },
     ref,
   ) => {
+    const params = useSearchParams();
+    const turmaSelected = params.get("turma");
+
     const form = useForm<FormProdutoFields>({
       resolver: yupResolver(produtoValidationSchema),
       defaultValues: {
@@ -66,13 +70,12 @@ const FormProduto = forwardRef<FormProdutoRef, FormProdutoProps>(
         prodFabricante: "",
         prodLote: "",
         prodQuantidade: "",
-        turma: "",
+        turma: turmaSelected ?? "",
       },
     });
 
     const {
       control,
-      register,
       handleSubmit,
       reset,
       setFocus,
