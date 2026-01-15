@@ -1,116 +1,72 @@
-import axios, { AxiosError } from "axios";
+import bcrypt from "bcryptjs";
 import { AuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
+
+import prisma from "./prisma";
 
 export const authOptions: AuthOptions = {
   secret: process.env.NEXTAUTH_SECRET,
   pages: {
-    signIn: "/api/auth/signin",
+    signIn: "/",
   },
   providers: [
     CredentialsProvider({
       id: "credentials",
+      name: "Credentials",
       credentials: {
         email: { label: "E-mail", type: "text" },
         password: { label: "Senha", type: "password" },
       },
-      authorize: async (credentials) => {
-        if (!credentials) return null;
+      authorize: async (credentials, req) => {
+        if (!credentials?.email || !credentials?.password) return null;
 
-        try {
-          const response = await fetch(
-            `${process.env.NEXTAUTH_URL}/api/auth/signin`,
-            {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({
-                email: credentials.email,
-                password: credentials.password,
-              }),
-              credentials: "include",
-            },
-          );
+        const user = await prisma.user.findUnique({
+          where: { email: credentials.email },
+        });
 
-          if (!response.ok) return null;
-
-          const data = await response.json();
-
-          if (data.user) {
-            return {
-              id: data.user.id,
-              name: data.user.name,
-              email: data.user.email,
-              curso: data.user.curso,
-              role: data.user.role,
-            };
-          }
-
-          return null;
-        } catch (error) {
-          const axiosError = error as AxiosError<Error>;
-
-          if (
-            axiosError.code === "ECONNREFUSED" ||
-            "ERR_BAD_RESPONSE" ||
-            "ERR_BAD_REQUEST"
-          ) {
-            throw new Error("Erro de conexão com o servidor. Tente novamente.");
-          }
-
-          if (axiosError.code === "ECONNABORTED") {
-            throw new Error("Tempo de espera excedido. Tente novamente.");
-          }
-
-          if (axiosError.response?.data.message) {
-            throw new Error(axiosError.response?.data.message);
-          }
-
-          return null;
+        if (!user || !user.password) {
+          throw new Error("Usuário não encontrado.");
         }
+
+        const isPasswordValid = await bcrypt.compare(
+          credentials.password,
+          user.password,
+        );
+
+        if (!isPasswordValid) {
+          throw new Error("E-mail ou senha incorretos.");
+        }
+
+        // retorno dos dados que vão para o token
+        return {
+          id: String(user.idUser),
+          name: user.nome,
+          email: user.email,
+          curso: user.idCurso ?? undefined,
+          role: user.role,
+        };
       },
     }),
   ],
-
   callbacks: {
     jwt: async ({ token, user, session, trigger }) => {
       if (user) {
         token.id = user.id;
-        token.name = user.name;
-        token.email = user.email;
         token.curso = user.curso;
         token.role = user.role;
       }
-
-      if (trigger == "update") {
+      if (trigger === "update" && session?.user?.name) {
         token.name = session.user.name;
       }
-
       return token;
     },
     session: async ({ session, token }) => {
-      if (token) {
-        session.user = {
-          id: token.id as unknown as number,
-          name: token.name as string,
-          email: token.email as string,
-          curso: token.curso as number,
-          role: token.role as string,
-        };
+      if (token && session.user) {
+        session.user.id = token.id as number;
+        session.user.curso = token.curso as any;
+        session.user.role = token.role as any;
       }
       return session;
-    },
-  },
-
-  cookies: {
-    sessionToken: {
-      name: "next-auth.senac-estoque-session-token",
-      options: {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "lax",
-        path: "/",
-        maxAge: 60 * 60 * 6, // 6 horas
-      },
     },
   },
 };

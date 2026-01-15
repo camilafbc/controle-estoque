@@ -45,33 +45,29 @@ export default function LoginForm() {
       setLoading(true);
 
       const result = await signIn("credentials", {
-        redirect: false,
+        redirect: false, // Mantém false para você decidir o destino
         email: data.email.trim(),
         password: data.password.trim(),
       });
 
+      console.log("RESULT: ", result);
+
       if (result?.ok) {
-        // aguarda a sessão ser atualizada
-        await new Promise((resolve) => setTimeout(resolve, 300));
-
-        // pega os dados da sessão
         const session = await getSession();
-
         const role = session?.user.role;
 
         const destino = role === "admin" ? "/admin/home" : "/home";
 
-        router.prefetch(destino);
-
         router.replace(destino);
       } else {
+        // Exibe o erro vindo do authorize
         setError("password", {
           type: "login",
-          message: "Usuário ou senha inválidos.",
+          message: result?.error || "Usuário ou senha inválidos.",
         });
       }
     } catch (error) {
-      console.error("Erro de autenticação: " + error);
+      console.error("Erro inesperado no login: ", error);
     } finally {
       setLoading(false);
     }

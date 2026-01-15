@@ -3,11 +3,10 @@ import type { NextRequest } from "next/server";
 import { getToken } from "next-auth/jwt";
 
 const secret = process.env.NEXTAUTH_SECRET;
-const customCookie = "next-auth.senac-estoque-session-token";
 
 export async function middleware(req: NextRequest) {
   const path = req.nextUrl.pathname;
-  const token = await getToken({ req, secret, cookieName: customCookie });
+  const token = await getToken({ req, secret: secret });
 
   if (path === "/" && token) {
     const newUrl = token.role === "admin" ? "/admin/home" : "/home";

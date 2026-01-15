@@ -5,12 +5,18 @@ import { getServerSession } from "next-auth";
 import GreetingUser from "@/components/home/GreetingUser";
 import MyBreadcrumb from "@/components/MyBreadcrumb";
 import { authOptions } from "@/lib/auth";
-import { countProdutos } from "@/services/produtos";
+import {
+  getLastDezOperacoes,
+  getRelatorioUltimosDozeMeses,
+} from "@/services/operacoes";
+import {
+  countProdutos,
+  getEstoquePorCurso,
+  getProdutosExpirando,
+} from "@/services/produtos";
 import { countTurmas } from "@/services/turmas";
 
 import Dashboard from "./components/Dashboard";
-
-const customCookie = process.env.NEXT_PUBLIC_CUSTOM_COOKIE;
 
 export default async function Page() {
   const session = await getServerSession(authOptions);
@@ -24,52 +30,20 @@ export default async function Page() {
     throw new Error("Erro ao carregar dados!");
   }
 
-  const cookieStore = cookies();
-  const sessionCookie = cookieStore.get(customCookie || "");
-
-  const [estoqueCount, validadeCount, last12Months, last10Ops] =
-    await Promise.all([
-      fetch(
-        `${process.env.NEXTAUTH_URL}/api/user/produtos/estoque/${idCurso}`,
-        {
-          cache: "no-store",
-          headers: {
-            Cookie: `${sessionCookie?.name}=${sessionCookie?.value}`,
-          },
-        },
-      ).then((res) => res.json()),
-      fetch(
-        `${process.env.NEXTAUTH_URL}/api/user/produtos/validade/${idCurso}`,
-        {
-          cache: "no-store",
-          headers: {
-            Cookie: `${sessionCookie?.name}=${sessionCookie?.value}`,
-          },
-        },
-      ).then((res) => res.json()),
-      fetch(
-        `${process.env.NEXTAUTH_URL}/api/user/operacoes/relatorios/${idCurso}/last-12-months`,
-        {
-          cache: "no-store",
-          headers: {
-            Cookie: `${sessionCookie?.name}=${sessionCookie?.value}`,
-          },
-        },
-      ).then((res) => res.json()),
-      fetch(
-        `${process.env.NEXTAUTH_URL}/api/user/operacoes/relatorios/${idCurso}/last-10-op`,
-        {
-          cache: "no-store",
-          headers: {
-            Cookie: `${sessionCookie?.name}=${sessionCookie?.value}`,
-          },
-        },
-      ).then((res) => res.json()),
-    ]);
-
-  const [turmasCount, produtosCount] = await Promise.all([
+  const [
+    turmasCount,
+    produtosCount,
+    estoqueCount,
+    validadeCount,
+    last12Months,
+    last10Ops,
+  ] = await Promise.all([
     await countTurmas(idCurso),
     await countProdutos(idCurso),
+    await getEstoquePorCurso(idCurso),
+    await getProdutosExpirando(idCurso),
+    await getRelatorioUltimosDozeMeses(idCurso),
+    await getLastDezOperacoes(idCurso),
   ]);
 
   const initialData = {

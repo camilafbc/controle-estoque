@@ -36,8 +36,6 @@ export const createProduto = async (
 
     if (!turma) return { error: "Turma vinculada não existe." };
 
-    // CRIAR TRANSACTION
-
     const produtoCreated = await prisma.$transaction(async (tx) => {
       const prod = await tx.produto.create({
         data: {

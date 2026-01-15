@@ -32,6 +32,8 @@ export default function TableOperacoes({
   className,
   delay,
 }: TableOperacoesProps) {
+  console.log("TABLE OPERACOES DATA: ", data);
+
   if (isLoading)
     return (
       <div>
@@ -85,7 +87,7 @@ export default function TableOperacoes({
                         {linha.tipoOperacao === 0 ? "Saída" : "Entrada"}
                       </TableCell>
                       <TableCell className="text-center">
-                        {dayjs(linha.data?.split(" ")[0]).format("DD/MM/YYYY")}
+                        {dayjs(linha.data).format("DD/MM/YYYY")}
                       </TableCell>
                       <TableCell className="text-right">
                         {linha.quantidade}
