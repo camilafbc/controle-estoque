@@ -24,7 +24,7 @@ export function SearchInput({
     >
       {icon && <span className="text-muted-foreground">{icon}</span>}
       <Input
-        type="text"
+        type="search"
         placeholder={placeholder}
         className="border-none bg-transparent px-2 focus:outline-none focus-visible:ring-0"
         value={value}
