@@ -6,11 +6,9 @@ import { useEffect, useRef, useState } from "react";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 
-import { MySelect } from "@/components/MySelect";
 import { FormProdutoRef } from "@/components/produtos/FormProduto";
 import { SearchInput } from "@/components/SearchInput";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { VirtualizedCombobox } from "@/components/ui/virtualized-combobox/VirtualizedCombobox";
 import {
   useCreateProdutoMutation,
@@ -20,7 +18,6 @@ import {
 import { useProduto, useProdutos } from "@/queries/produtos";
 import { useTurmas } from "@/queries/turmas";
 import { FormProdutoFields } from "@/schemas/produto-schema";
-import { useTurmaStore } from "@/stores/useTurmaStore";
 import { Produto } from "@/types/Produto";
 import { Turma } from "@/types/Turma";
 import { getErrorMessage } from "@/utils/getErrorMessage";
@@ -30,23 +27,21 @@ import ProductDialog from "./Dialog";
 import ProductTable from "./Table";
 
 interface ProductContainerProps {
+  turmas: Turma[];
   idCurso: number;
 }
 
-export default function ProductContainer({ idCurso }: ProductContainerProps) {
+export default function ProductContainer({
+  idCurso,
+  turmas,
+}: ProductContainerProps) {
   const router = useRouter();
   const params = useSearchParams();
-  const { selectedTurma, setSelectedTurma } = useTurmaStore();
+  const initialTurma = params.get("turma");
 
-  const turmas = ["3469c6d4-a12a-4768-be0f-cfe3bc75ae0b"];
-
-  // const initialTurma =
-  //   selectedTurma ||
-  //   params.get("turma") ||
-  //   turmas.filter((turma: Turma) => turma.status === true).at(0)?.uuid ||
-  //   "";
-
-  const initialTurma = turmas[0];
+  if (!initialTurma) {
+    throw new Error("Erro");
+  }
 
   const {
     control,
@@ -58,15 +53,11 @@ export default function ProductContainer({ idCurso }: ProductContainerProps) {
     },
   });
 
-  // Atualiza a URL e a url quando a turma muda
+  // Atualiza a URL quando a turma muda
   const currentTurma = watch("turma");
   useEffect(() => {
-    if (currentTurma) {
-      router.replace(`/cadastros/produtos?turma=${currentTurma}`, undefined);
-
-      setSelectedTurma(currentTurma);
-    }
-  }, [selectedTurma, currentTurma, router, setSelectedTurma]);
+    router.push(`/cadastros/produtos?turma=${currentTurma}`);
+  }, [currentTurma, router]);
 
   // ref
   const formRef = useRef<FormProdutoRef>(null);
@@ -75,7 +66,7 @@ export default function ProductContainer({ idCurso }: ProductContainerProps) {
   const [openDialog, setOpenDialog] = useState(false);
   const [editingId, setEditingId] = useState<string>("");
   // queries e mutations
-  const fetchTurmas = useTurmas(Number(idCurso));
+  const fetchTurmas = useTurmas(Number(idCurso), turmas);
   const produtos = useProdutos(currentTurma, Number(idCurso));
   const produto = useProduto(editingId, currentTurma, Number(idCurso));
   const deleteMutation = useDeleteProductMutation();
@@ -83,7 +74,9 @@ export default function ProductContainer({ idCurso }: ProductContainerProps) {
   const updateProduto = useUpdateProductMutation();
 
   const handleMovimentacoes = (uuidProduto: string) => {
-    router.push(`/cadastros/produtos/${uuidProduto}/movimentacoes`);
+    router.push(
+      `/cadastros/produtos?turma=${currentTurma}&produto=${uuidProduto}`,
+    );
   };
 
   const handleEdit = (uuid: string) => {
@@ -196,21 +189,15 @@ export default function ProductContainer({ idCurso }: ProductContainerProps) {
                   required
                   label="Turma"
                   id="select-turma"
-                  height={100}
-                  // options={
-                  //   fetchTurmas.data
-                  //     .filter((turma: Turma) => turma.status === true)
-                  //     .map((turma: Turma) => ({
-                  //       label: `${turma.codigoTurma} - ${turma.turnoTurma}`,
-                  //       id: turma.uuid,
-                  //     })) || []
-                  // }
-                  options={[
-                    {
-                      id: "3469c6d4-a12a-4768-be0f-cfe3bc75ae0b",
-                      label: "teste build 2",
-                    },
-                  ]}
+                  height={200}
+                  options={
+                    fetchTurmas.data
+                      .filter((turma: Turma) => turma.status === true)
+                      .map((turma: Turma) => ({
+                        label: `${turma.codigoTurma} - ${turma.turnoTurma}`,
+                        id: turma.uuid,
+                      })) || []
+                  }
                   placeholder="Buscar turma"
                   loading={fetchTurmas.isFetching}
                   error={errors.turma?.message}

@@ -4,20 +4,34 @@ import {
   QueryClient,
 } from "@tanstack/react-query";
 import { BoxesIcon } from "lucide-react";
-import { cookies } from "next/headers";
+import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getServerSession } from "next-auth";
 
+import { getOperacoesByProduto } from "@/api/operacoes";
 import MyBreadcrumb from "@/components/MyBreadcrumb";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { authOptions } from "@/lib/auth";
-import { getProdutos } from "@/services/produtos";
+import { getProdutoById, getProdutos } from "@/services/produtos";
+import { getTurmas } from "@/services/turmas";
 
 import Container from "./components/Container";
+import Movimentacoes from "./components/Movimentacoes";
 
-export default async function ProdutosPage() {
+type ProdutosPageProps = {
+  searchParams: {
+    turma?: string;
+    produto?: string;
+  };
+};
+
+export default async function ProdutosPage({
+  searchParams,
+}: ProdutosPageProps) {
   const session = await getServerSession(authOptions);
   const idCurso = session?.user.curso;
+  const { turma, produto } = searchParams;
 
   if (!session || session.user?.role !== "user") {
     redirect("/acesso-negado");
@@ -27,26 +41,68 @@ export default async function ProdutosPage() {
     throw new Error("Erro ao carregar dados!");
   }
 
+  const turmas = await getTurmas(idCurso);
+
+  if (turmas.length === 0) {
+    return (
+      <div className="flex h-[60vh] flex-col items-center justify-center space-y-4">
+        <BoxesIcon size={48} className="text-gray-300" />
+        <h2 className="text-xl font-semibold">Nenhuma turma encontrada</h2>
+        <p className="text-gray-500">
+          Você precisa cadastrar uma turma antes de gerenciar produtos.
+        </p>
+        <Button asChild>
+          <Link href="/cadastros/turmas">Cadastrar Turma</Link>
+        </Button>
+      </div>
+    );
+  }
+
+  if (!turma && turmas.length > 0) {
+    const primeiraTurma = turmas.filter((t) => t.status === true).at(0)?.uuid;
+
+    if (primeiraTurma) redirect(`/cadastros/produtos?turma=${primeiraTurma}`);
+  }
+
   const queryClient = new QueryClient();
 
-  await queryClient.prefetchQuery({
-    queryKey: ["produtos", idCurso],
-    queryFn: async () =>
-      await getProdutos(idCurso, "3469c6d4-a12a-4768-be0f-cfe3bc75ae0b"),
-  });
+  if (turma) {
+    await queryClient.prefetchQuery({
+      queryKey: ["produtos", turma, idCurso],
+      queryFn: async () => await getProdutos(idCurso, turma),
+    });
+  }
 
-  // const cookieStore = cookies();
-  // const sessionCookie = cookieStore.get(customCookie || "");
+  if (turma && produto) {
+    await queryClient.prefetchQuery({
+      queryKey: ["operacoes", produto],
+      queryFn: async () => await getOperacoesByProduto(produto),
+    });
 
-  // const turmas = await fetch(
-  //   `${process.env.NEXTAUTH_URL}/api/user/turmas/curso/${idCurso}`,
-  //   {
-  //     cache: "no-store",
-  //     headers: {
-  //       Cookie: `${sessionCookie?.name}=${sessionCookie?.value}`,
-  //     },
-  //   },
-  // ).then((res) => res.json());
+    const produtoData = await getProdutoById(produto);
+
+    return (
+      <div className="space-y-6">
+        <MyBreadcrumb
+          listItems={[
+            { label: "Cadastros" },
+            { label: "Produtos", href: "/cadastros/produtos" },
+            { label: "Movimentações" },
+          ]}
+        />
+        <HydrationBoundary state={dehydrate(queryClient)}>
+          <Movimentacoes
+            key={produto}
+            turma={turma}
+            produto={{
+              descricao: produtoData?.prodDescricao ?? "-",
+              uuid: produto,
+            }}
+          />
+        </HydrationBoundary>
+      </div>
+    );
+  }
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
@@ -63,7 +119,7 @@ export default async function ProdutosPage() {
             <CardTitle>Produtos</CardTitle>
           </CardHeader>
           <CardContent>
-            <Container idCurso={idCurso} />
+            <Container idCurso={idCurso} turmas={turmas} />
           </CardContent>
         </Card>
       </div>

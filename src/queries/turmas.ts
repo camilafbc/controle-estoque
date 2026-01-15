@@ -3,11 +3,12 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { getCountTurmas, getTurmaById, getTurmas } from "@/api/turmas";
 import { Turma } from "@/types/Turma";
 
-export const useTurmas = (idCurso: number) => {
+export const useTurmas = (idCurso: number, initialData?: Turma[]) => {
   const query = useQuery({
     queryKey: ["turmas", idCurso],
     queryFn: () => getTurmas(idCurso),
     enabled: !!idCurso,
+    initialData: initialData,
     staleTime: 5 * 60 * 1000,
   });
   return query;
