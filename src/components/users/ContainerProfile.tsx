@@ -65,8 +65,8 @@ export default function ContainerProfile() {
         <div className="flex items-center gap-2">
           <Avatar className="size-16">
             <AvatarFallback className="bg-navbar text-xl font-bold tracking-wider text-primary-foreground dark:bg-orange-500 dark:text-white">
-              {session?.user.name?.split(" ")?.[0]?.[0].toUpperCase()}
-              {session?.user.name?.split(" ")?.[1]?.[0].toUpperCase()}
+              {session?.user.name?.split(" ")?.[0]?.[0]?.toUpperCase()}
+              {session?.user.name?.split(" ")?.[1]?.[0]?.toUpperCase()}
             </AvatarFallback>
           </Avatar>
           <div className="flex flex-col justify-start">

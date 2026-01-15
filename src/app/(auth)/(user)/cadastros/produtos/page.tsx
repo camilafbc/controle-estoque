@@ -86,7 +86,7 @@ export default async function ProdutosPage({
         <MyBreadcrumb
           listItems={[
             { label: "Cadastros" },
-            { label: "Produtos", href: "/cadastros/produtos" },
+            { label: "Produtos", href: `/cadastros/produtos?turma=${turma}` },
             { label: "Movimentações" },
           ]}
         />
@@ -110,7 +110,7 @@ export default async function ProdutosPage({
         <MyBreadcrumb
           listItems={[
             { label: "Cadastros" },
-            { label: "Produtos", href: "/cadastros/produtos" },
+            { label: "Produtos", href: `/cadastros/produtos?turma=${turma}` },
           ]}
         />
         <Card>
