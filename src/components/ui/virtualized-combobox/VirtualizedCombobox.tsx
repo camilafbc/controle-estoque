@@ -57,33 +57,24 @@ const VirtualizedCommand = ({
 }: VirtualizedCommandProps) => {
   const [filteredOptions, setFilteredOptions] = useState<Option[]>(options);
 
-  //console.log("Options:", options);
-  //console.log("Filtered Options:", filteredOptions);
-
   const parentRef = useRef(null);
-  // const parentRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     if (searching) {
       setSearchInput(searching);
-      //console.log("Searching está definido: ", searching);
     } else {
       setSearchInput(searchInput);
-      //console.log("SearchInput está atualizado: ", searchInput);
     }
   }, [searchInput, searching, setSearchInput]);
 
   useEffect(() => {
-    //console.log("Filtro de opções: ", searchInput);
     if (searchInput) {
       setFilteredOptions(
         options.filter((option) =>
           option.label.toLowerCase().includes(searchInput.toLowerCase() ?? []),
         ),
       );
-      //console.log("Opções filtradas: ", filteredOptions);
     } else setFilteredOptions(options);
-    //console.log("Sem filtro, todas as opções: ", options);
   }, [options, searchInput]);
 
   const ITEM_SIZE = 35;

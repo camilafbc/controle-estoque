@@ -32,8 +32,6 @@ export default function TableOperacoes({
   className,
   delay,
 }: TableOperacoesProps) {
-  console.log("TABLE OPERACOES DATA: ", data);
-
   if (isLoading)
     return (
       <div>

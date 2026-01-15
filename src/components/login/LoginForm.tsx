@@ -50,8 +50,6 @@ export default function LoginForm() {
         password: data.password.trim(),
       });
 
-      console.log("RESULT: ", result);
-
       if (result?.ok) {
         const session = await getSession();
         const role = session?.user.role;
