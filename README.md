@@ -1,22 +1,19 @@
 # 📋 Controle de Estoque - Projeto Integrador SENAC MG
 
-Este projeto é uma aplicação de controle de estoque desenvolvida como parte do projeto integrador do curso Técnico em Desenvolvimento de Sistemas do SENAC MG, unidade Lavras. A aplicação foi criada para atender a uma demanda dos cursos de Estética e Cabeleireiro da instituição, que precisavam de um sistema para registrar a entrada e saída de produtos por turma, visando o controle de estoque e o acompanhamento do consumo de produtos por turma e por período.
+Este projeto é uma aplicação de controle de estoque desenvolvida como projeto integrador do curso Técnico em Desenvolvimento de Sistemas do SENAC MG. A aplicação foi criada para atender a uma demanda interna da instituição, que precisavam de um sistema para registrar a entrada e saída de produtos por turma, visando o controle de estoque e o acompanhamento do consumo de produtos por turma e por período.
 
 <img width="100%" src="https://raw.githubusercontent.com/camilafbc/controle-estoque/refs/heads/main/to_readme.jpeg"/>
 
-# Visão Geral
 
-A aplicação conta com uma área administrativa para o cadastro de usuários e cursos, permitindo que o sistema seja usado por outros cursos. A área comum do sistema possibilita o cadastro de turmas e produtos, além de registrar entradas e saídas de produtos, gerando relatórios de movimentação.
+## 🚀 Refatoração
 
-##🚀 Refatoração
+Recentemente, o projeto passou por uma reestruturação da arquitetura para adotar as melhores práticas do Next.js e garantir uma melhor legibilidade do código:
 
-    Recentemente, o projeto passou por uma reestruturação da arquitetura para adotar as melhores práticas do Next.js e garantir uma melhor legibilidade do código:
-
-    - Migração de rotas de API para Server Actions, reduzindo a latência e simplificando a comunicação com o banco de dados;
-    - Utilização do HydrationBoundary do TanStack Query, permitindo que os dados sejam pré-carregados no servidor e entregues instantaneamente ao cliente;
-    - Implementação de Prisma Transactions para garantir atomicidade. Ex: A criação de um produto e sua movimentação inicial de estoque ocorrem como uma única operação "tudo ou nada";
-    - Controle de acesso baseado em funções (RBAC) via Middleware e integração direta do NextAuth com o banco de dados;
-    - Substituição de estado global (Zustand) por parâmetros de URL para controle de modais e filtros, facilitando o compartilhamento de links e a navegabilidade.
+  - Migração de rotas de API para Server Actions, reduzindo a latência e simplificando a comunicação com o banco de dados;
+  - Utilização do HydrationBoundary do TanStack Query, permitindo que os dados sejam pré-carregados no servidor e entregues instantaneamente ao cliente;
+  - Implementação de Prisma Transactions para garantir atomicidade. Ex: A criação de um produto e sua movimentação inicial de estoque ocorrem como uma única operação "tudo ou nada";
+  - Controle de acesso baseado em funções (RBAC) via Middleware e integração direta do NextAuth com o banco de dados;
+  - Substituição de estado global (Zustand) por parâmetros de URL para controle de modais e filtros, facilitando o compartilhamento de links e a navegabilidade.
 
 # Funcionalidades
 
