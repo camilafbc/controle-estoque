@@ -7,6 +7,7 @@ import { authOptions } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 import { userValidationSchema } from "@/schemas/user-schema";
 import { User } from "@/types/User";
+import { handleDatabaseError } from "@/utils/handleDbError";
 
 export const updateUser = async (user: Partial<User>) => {
   try {
@@ -47,7 +48,9 @@ export const updateUser = async (user: Partial<User>) => {
       return { error: "Dados inválidos", messages: error.errors };
     }
 
-    console.error("Erro ao criar usuário: ", error);
-    return { error: "Erro interno do servidor" };
+    const dbError = handleDatabaseError(error);
+
+    console.error("Erro ao criar usuário: ", dbError);
+    return { error: dbError.message };
   }
 };

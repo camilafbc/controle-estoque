@@ -2,7 +2,6 @@ import { AxiosError } from "axios";
 
 export function getErrorMessage(error: any): string {
   const axiosError = error as AxiosError<any>;
-  // console.error("Erro capturado:", axiosError);
 
   return (
     axiosError.response?.data?.error ||
@@ -11,6 +10,7 @@ export function getErrorMessage(error: any): string {
     axiosError.message ||
     error ||
     error.message ||
+    error.data ||
     "Erro inesperado!"
   );
 }

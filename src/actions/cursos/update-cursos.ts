@@ -6,6 +6,7 @@ import { authOptions } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 import { cursoUpdateSchema } from "@/schemas/curso-schema";
 import { Curso } from "@/types/Curso";
+import { handleDatabaseError } from "@/utils/handleDbError";
 
 export const updateCurso = async (curso: Curso) => {
   try {
@@ -34,7 +35,9 @@ export const updateCurso = async (curso: Curso) => {
       return { error: "Dados inválidos", message: error.errors };
     }
 
-    console.error("Erro ao atualizar dados de curso: ", error);
-    return { error: "Erro interno do servidor" };
+    const dbError = handleDatabaseError(error);
+
+    console.error("Erro ao atualizar dados de curso: ", dbError);
+    return { error: dbError.message };
   }
 };

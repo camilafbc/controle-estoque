@@ -7,6 +7,7 @@ import * as yup from "yup";
 import { authOptions } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 import { userProfileValidationSchema } from "@/schemas/user-profile-schema";
+import { handleDatabaseError } from "@/utils/handleDbError";
 
 export const updateProfile = async (user: {
   idUser: number;
@@ -45,7 +46,9 @@ export const updateProfile = async (user: {
       return { error: "Dados inválidos", messages: error.errors };
     }
 
-    console.error("Erro ao criar usuário: ", error);
-    return { error: "Erro interno do servidor" };
+    const dbError = handleDatabaseError(error);
+
+    console.error("Erro ao criar usuário: ", dbError);
+    return { error: dbError.message };
   }
 };

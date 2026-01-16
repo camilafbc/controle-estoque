@@ -7,6 +7,7 @@ import { authOptions } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 import { produtoValidationSchema } from "@/schemas/produto-schema";
 import { Produto } from "@/types/Produto";
+import { handleDatabaseError } from "@/utils/handleDbError";
 
 export const updateProduto = async (
   produto: Omit<Produto, "idProduto" | "prodTurma">,
@@ -59,7 +60,9 @@ export const updateProduto = async (
       return { error: "Dados inválidos", messages: error.errors };
     }
 
-    console.error("Erro ao criar produto: ", error);
-    return { error: "Erro interno do servidor" };
+    const dbError = handleDatabaseError(error);
+
+    console.error("Erro ao criar produto: ", dbError);
+    return { error: dbError.message };
   }
 };

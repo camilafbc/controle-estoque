@@ -1,7 +1,8 @@
-import { authOptions } from "@/lib/auth";
 import { jwtDecode } from "jwt-decode";
-import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
+import { getServerSession } from "next-auth";
+
+import { authOptions } from "@/lib/auth";
 
 export async function checkRole(requiredRole: string) {
   const session = await getServerSession(authOptions);

@@ -7,6 +7,7 @@ import { authOptions } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 import { turmaUpdateValidationSchema } from "@/schemas/turma-schema";
 import { Turma } from "@/types/Turma";
+import { handleDatabaseError } from "@/utils/handleDbError";
 
 export const updateTurma = async (turma: Turma) => {
   try {
@@ -30,7 +31,9 @@ export const updateTurma = async (turma: Turma) => {
       return { error: "Dados inválidos", messages: error.errors };
     }
 
-    console.error("Erro ao atualizar dados de turma: ", error);
+    const dbError = handleDatabaseError(error);
+
+    console.error("Erro ao atualizar dados de turma: ", dbError.message);
     return { error: "Erro interno do servidor" };
   }
 };

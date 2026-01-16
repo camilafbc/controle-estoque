@@ -6,6 +6,7 @@ import { authOptions } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 import { cursoValidationSchema } from "@/schemas/curso-schema";
 import { Curso } from "@/types/Curso";
+import { handleDatabaseError } from "@/utils/handleDbError";
 
 export const createCurso = async (curso: Omit<Curso, "idCurso">) => {
   try {
@@ -30,7 +31,9 @@ export const createCurso = async (curso: Omit<Curso, "idCurso">) => {
       return { error: "Dados inválidos", messages: error.errors };
     }
 
-    console.error("Erro ao criar novo curso: ", error);
-    return { error: "Erro interno do servidor" };
+    const dbError = handleDatabaseError(error);
+
+    console.error("Erro ao criar novo curso: ", dbError);
+    return { error: dbError.message };
   }
 };

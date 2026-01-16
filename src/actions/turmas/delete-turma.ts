@@ -5,6 +5,7 @@ import * as yup from "yup";
 
 import { authOptions } from "@/lib/auth";
 import prisma from "@/lib/prisma";
+import { handleDatabaseError } from "@/utils/handleDbError";
 
 export const deleteTurma = async (idTurma: number) => {
   try {
@@ -28,7 +29,9 @@ export const deleteTurma = async (idTurma: number) => {
       return { error: "Dados inválidos", messages: error.errors };
     }
 
-    console.error("Erro ao excluir turma: ", error);
-    return { error: "Erro interno do servidor" };
+    const dbError = handleDatabaseError(error);
+
+    console.error("Erro ao excluir turma: ", dbError);
+    return { error: dbError.message };
   }
 };
