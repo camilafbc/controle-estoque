@@ -1,10 +1,12 @@
 import prisma from "@/lib/prisma";
 
-export const getUsers = async () => {
+export const getUsers = async (idLogado: number) => {
+  const hideIds = [Number(process.env.DEVELOPER), +idLogado];
+
   const users = await prisma.user.findMany({
     where: {
       idUser: {
-        not: 1,
+        notIn: hideIds,
       },
     },
     select: {
