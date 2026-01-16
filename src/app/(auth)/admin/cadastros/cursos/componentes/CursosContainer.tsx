@@ -5,31 +5,30 @@ import { useRef, useState } from "react";
 import { SubmitHandler } from "react-hook-form";
 import { toast } from "react-toastify";
 
-import FormCurso, {
-  FormCursoFields,
-  FormCursoRef,
-} from "@/components/cursos/FormCurso";
+import FormCurso, { FormCursoRef } from "@/components/cursos/FormCurso";
+import { FormCursoSkeleton } from "@/components/cursos/FormCursoSkeleton";
 import MyDialog from "@/components/MyDialog";
 import { SearchInput } from "@/components/SearchInput";
 import { Button } from "@/components/ui/button";
 import { DataTable } from "@/components/ui/data-table/data-table";
-import { Input } from "@/components/ui/input";
 import {
   useCreateCursoMutation,
   useDeleteCursoMutation,
   useUpdateCursoMutation,
 } from "@/mutations/cursos";
 import { useCursos, useGetCurso } from "@/queries/cursos";
+import { FormCursoFields } from "@/schemas/curso-schema";
 import { Curso } from "@/types/Curso";
 import { getErrorMessage } from "@/utils/getErrorMessage";
+import { getErrorMessageFromAction } from "@/utils/getErrorMessageFromAction";
 
 import { columns } from "./TableColumns";
 
-interface CursosContainerProps {
-  cursos: Curso[];
-}
+// interface CursosContainerProps {
+//   cursos: Curso[];
+// }
 
-export default function CursosContainer({ cursos }: CursosContainerProps) {
+export default function CursosContainer() {
   // ref
   const formRef = useRef<FormCursoRef>(null);
   // states
@@ -37,8 +36,8 @@ export default function CursosContainer({ cursos }: CursosContainerProps) {
   const [openDialog, setOpenDialog] = useState(false);
   const [editingId, setEditingId] = useState<number | null>(null);
   // data
-  const { data: cursosData, isLoading: cursosLoading } = useCursos(cursos);
-  const { data: cursoData, isLoading: isLoadingCurso } = useGetCurso(
+  const { data: cursosData, isLoading: cursosLoading } = useCursos();
+  const { data: cursoData, isLoading: cursoLoading } = useGetCurso(
     editingId || 0,
   );
   // mutations
@@ -58,10 +57,15 @@ export default function CursosContainer({ cursos }: CursosContainerProps) {
 
   const handleDelete = (id: number) => {
     deleteCurso.mutate(id, {
-      onSuccess(data, variables, context) {
-        toast.success(data.message);
+      onSuccess(data) {
+        if ("error" in data && data.error) {
+          const msg = getErrorMessageFromAction(data);
+          toast.error(`Erro: ${msg}`);
+          return;
+        }
+        toast.success("Dados excluídos com sucesso!");
       },
-      onError(error, variables, context) {
+      onError(error) {
         toast.error(getErrorMessage(error));
       },
     });
@@ -73,8 +77,13 @@ export default function CursosContainer({ cursos }: CursosContainerProps) {
 
   const handleCreateCurso = (curso: Omit<Curso, "idCurso">) => {
     createCurso.mutate(curso, {
-      onSuccess: (response) => {
-        toast.success(response.message);
+      onSuccess: (data) => {
+        if ("error" in data && data.error) {
+          const msg = getErrorMessageFromAction(data);
+          toast.error(`Erro: ${msg}`);
+          return;
+        }
+        toast.success("Curso cadastrado com sucesso!");
         setOpenDialog(false);
       },
       onError: (error) => {
@@ -85,12 +94,18 @@ export default function CursosContainer({ cursos }: CursosContainerProps) {
 
   const handleUpdateCurso = (curso: Curso) => {
     updateCurso.mutate(curso, {
-      onSuccess: (response) => {
-        toast.success(response.message);
+      onSuccess: (data) => {
+        if ("error" in data && data.error) {
+          const msg = getErrorMessageFromAction(data);
+          toast.error(`Erro: ${msg}`);
+          return;
+        }
+
+        toast.success("Dados atualizados com sucesso!");
         setOpenDialog(false);
       },
-      onError: (error) => {
-        toast.error(getErrorMessage(error));
+      onError: (result) => {
+        toast.error(getErrorMessage(result.message));
       },
     });
   };
@@ -166,6 +181,7 @@ export default function CursosContainer({ cursos }: CursosContainerProps) {
           </div>
         }
       >
+        {cursoLoading && <FormCursoSkeleton />}
         <FormCurso
           ref={formRef}
           initialValues={cursoData}

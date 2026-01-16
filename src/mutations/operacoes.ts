@@ -1,25 +1,25 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
-import { createOperacao } from "@/api/operacoes";
+import { createOperacao } from "@/actions/produtos/create-movimentacao-produto";
 
 export const useCreateOperacaoMutation = () => {
   const queryClient = useQueryClient();
   const mutation = useMutation({
-    mutationFn: (operacao: {
+    mutationFn: ({
+      uuidProduto,
+      tipoOp,
+      quantidade,
+    }: {
       uuidProduto: string;
       tipoOp: number;
       quantidade: number;
-    }) => createOperacao(operacao),
-    onSuccess: (data) => {
+    }) => createOperacao(uuidProduto, tipoOp, quantidade),
+    onSuccess: (data, variables) => {
       queryClient.invalidateQueries({
-        queryKey: ["operacoes", data.operacao.produto.uuid],
+        queryKey: ["operacoes", variables.uuidProduto],
       });
       queryClient.invalidateQueries({
-        queryKey: [
-          "produtos",
-          data.operacao.produto.turma.uuid,
-          data.operacao.produto.prodCurso,
-        ],
+        queryKey: ["produtos", data.data?.prodCurso],
       });
     },
   });

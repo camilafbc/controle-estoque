@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getToken } from "next-auth/jwt";
 
 import { getRelatorioOperacoes } from "@/services/operacoes";
 import { getTurmaById } from "@/services/turmas";
@@ -7,16 +6,6 @@ import { handleDatabaseError } from "@/utils/handleDbError";
 
 export async function POST(req: NextRequest) {
   try {
-    // const token = await getToken({ req });
-
-    // if (!token || !token.id)
-    //   return NextResponse.json(
-    //     { error: true, message: "Usuário não autorizado!" },
-    //     { status: 401 },
-    //   );
-
-    // const idUser = token.id;
-
     const { idCurso, idTurma, dataInicial, dataFinal } = await req.json();
 
     if (!idCurso || !idTurma || !dataInicial || !dataFinal) {

@@ -38,21 +38,14 @@ type FormData = yup.InferType<typeof validationSchema>;
 
 interface MovTurmaContainerProps {
   idCurso: number;
-  turmas: Turma[];
 }
 
-export default function MovTurmaContainer({
-  idCurso,
-  turmas,
-}: MovTurmaContainerProps) {
+export default function MovTurmaContainer({ idCurso }: MovTurmaContainerProps) {
   const { data: session } = useSession();
   const [openAlert, setOpenAlert] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [alertMessage, setAlertMessage] = useState("");
-  const { data: turmasData, isLoading: turmasLoading } = useTurmas(
-    idCurso,
-    turmas,
-  );
+  const { data: turmasData, isLoading: turmasLoading } = useTurmas(idCurso);
 
   const form = useForm({
     resolver: yupResolver(validationSchema),
@@ -146,7 +139,6 @@ export default function MovTurmaContainer({
                   }
                   placeholder="Buscar turma"
                   loading={turmasLoading}
-                  error={errors.turma?.message}
                   value={field.value}
                   onChange={(value) => field.onChange(value ?? "")}
                 />

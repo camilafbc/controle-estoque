@@ -1,0 +1,96 @@
+"use server";
+
+import dayjs from "dayjs";
+import { getServerSession } from "next-auth";
+import * as yup from "yup";
+
+import { authOptions } from "@/lib/auth";
+import prisma from "@/lib/prisma";
+import { handleDatabaseError } from "@/utils/handleDbError";
+
+const operacaoValidationSchema = yup.object({
+  // idUser: yup.number().required("Parâmetro obrigatório"),
+  uuidProduto: yup.string().required("Parâmetro obrigatório"),
+  tipoOp: yup.number().required("Parâmetro obrigatório"),
+  qtd: yup
+    .number()
+    .min(1, "Quantidade mínima para movimentação é 1.")
+    .required("Parâmetro obrigatório"),
+});
+
+export const createOperacao = async (
+  uuidProduto: string,
+  tipoOp: number,
+  qtd: number,
+) => {
+  try {
+    const session = await getServerSession(authOptions);
+
+    if (!session || session.user.role !== "user") {
+      return { error: "Usuário não autorizado" };
+    }
+
+    await operacaoValidationSchema.validate(
+      { uuidProduto, tipoOp, qtd },
+      { abortEarly: false },
+    );
+
+    // 1. Buscamos o produto primeiro para validar estoque
+    const produtoData = await prisma.produto.findUnique({
+      where: { uuid: uuidProduto },
+    });
+
+    if (!produtoData) {
+      return { error: "Produto não encontrado!" };
+    }
+
+    const tipoOperacao = tipoOp === 0 ? "decrement" : "increment";
+
+    if (tipoOperacao === "decrement" && qtd > produtoData.prodQuantidade) {
+      return { error: "Quantidade insuficiente para movimentação de saída!" };
+    }
+
+    const userDoing = +session.user.id;
+
+    // --- INÍCIO DA TRANSAÇÃO ---
+    const [operacao, produtoAtualizado] = await prisma.$transaction([
+      // Criar a operação
+      prisma.operacao.create({
+        data: {
+          tipoOperacao: tipoOp,
+          idUsuario: userDoing,
+          idProduto: produtoData.idProduto,
+          data: new Date(),
+          quantidade: qtd,
+        },
+      }),
+
+      // Atualiza o estoque do produto
+      prisma.produto.update({
+        where: { idProduto: produtoData.idProduto },
+        data: {
+          prodQuantidade: {
+            [tipoOperacao]: Number(qtd),
+          },
+        },
+      }),
+    ]);
+    // --- FIM DA TRANSAÇÃO ---
+
+    return {
+      message: "Movimentação registrada e estoque atualizado com sucesso!",
+      data: produtoAtualizado,
+    };
+  } catch (error) {
+    if (error instanceof yup.ValidationError) {
+      return { error: "Dados inválidos", messages: error.errors };
+    }
+
+    const dbError = handleDatabaseError(error);
+
+    console.error("Erro na transação: ", dbError);
+    return {
+      error: dbError.message,
+    };
+  }
+};

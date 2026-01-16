@@ -1,31 +1,37 @@
+import {
+  dehydrate,
+  HydrationBoundary,
+  QueryClient,
+} from "@tanstack/react-query";
 import { FileText } from "lucide-react";
-import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
 import { getServerSession } from "next-auth";
 
 import MyBreadcrumb from "@/components/MyBreadcrumb";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { authOptions } from "@/lib/auth";
+import { getTurmas } from "@/services/turmas";
 
 import MovTurmaContainer from "./componentes/Container";
-
-const customCookie = process.env.NEXT_PUBLIC_CUSTOM_COOKIE;
 
 export default async function Page() {
   const session = await getServerSession(authOptions);
   const idCurso = session?.user.curso;
 
-  const cookieStore = cookies();
-  const sessionCookie = cookieStore.get(customCookie || "");
+  if (!session || session.user?.role !== "user") {
+    redirect("/acesso-negado");
+  }
 
-  const turmas = await fetch(
-    `${process.env.NEXTAUTH_URL}/api/user/turmas/curso/${idCurso}`,
-    {
-      cache: "no-store",
-      headers: {
-        Cookie: `${sessionCookie?.name}=${sessionCookie?.value}`,
-      },
-    },
-  ).then((res) => res.json());
+  if (!idCurso) {
+    throw new Error("Erro ao carregar dados!");
+  }
+
+  const queryClient = new QueryClient();
+
+  await queryClient.prefetchQuery({
+    queryKey: ["turmas", idCurso],
+    queryFn: async () => await getTurmas(idCurso),
+  });
 
   return (
     <div className="space-y-6">
@@ -41,7 +47,9 @@ export default async function Page() {
           <CardTitle>Relatório de Movimentação por Turma</CardTitle>
         </CardHeader>
         <CardContent>
-          <MovTurmaContainer turmas={turmas} idCurso={idCurso || 0} />
+          <HydrationBoundary state={dehydrate(queryClient)}>
+            <MovTurmaContainer idCurso={idCurso} />
+          </HydrationBoundary>
         </CardContent>
       </Card>
     </div>

@@ -7,7 +7,7 @@ import { useRef, useState } from "react";
 import { SubmitHandler } from "react-hook-form";
 import { toast } from "react-toastify";
 
-import { updateProfile } from "@/api/users";
+import { updateProfile } from "@/actions/users/update-user-profile";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
@@ -32,22 +32,22 @@ export default function ContainerProfile() {
     try {
       setIsLoading(true);
 
-      const fetchUpdate = await updateProfile({
+      const profileUpdated = await updateProfile({
         ...data,
         idUser: Number(session?.user.id),
       });
-      if (fetchUpdate) {
+      if (profileUpdated) {
         //Atualização da Sessão
         const updateSession = await update({
           user: {
             ...session?.user,
-            name: fetchUpdate.updated,
+            name: profileUpdated.data,
           },
         });
       }
       formRef.current?.resetForm();
 
-      toast.success(fetchUpdate.message);
+      toast.success(profileUpdated.message);
     } catch (error) {
       toast.error(getErrorMessage(error));
     } finally {
@@ -65,8 +65,8 @@ export default function ContainerProfile() {
         <div className="flex items-center gap-2">
           <Avatar className="size-16">
             <AvatarFallback className="bg-navbar text-xl font-bold tracking-wider text-primary-foreground dark:bg-orange-500 dark:text-white">
-              {session?.user.name?.split(" ")?.[0]?.[0]}
-              {session?.user.name?.split(" ")?.[1]?.[0]}
+              {session?.user.name?.split(" ")?.[0]?.[0]?.toUpperCase()}
+              {session?.user.name?.split(" ")?.[1]?.[0]?.toUpperCase()}
             </AvatarFallback>
           </Avatar>
           <div className="flex flex-col justify-start">

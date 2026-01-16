@@ -1,14 +1,12 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 import { getCursoById, getCursos } from "@/api/cursos";
-import { getCountCursos } from "@/api/dashboard";
 import { Curso } from "@/types/Curso";
 
-export const useCursos = (initialData?: Curso[]) => {
+export const useCursos = () => {
   const query = useQuery({
     queryKey: ["cursos"],
     queryFn: () => getCursos(),
-    initialData: initialData,
     staleTime: 5 * 60 * 1000,
   });
   return query;
@@ -25,15 +23,6 @@ export const useGetCurso = (id: number) => {
       return cursos?.find((curso) => curso.idCurso === id);
     },
     staleTime: 1000 * 60 * 5,
-  });
-  return query;
-};
-
-export const useGetCountCurso = () => {
-  const query = useQuery({
-    queryKey: ["cursosCount"],
-    queryFn: () => getCountCursos(),
-    staleTime: Infinity,
   });
   return query;
 };

@@ -4,12 +4,11 @@ import { getCountUsers } from "@/api/dashboard";
 import { getUserById, getUsers } from "@/api/users";
 import { User } from "@/types/User";
 
-export const useUsers = (initialData?: User[]) => {
+export const useUsers = () => {
   const query = useQuery({
     queryKey: ["users"],
     queryFn: () => getUsers(),
-    initialData: initialData,
-    staleTime: Infinity,
+    staleTime: 1000 * 60 * 5,
   });
   return query;
 };

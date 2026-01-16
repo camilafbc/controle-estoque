@@ -3,19 +3,13 @@
 import { yupResolver } from "@hookform/resolvers/yup";
 import { forwardRef, useEffect, useImperativeHandle } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
-import * as yup from "yup";
+
+import { cursoValidationSchema, FormCursoFields } from "@/schemas/curso-schema";
 
 import { Form, FormField, FormItem, FormMessage } from "../ui/form";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
 import { Switch } from "../ui/switch";
-
-const validationSchema = yup.object({
-  nomeCurso: yup.string().required("Campo obrigatório"),
-  status: yup.boolean().required("Campo obrigatório"),
-});
-
-export type FormCursoFields = yup.InferType<typeof validationSchema>;
 
 interface FormCursoProps {
   initialValues?: Partial<FormCursoFields>;
@@ -36,7 +30,7 @@ const FormCurso = forwardRef<FormCursoRef, FormCursoProps>(
     ref,
   ) => {
     const form = useForm<FormCursoFields>({
-      resolver: yupResolver(validationSchema),
+      resolver: yupResolver(cursoValidationSchema),
       defaultValues: {
         nomeCurso: "",
         status: true,

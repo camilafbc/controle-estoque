@@ -1,20 +1,34 @@
 import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
 import { getServerSession } from "next-auth";
 
 import GreetingUser from "@/components/home/GreetingUser";
 import MyBreadcrumb from "@/components/MyBreadcrumb";
 import { authOptions } from "@/lib/auth";
+import {
+  getLastDezOperacoes,
+  getRelatorioUltimosDozeMeses,
+} from "@/services/operacoes";
+import {
+  countProdutos,
+  getEstoquePorCurso,
+  getProdutosExpirando,
+} from "@/services/produtos";
+import { countTurmas } from "@/services/turmas";
 
 import Dashboard from "./components/Dashboard";
-
-const customCookie = process.env.NEXT_PUBLIC_CUSTOM_COOKIE;
 
 export default async function Page() {
   const session = await getServerSession(authOptions);
   const idCurso = session?.user.curso;
 
-  const cookieStore = cookies();
-  const sessionCookie = cookieStore.get(customCookie || "");
+  if (!session || session.user?.role !== "user") {
+    redirect("/acesso-negado");
+  }
+
+  if (!idCurso) {
+    throw new Error("Erro ao carregar dados!");
+  }
 
   const [
     turmasCount,
@@ -24,48 +38,12 @@ export default async function Page() {
     last12Months,
     last10Ops,
   ] = await Promise.all([
-    fetch(`${process.env.NEXTAUTH_URL}/api/user/turmas/count/${idCurso}`, {
-      cache: "no-store",
-      headers: {
-        Cookie: `${sessionCookie?.name}=${sessionCookie?.value}`,
-      },
-    }).then((res) => res.json()),
-    fetch(`${process.env.NEXTAUTH_URL}/api/user/produtos/count/${idCurso}`, {
-      cache: "no-store",
-      headers: {
-        Cookie: `${sessionCookie?.name}=${sessionCookie?.value}`,
-      },
-    }).then((res) => res.json()),
-    fetch(`${process.env.NEXTAUTH_URL}/api/user/produtos/estoque/${idCurso}`, {
-      cache: "no-store",
-      headers: {
-        Cookie: `${sessionCookie?.name}=${sessionCookie?.value}`,
-      },
-    }).then((res) => res.json()),
-    fetch(`${process.env.NEXTAUTH_URL}/api/user/produtos/validade/${idCurso}`, {
-      cache: "no-store",
-      headers: {
-        Cookie: `${sessionCookie?.name}=${sessionCookie?.value}`,
-      },
-    }).then((res) => res.json()),
-    fetch(
-      `${process.env.NEXTAUTH_URL}/api/user/operacoes/relatorios/${idCurso}/last-12-months`,
-      {
-        cache: "no-store",
-        headers: {
-          Cookie: `${sessionCookie?.name}=${sessionCookie?.value}`,
-        },
-      },
-    ).then((res) => res.json()),
-    fetch(
-      `${process.env.NEXTAUTH_URL}/api/user/operacoes/relatorios/${idCurso}/last-10-op`,
-      {
-        cache: "no-store",
-        headers: {
-          Cookie: `${sessionCookie?.name}=${sessionCookie?.value}`,
-        },
-      },
-    ).then((res) => res.json()),
+    await countTurmas(idCurso),
+    await countProdutos(idCurso),
+    await getEstoquePorCurso(idCurso),
+    await getProdutosExpirando(idCurso),
+    await getRelatorioUltimosDozeMeses(idCurso),
+    await getLastDezOperacoes(idCurso),
   ]);
 
   const initialData = {

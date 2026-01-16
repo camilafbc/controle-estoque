@@ -8,35 +8,29 @@ import { toast } from "react-toastify";
 
 import MyDialog from "@/components/MyDialog";
 import { SearchInput } from "@/components/SearchInput";
-import FormTurmas, {
-  FormTurmasFields,
-  FormTurmasRef,
-} from "@/components/turmas/FormTurmas";
+import FormTurmas, { FormTurmasRef } from "@/components/turmas/FormTurmas";
 import { Button } from "@/components/ui/button";
 import { DataTable } from "@/components/ui/data-table/data-table";
-import { Input } from "@/components/ui/input";
 import {
+  useCreateTurmaMutation,
   useDeleteTurmaMutation,
-  useInsertTurmaMutation,
   useUpdateTurmaMutation,
 } from "@/mutations/turmas";
 import { useGetTurmaById, useTurmas } from "@/queries/turmas";
+import { FormTurmasFields } from "@/schemas/turma-schema";
 import { Turma } from "@/types/Turma";
 import { getErrorMessage } from "@/utils/getErrorMessage";
+import { getErrorMessageFromAction } from "@/utils/getErrorMessageFromAction";
 
 import { columns } from "./TableColumns";
 
-interface TurmasContainerProps {
-  initialData: Turma[];
-}
-
-export default function TurmasContainer({ initialData }: TurmasContainerProps) {
+export default function TurmasContainer() {
   // ref
   const formRef = useRef<FormTurmasRef>(null);
   const user = useSession();
   const idCurso = user.data?.user.curso;
   const deleteMutation = useDeleteTurmaMutation();
-  const { data: turmas, isLoading } = useTurmas(Number(idCurso), initialData);
+  const { data: turmas, isLoading } = useTurmas(Number(idCurso));
   const [filterValue, setFilterValue] = useState("");
   const [openDialog, setOpenDialog] = useState(false);
   const [editingId, setEditingId] = useState<number | null>();
@@ -44,7 +38,7 @@ export default function TurmasContainer({ initialData }: TurmasContainerProps) {
   const turma = useGetTurmaById(editingId ? String(editingId) : "", {
     enabled: openDialog,
   });
-  const createTurma = useInsertTurmaMutation();
+  const createTurma = useCreateTurmaMutation();
   const updateTurma = useUpdateTurmaMutation();
 
   const filteredData = turmas
@@ -55,11 +49,16 @@ export default function TurmasContainer({ initialData }: TurmasContainerProps) {
 
   const handleDelete = (id: number) => {
     deleteMutation.mutate(id, {
-      onSuccess: () => {
+      onSuccess: (data) => {
+        if ("error" in data && data.error) {
+          const msg = getErrorMessageFromAction(data);
+          toast.error(`Erro: ${msg}`);
+          return;
+        }
         toast.success("Turma removida com sucesso!");
       },
-      onError: () => {
-        toast.error("Erro ao remover turma!");
+      onError: (error) => {
+        toast.error(getErrorMessage(error));
       },
     });
   };
@@ -81,8 +80,13 @@ export default function TurmasContainer({ initialData }: TurmasContainerProps) {
 
   const handleCreateTurma = (data: Omit<Turma, "idTurma">) => {
     createTurma.mutate(data, {
-      onSuccess: (response) => {
-        toast.success(response.message);
+      onSuccess: (data) => {
+        if ("error" in data && data.error) {
+          const msg = getErrorMessageFromAction(data);
+          toast.error(`Erro: ${msg}`);
+          return;
+        }
+        toast.success(data.message);
         setOpenDialog(false);
       },
       onError: (error) => {
@@ -93,8 +97,13 @@ export default function TurmasContainer({ initialData }: TurmasContainerProps) {
 
   const handleUpdateTurma = (data: Turma) => {
     updateTurma.mutate(data, {
-      onSuccess: (response) => {
-        toast.success(response.message);
+      onSuccess: (data) => {
+        if ("error" in data && data.error) {
+          const msg = getErrorMessageFromAction(data);
+          toast.error(`Erro: ${msg}`);
+          return;
+        }
+        toast.success(data.message);
         setOpenDialog(false);
       },
       onError: (error) => {
@@ -106,9 +115,9 @@ export default function TurmasContainer({ initialData }: TurmasContainerProps) {
   const handleSubmit: SubmitHandler<FormTurmasFields> = (data) => {
     if (idCurso) {
       const turma = {
-        codigoTurma: data.codigo.trim(),
+        codigoTurma: data.codigoTurma.trim(),
         idCurso: +idCurso,
-        turnoTurma: data.turno.trim(),
+        turnoTurma: data.turnoTurma.trim(),
         status: data.status,
       };
 
@@ -173,14 +182,6 @@ export default function TurmasContainer({ initialData }: TurmasContainerProps) {
       >
         <FormTurmas
           ref={formRef}
-          // initialValues={
-          //   turma.data
-          //     ? {
-          //         ...turma.data,
-          //         uuid: turma.data.uuid === undefined ? null : turma.data.uuid,
-          //       }
-          //     : undefined
-          // }
           initialValues={turma.data}
           isLoading={createTurma.isPending || updateTurma.isPending}
           onSubmit={handleSubmit}

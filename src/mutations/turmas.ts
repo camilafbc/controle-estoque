@@ -1,13 +1,17 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
-import { createTurma, deleteTurma, updateTurma } from "@/api/turmas";
+import { createTurma } from "@/actions/turmas/create-turma";
+import { deleteTurma } from "@/actions/turmas/delete-turma";
+import { updateTurma } from "@/actions/turmas/update-turma";
 
-export const useInsertTurmaMutation = () => {
+export const useCreateTurmaMutation = () => {
   const queryClient = useQueryClient();
   const mutation = useMutation({
     mutationFn: (turma: any) => createTurma(turma),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["turmas"] });
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({
+        queryKey: ["turmas", data.data?.idCurso],
+      });
     },
   });
   return mutation;

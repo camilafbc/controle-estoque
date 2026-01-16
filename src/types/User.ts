@@ -2,9 +2,9 @@ export type User = {
   idUser: number;
   nome: string;
   email: string;
-  senha?: string;
+  password?: string;
   idCurso?: number;
-  role: string;
+  role: "admin" | "user";
   status: boolean;
   curso?: {
     idCurso: number;

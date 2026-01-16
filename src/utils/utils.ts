@@ -133,12 +133,9 @@ export const calcularPorcentagem = (
   valorDoTodo: string | number,
   valorDaParte: string | number,
 ) => {
-  console.log("VALOR TOTAL: ", valorDoTodo);
-  console.log("VALOR DA PARTE: ", valorDaParte);
   const todo = Number(valorDoTodo);
   const parte = Number(valorDaParte);
   const porcentagem = (parte / todo) * 100;
-  console.log("PORCENTAGEM: ", porcentagem);
   // if (porcentagem > 100) return 100;
   return Number(porcentagem.toFixed(2));
 };

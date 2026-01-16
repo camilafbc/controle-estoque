@@ -1,10 +1,11 @@
 import { yupResolver } from "@hookform/resolvers/yup";
-import { errorToJSON } from "next/dist/server/render";
 import { forwardRef, useEffect, useImperativeHandle } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
-import * as yup from "yup";
 
-import { Turma } from "@/generated/prisma";
+import {
+  FormTurmasFields,
+  turmaValidationSchema,
+} from "@/schemas/turma-schema";
 
 import { MySelect } from "../MySelect";
 import { Form, FormField, FormItem, FormMessage } from "../ui/form";
@@ -12,13 +13,13 @@ import { Input } from "../ui/input";
 import { Label } from "../ui/label";
 import { Switch } from "../ui/switch";
 
-const validationSchema = yup.object({
-  codigo: yup.string().required("Campo obrigatório"),
-  turno: yup.string().required("Campo obrigatório"),
-  status: yup.boolean().default(true).required(),
-});
+// const validationSchema = yup.object({
+//   codigo: yup.string().required("Campo obrigatório"),
+//   turno: yup.string().required("Campo obrigatório"),
+//   status: yup.boolean().default(true).required(),
+// });
 
-export type FormTurmasFields = yup.InferType<typeof validationSchema>;
+// export type FormTurmasFields = yup.InferType<typeof validationSchema>;
 
 interface FormTurmasProps {
   initialValues?: any;
@@ -35,12 +36,17 @@ export interface FormTurmasRef {
 
 const FormTurmas = forwardRef<FormTurmasRef, FormTurmasProps>(
   (
-    { initialValues, isLoading = false, defaultFocus = "codigo", onSubmit },
+    {
+      initialValues,
+      isLoading = false,
+      defaultFocus = "codigoTurma",
+      onSubmit,
+    },
     ref,
   ) => {
     const form = useForm<FormTurmasFields>({
-      resolver: yupResolver(validationSchema),
-      defaultValues: { codigo: "", turno: "Manhã", status: true },
+      resolver: yupResolver(turmaValidationSchema),
+      defaultValues: { codigoTurma: "", turnoTurma: "Manhã", status: true },
     });
 
     const {
@@ -55,8 +61,8 @@ const FormTurmas = forwardRef<FormTurmasRef, FormTurmasProps>(
     useImperativeHandle(ref, () => ({
       resetForm: () => {
         reset({
-          codigo: "",
-          turno: "",
+          codigoTurma: "",
+          turnoTurma: "",
           status: true,
         });
       },
@@ -71,8 +77,8 @@ const FormTurmas = forwardRef<FormTurmasRef, FormTurmasProps>(
     useEffect(() => {
       if (initialValues) {
         reset({
-          codigo: initialValues.codigoTurma ?? "",
-          turno: initialValues.turnoTurma ?? "",
+          codigoTurma: initialValues.codigoTurma ?? "",
+          turnoTurma: initialValues.turnoTurma ?? "",
           status: initialValues.status ?? true,
         });
       }
@@ -87,7 +93,7 @@ const FormTurmas = forwardRef<FormTurmasRef, FormTurmasProps>(
           {/* Campo do Curso */}
           <FormField
             control={control}
-            name="codigo"
+            name="codigoTurma"
             render={({ field }) => (
               <FormItem className="col-span-1 p-1">
                 <Input
@@ -99,7 +105,7 @@ const FormTurmas = forwardRef<FormTurmasRef, FormTurmasProps>(
                   placeholder="Informe o código da turma"
                   size="lg"
                   disabled={isLoading}
-                  error={!!errors.codigo}
+                  error={!!errors.codigoTurma}
                   className="w-full"
                   value={field.value}
                   onChange={(value) => field.onChange(value)}
@@ -111,7 +117,7 @@ const FormTurmas = forwardRef<FormTurmasRef, FormTurmasProps>(
 
           <FormField
             control={control}
-            name="turno"
+            name="turnoTurma"
             render={({ field }) => (
               <FormItem className="p-1">
                 <MySelect
@@ -126,7 +132,7 @@ const FormTurmas = forwardRef<FormTurmasRef, FormTurmasProps>(
                     { label: "Tarde", value: "Tarde" },
                     { label: "Noite", value: "Noite" },
                   ]}
-                  error={!!errors.turno}
+                  error={!!errors.turnoTurma}
                   value={field.value}
                   onValueChange={(value) => field.onChange(value)}
                 />

@@ -5,7 +5,6 @@ import { Key } from "lucide-react";
 import { forwardRef, useImperativeHandle } from "react";
 import { useEffect, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
-import * as yup from "yup";
 
 import "react-toastify/dist/ReactToastify.css";
 import { MySelect } from "@/components/MySelect";
@@ -13,51 +12,12 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
+import { FormUserFields, userValidationSchema } from "@/schemas/user-schema";
 import { Curso } from "@/types/Curso";
 import { User } from "@/types/User";
 
 import { Form, FormField, FormItem, FormMessage } from "../ui/form";
 import { VirtualizedCombobox } from "../ui/virtualized-combobox/VirtualizedCombobox";
-
-const validationSchema = yup.object({
-  nome: yup
-    .string()
-    .min(2, "Mínimo 2 caracteres")
-    .required("Campo obrigatório"),
-  email: yup.string().email("E-mail inválido").required("Campo obrigatório"),
-  role: yup.string().required("Campo obrigatório"),
-  idCurso: yup
-    .string()
-    .nullable()
-    .when("role", {
-      is: "user",
-      then: (schema) => schema.required("Campo obrigatório"),
-      otherwise: (schema) => schema.notRequired(),
-    }),
-  status: yup.boolean().required("Campo obrigatório"),
-  password: yup
-    .string()
-    .test("senha-required", "Campo obrigatório", function (value) {
-      const isRequired = !this.options?.context?.isEdit;
-      if (isRequired && !value) {
-        return this.createError({ message: "Senha é obrigatória" });
-      }
-      return true;
-    })
-    .test(
-      "min-length",
-      "A senha deve ter no mínimo 6 caracteres",
-      (value) => !value || value.length >= 6,
-    ),
-  confirmaSenha: yup
-    .string()
-    .test("confirmaSenha", "As senhas não coincidem", function (value) {
-      const { password } = this.parent;
-      return !password || password === value;
-    }),
-});
-
-export type FormUserFields = yup.InferType<typeof validationSchema>;
 
 interface FormUserProps {
   initialValues?: User;
@@ -89,7 +49,7 @@ const FormUser = forwardRef<FormUserRef, FormUserProps>(
     const [showPasswordContainer, setShowPasswordContainer] = useState(true);
 
     const form = useForm<FormUserFields>({
-      resolver: yupResolver(validationSchema),
+      resolver: yupResolver(userValidationSchema),
       defaultValues: {
         nome: "",
         email: "",
@@ -140,7 +100,6 @@ const FormUser = forwardRef<FormUserRef, FormUserProps>(
     useEffect(() => {
       if (initialValues) {
         const isUser = initialValues.role === "user";
-        // setUserRole(isUser ? "user" : initialValues.role);
 
         reset({
           nome: initialValues.nome,

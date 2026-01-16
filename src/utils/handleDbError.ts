@@ -16,7 +16,7 @@ export function handleDatabaseError(error: any): {
         return {
           status: 400,
           message:
-            "Violação de chave estrangeira. O registro relacionado não existe.",
+            "Este registro não pode ser excluído ou alterado pois existem outros dados vinculados a ele.",
         };
 
       case "P2000":

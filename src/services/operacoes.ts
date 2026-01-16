@@ -1,40 +1,6 @@
-import dayjs from "dayjs";
-
 import prisma from "@/lib/prisma";
 
 import { getProdutoById } from "./produtos";
-
-export const createOperacao = async (
-  idUser: number,
-  idProduto: number,
-  tipoOp: number,
-  qtd: number,
-) => {
-  const currentData = dayjs().format("YYYY-MM-DD HH:mm:ss");
-
-  const operacao = await prisma.operacao.create({
-    data: {
-      tipoOperacao: tipoOp,
-      idUsuario: idUser,
-      idProduto: idProduto,
-      data: new Date(currentData),
-      quantidade: qtd,
-    },
-    include: {
-      produto: {
-        select: {
-          prodCurso: true,
-          uuid: true,
-          turma: {
-            select: { uuid: true },
-          },
-        },
-      },
-    },
-  });
-
-  return operacao;
-};
 
 export const getOperacoesPorProduto = async (uuidProduto: string) => {
   const produto = await getProdutoById(uuidProduto);
