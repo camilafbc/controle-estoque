@@ -1,5 +1,6 @@
 "use server";
 
+import bcrypt from "bcryptjs";
 import { getServerSession } from "next-auth";
 import * as yup from "yup";
 
@@ -15,7 +16,9 @@ export const updateUser = async (user: Partial<User>) => {
 
     if (!session) return { error: "Usuário não autorizado." };
 
-    await userValidationSchema.validate(user, {
+    const validationSchema = userValidationSchema.omit(["confirmaSenha"]);
+
+    await validationSchema.validate(user, {
       abortEarly: false,
       context: { isEdit: true },
     });
@@ -28,7 +31,7 @@ export const updateUser = async (user: Partial<User>) => {
     };
 
     if (user.password) {
-      dataToUpdate.password = user.password;
+      dataToUpdate.password = bcrypt.hashSync(user.password, 10);
     }
 
     if (user.role === "user" && user.idCurso) {

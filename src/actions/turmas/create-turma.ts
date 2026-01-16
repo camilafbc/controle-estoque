@@ -10,7 +10,6 @@ import { Turma } from "@/types/Turma";
 import { handleDatabaseError } from "@/utils/handleDbError";
 
 export const createTurma = async (turma: Omit<Turma, "idTurma">) => {
-  console.log("CHEGANDO: ", turma);
   try {
     const session = await getServerSession(authOptions);
 
@@ -21,8 +20,6 @@ export const createTurma = async (turma: Omit<Turma, "idTurma">) => {
     const teste = await turmaValidationSchema.validate(turma, {
       abortEarly: false,
     });
-
-    console.log("VALIDATE: ", teste);
 
     const turmaCreated = await prisma.turma.create({
       data: {

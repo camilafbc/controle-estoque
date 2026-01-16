@@ -17,7 +17,7 @@ export const createUser = async (user: Omit<User, "idUser">) => {
 
     if (!session) return { error: "Usuário não autorizado." };
 
-    const userDo = session?.user.id;
+    const userDoing = +session?.user.id;
 
     await userActionValidationSchema.validate(user, {
       abortEarly: false,
@@ -34,7 +34,7 @@ export const createUser = async (user: Omit<User, "idUser">) => {
         email: user.email.toLowerCase(),
         password: bcrypt.hashSync(user.password, 10),
         role: user.role,
-        created_by: userDo,
+        created_by: userDoing,
         status: user.status,
         idCurso: user.role === "admin" ? null : user.idCurso,
       },

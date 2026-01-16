@@ -16,7 +16,6 @@ export async function GET() {
     }
 
     const users = await getUsers(session.user.id);
-    console.log("Rota Users: ", users);
 
     return NextResponse.json(users, { status: 200 });
   } catch (error) {

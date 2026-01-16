@@ -50,7 +50,7 @@ export const createOperacao = async (
       return { error: "Quantidade insuficiente para movimentação de saída!" };
     }
 
-    const userDo = session.user.id;
+    const userDoing = +session.user.id;
 
     // --- INÍCIO DA TRANSAÇÃO ---
     const [operacao, produtoAtualizado] = await prisma.$transaction([
@@ -58,7 +58,7 @@ export const createOperacao = async (
       prisma.operacao.create({
         data: {
           tipoOperacao: tipoOp,
-          idUsuario: userDo,
+          idUsuario: userDoing,
           idProduto: produtoData.idProduto,
           data: new Date(),
           quantidade: qtd,

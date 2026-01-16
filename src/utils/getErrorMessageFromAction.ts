@@ -1,5 +1,5 @@
 export const getErrorMessageFromAction = (data: any) => {
-  // console.log("ERROR: ", data);
+  console.log("ERROR: ", data);
   const mensagens = Array.isArray(data.message)
     ? data.message.join(", ")
     : data.message;

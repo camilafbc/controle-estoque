@@ -23,7 +23,7 @@ export const createProduto = async (
     if (!uuidTurma)
       return { error: "Erro ao excluir dados; item não selecionado." };
 
-    const userDo = session.user.id;
+    const userDoing = +session.user.id;
 
     await produtoValidationSchema.validate(
       { ...produto, turma: uuidTurma },
@@ -54,7 +54,7 @@ export const createProduto = async (
         await tx.operacao.create({
           data: {
             tipoOperacao: 1,
-            idUsuario: userDo,
+            idUsuario: userDoing,
             idProduto: prod.idProduto,
             data: new Date(),
             quantidade: produto.prodQuantidade,

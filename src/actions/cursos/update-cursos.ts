@@ -31,7 +31,7 @@ export const updateCurso = async (curso: Curso) => {
     return cursoUpdated;
   } catch (error) {
     if (error instanceof yup.ValidationError) {
-      console.log("ERRORS: ", error.errors);
+      console.error("ERRORS: ", error.errors);
       return { error: "Dados inválidos", message: error.errors };
     }
 
