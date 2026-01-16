@@ -8,82 +8,93 @@ Este projeto é uma aplicação de controle de estoque desenvolvida como parte d
 
 A aplicação conta com uma área administrativa para o cadastro de usuários e cursos, permitindo que o sistema seja usado por outros cursos. A área comum do sistema possibilita o cadastro de turmas e produtos, além de registrar entradas e saídas de produtos, gerando relatórios de movimentação.
 
+##🚀 Refatoração
+
+    Recentemente, o projeto passou por uma reestruturação da arquitetura para adotar as melhores práticas do Next.js e garantir uma melhor legibilidade do código:
+
+    - Migração de rotas de API para Server Actions, reduzindo a latência e simplificando a comunicação com o banco de dados;
+    - Utilização do HydrationBoundary do TanStack Query, permitindo que os dados sejam pré-carregados no servidor e entregues instantaneamente ao cliente;
+    - Implementação de Prisma Transactions para garantir atomicidade. Ex: A criação de um produto e sua movimentação inicial de estoque ocorrem como uma única operação "tudo ou nada";
+    - Controle de acesso baseado em funções (RBAC) via Middleware e integração direta do NextAuth com o banco de dados;
+    - Substituição de estado global (Zustand) por parâmetros de URL para controle de modais e filtros, facilitando o compartilhamento de links e a navegabilidade.
+
 # Funcionalidades
 
-* Área Administrativa:
-    - Cadastro de usuários (diretoria) e cursos.
-    - Autonomia para a instituição utilizar o sistema com diferentes cursos.
-* Área Comum:
-    - Cadastro de turmas e produtos.
-    - Registro de movimentações de entrada e saída de produtos por turma.
-    - Geração de relatório de movimentação por turma, com controle de consumo de produtos por período.
-* Geral:
-    - Suporte PWA para acesso e uso em dispositivos móveis
-    - Edição de dados de perfil
-    - Escolha de tema (Claro, Escuro ou Sistema)
- 
+- Área Administrativa:
+  - Cadastro de usuários (diretoria) e cursos.
+  - Autonomia para a instituição utilizar o sistema com diferentes cursos.
+- Área Comum:
+  - Cadastro de turmas e produtos.
+  - Registro de movimentações de entrada e saída de produtos por turma.
+  - Geração de relatório de movimentação por turma, com controle de consumo de produtos por período.
+- Geral:
+  - Suporte PWA para acesso e uso em dispositivos móveis
+  - Edição de dados de perfil
+  - Escolha de tema (Claro, Escuro ou Sistema)
+
 # Tecnologias Utilizadas
 
-* Frontend: Next.js, React, TypeScript, Tailwind CSS, Shadcn/UI, Framer Motion
-* Backend: APIs integradas no Next.js, Node.js, Express, Prisma
-* Banco de Dados: PostgreSQL
-* Consumo de dados otimizado com fetch do Next.js e TanStack Query
-* Validações e segurança com React Hook Form, Yup e BCrypt
-* Zustand para gerenciamento de estado
-* Relatórios em PDF com React PDF
-
+- Framework: Next.js, React, TypeScript
+- Estilização: Tailwind CSS, Shadcn/UI e Framer Motion
+- Banco de Dados: PostgreSQL e Prisma (ORM)
+- Gestão de Dados: TanStack Query
+- Validações e segurança: React Hook Form, Yup e BCrypt
+- Relatórios: React PDF
 
 # Instalação
 
 Para configurar o projeto localmente, siga as etapas abaixo:
 
 1. Clonando o repositório
-Clone o repositório para seu ambiente local:
+   Clone o repositório para seu ambiente local:
 
-````bash
+```bash
 git clone https://github.com/camilafbc/controle-estoque/.git
-````
+```
+
 2. Instalando Dependências
 
 No diretório raiz do projeto, instale as dependências do frontend e do backend:
 
-* Frontend:
-````bash
+- Frontend:
+
+```bash
 cd frontend
 npm install
-````
-* Backend:
-````bash
+```
+
+- Backend:
+
+```bash
 cd backend
 npm install
-````
+```
 
 3. Configuração de Variáveis de Ambiente
 
 Antes de iniciar a aplicação, é necessário configurar as variáveis de ambiente para o frontend e backend. Arquivos de exemplo .env.example foram disponibilizados em ambos os diretórios.
 
-* Backend
-No diretório backend, renomeie o arquivo .env.example para .env e preencha os seguintes valores:
+- Backend
+  No diretório backend, renomeie o arquivo .env.example para .env e preencha os seguintes valores:
 
-````bash
+```bash
 PORT=5000                 # Porta onde o servidor será executado
 NODE_ENV=development       # Ambiente de execução (development, production)
 JWT_KEY=                   # Chave secreta para geração de tokens JWT
 MYSQL_URL=                 # URL de conexão com o banco de dados MySQL
-````
+```
 
-* Frontend
-No diretório frontend, renomeie o arquivo .env.example para .env.local e preencha os seguintes valores:
+- Frontend
+  No diretório frontend, renomeie o arquivo .env.example para .env.local e preencha os seguintes valores:
 
-````bash
+```bash
 NEXT_PUBLIC_BASE_URL= #
-NEXT_PUBLIC_CUSTOM_COOKIE= #
-NEXT_CUSTOM_COOKIE= #
 NEXTAUTH_URL= http://localhost:3000
 NEXTAUTH_SECRET= #
 JWT_KEY= #
 DATABASE_URL= #
-````
+DEVELOPER=# (recebe o id do usuário gerencial que é ocultado na listagem para os demais administradores)
+```
 
 Preencha também as variáveis do arquivo seed.ts para criar um usuário na base
 
@@ -91,13 +102,13 @@ Preencha também as variáveis do arquivo seed.ts para criar um usuário na base
 
 Para rodar a aplicação:
 
-````bash
+```bash
 cd ../controle-estoque
 npm start
-````
+```
 
 A aplicação estará disponível em http://localhost:3000
 
 # Licença
 
-Este projeto está licenciado sob a Licença [MIT](https://choosealicense.com/licenses/mit/) 
+Este projeto está licenciado sob a Licença [MIT](https://choosealicense.com/licenses/mit/)
