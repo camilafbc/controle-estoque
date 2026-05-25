@@ -10,13 +10,13 @@ import bcrypt from "bcryptjs";
 import { PrismaClient } from "../src/generated/prisma";
 
 const prisma = new PrismaClient();
-const nome = "";
-const email = "";
-const password = "";
+const nome = process.env.USER_PADRAO_NOME;
+const email = process.env.USER_PADRAO_EMAIL;
+const password = process.env.USER_PADRAO_PASSWORD;
 
 async function main() {
   // Hash da senha
-  const passwordHash = await bcrypt.hash(password, 10);
+  const passwordHash = await bcrypt.hash(password as string, 10);
 
   // Criação do usuário admin sem curso vinculado
   await prisma.user.upsert({
@@ -24,8 +24,8 @@ async function main() {
     update: {},
     create: {
       // INSERIR NOME
-      nome: nome,
-      email: email,
+      nome: nome as string,
+      email: email as string,
       password: passwordHash,
       role: "admin",
       status: true,

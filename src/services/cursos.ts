@@ -19,7 +19,7 @@ export const getCursoById = async (idCurso: number) => {
 };
 
 export const countCursos = async () => {
-  const count = await prisma.user.count({
+  const count = await prisma.curso.count({
     where: {
       status: true,
     },
