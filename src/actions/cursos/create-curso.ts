@@ -4,8 +4,8 @@ import { authorizeAdmin } from "@/lib/authz";
 import prisma from "@/lib/prisma";
 import { cursoValidationSchema } from "@/schemas/curso-schema";
 import { Curso } from "@/types/Curso";
-import { handleDatabaseError } from "@/utils/handleDbError";
 import { getValidationMessages } from "@/utils/getValidationMessages";
+import { handleDatabaseError } from "@/utils/handleDbError";
 
 export const createCurso = async (curso: Omit<Curso, "idCurso">) => {
   try {

@@ -11,6 +11,7 @@ import { SearchInput } from "@/components/SearchInput";
 import FormTurmas, { FormTurmasRef } from "@/components/turmas/FormTurmas";
 import { Button } from "@/components/ui/button";
 import { DataTable } from "@/components/ui/data-table/data-table";
+import { useListFilter } from "@/hooks/useListFilter";
 import {
   useCreateTurmaMutation,
   useDeleteTurmaMutation,
@@ -19,7 +20,6 @@ import {
 import { useGetTurmaById, useTurmas } from "@/queries/turmas";
 import { FormTurmasFields } from "@/schemas/turma-schema";
 import { Turma } from "@/types/Turma";
-import { useListFilter } from "@/hooks/useListFilter";
 import { getErrorMessage } from "@/utils/getErrorMessage";
 import { getErrorMessageFromAction } from "@/utils/getErrorMessageFromAction";
 
@@ -133,6 +133,7 @@ export default function TurmasContainer() {
           placeholder="Buscar Turma"
           value={search}
           onChange={(event) => setSearch(event.target.value)}
+          onClear={() => setSearch("")}
         />
         <Button
           onClick={handleNew}
@@ -147,6 +148,11 @@ export default function TurmasContainer() {
         columns={columns(handleEdit, handleDelete)}
         data={filteredItems}
         isLoading={isLoading}
+        filterValue={search}
+        onClearFilter={() => setSearch("")}
+        totalRawCount={turmas.length}
+        emptyTitle="Nenhuma turma cadastrada"
+        emptyDescription="Cadastre uma nova turma para começar a organizar os produtos e relatórios."
       />
 
       <MyDialog

@@ -4,6 +4,7 @@ import { ColumnDef } from "@tanstack/react-table";
 
 import { DataTableColumnHeader } from "@/components/ui/data-table/data-table-column-header";
 import { Operacao } from "@/types/Operacao";
+import { dateTimeFormatter } from "@/utils/utils";
 
 export const columns: ColumnDef<Operacao>[] = [
   {
@@ -25,12 +26,9 @@ export const columns: ColumnDef<Operacao>[] = [
   {
     accessorKey: "data",
     header: ({ column }) => (
-      <DataTableColumnHeader
-        column={column}
-        title="Data e Hora"
-        className="justify-center"
-      />
+      <DataTableColumnHeader column={column} title="Data e Hora" />
     ),
+    cell: ({ row }) => dateTimeFormatter(new Date(row.getValue("data"))),
     enableSorting: true,
     meta: { type: "dateTime", minWidth: "30" },
     size: 10,

@@ -1,11 +1,12 @@
 "use server";
 
 import bcrypt from "bcryptjs";
+
 import { authorizeAuthenticated } from "@/lib/authz";
 import prisma from "@/lib/prisma";
 import { userProfileValidationSchema } from "@/schemas/user-profile-schema";
-import { handleDatabaseError } from "@/utils/handleDbError";
 import { getValidationMessages } from "@/utils/getValidationMessages";
+import { handleDatabaseError } from "@/utils/handleDbError";
 
 interface UpdateProfileInput {
   nome?: string;

@@ -26,7 +26,7 @@ export const authOptions: AuthOptions = {
         });
         const parsed = schema.safeParse(credentials);
         if (!parsed.success) {
-          // return null signals auth failure without throwing
+          console.error("Invalid credentials", parsed.error);
           return null;
         }
         const { email, password } = parsed.data;
@@ -55,9 +55,7 @@ export const authOptions: AuthOptions = {
         token.curso = user.curso;
         token.role = user.role;
       }
-      // Rotate token every 15 minutes (optional)
-      // const now = Math.floor(Date.now() / 1000);
-      // if (token.iat && now - token.iat > 15 * 60) token.iat = now;
+
       return token;
     },
     session: async ({ session, token }) => {
@@ -71,8 +69,6 @@ export const authOptions: AuthOptions = {
       return session;
     },
   },
-  // cookies: {
-  //   sessionToken: { sameSite: "strict", secure: true },
-  // },
+
   session: { strategy: "jwt", maxAge: 30 * 24 * 60 * 60 },
 };

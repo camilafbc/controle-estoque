@@ -33,13 +33,11 @@ export default async function Page() {
         title="Usuários"
         description="Gerencie perfis, permissões e o curso associado a cada usuário."
         icon={<Users className="size-5" />}
-        breadcrumbs={[
-          { label: "Cadastros" },
-          { label: "Usuários", href: "/admin/cadastros/usuarios" },
-        ]}
       />
       <HydrationBoundary state={dehydrate(queryClient)}>
-        <UsersContainer />
+        <div className="rounded-2xl border border-border/70 bg-card p-5 shadow-sm sm:p-6">
+          <UsersContainer />
+        </div>
       </HydrationBoundary>
     </div>
   );

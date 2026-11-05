@@ -126,7 +126,7 @@ const FormMovimentacoes = forwardRef<
                         setValue("quantidade", Number(value));
                       }
                     }}
-                    className="h-9 rounded-none text-center focus:border focus:ring"
+                    className="h-10 rounded-none text-center focus:border focus:ring"
                   />
                   <Button
                     onClick={handleIncrease}

@@ -1,6 +1,6 @@
 "use client";
 
-import { ChevronLeft } from "lucide-react";
+import { ArrowLeft, Save, ShieldCheck } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { useRef, useState } from "react";
@@ -12,9 +12,9 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
   Card,
-  CardHeader,
   CardContent,
   CardFooter,
+  CardHeader,
 } from "@/components/ui/card";
 import FormUserProfile, {
   FormUserProfileFields,
@@ -28,23 +28,31 @@ export default function ContainerProfile() {
   const formRef = useRef<FormUserProfileRef>(null);
   const router = useRouter();
 
+  const userInitials =
+    session?.user?.name
+      ?.split(" ")
+      .slice(0, 2)
+      .map((part) => part[0])
+      .join("")
+      .toUpperCase() || "SE";
+
   const handleSubmit: SubmitHandler<FormUserProfileFields> = async (data) => {
     try {
       setIsLoading(true);
 
       const profileUpdated = await updateProfile(data);
-      if (profileUpdated) {
-        //Atualização da Sessão
-        const updateSession = await update({
+      if (profileUpdated && "data" in profileUpdated) {
+        await update({
           user: {
             ...session?.user,
             name: profileUpdated.data,
           },
         });
+        toast.success(profileUpdated.message);
+      } else if (profileUpdated && "error" in profileUpdated) {
+        toast.error(profileUpdated.error);
       }
       formRef.current?.resetForm();
-
-      toast.success(profileUpdated.message);
     } catch (error) {
       toast.error(getErrorMessage(error));
     } finally {
@@ -57,48 +65,52 @@ export default function ContainerProfile() {
   };
 
   return (
-    <Card>
-      <CardHeader>
-        <div className="flex items-center gap-2">
-          <Avatar className="size-16">
-            <AvatarFallback className="bg-navbar text-xl font-bold tracking-wider text-primary-foreground dark:bg-orange-500 dark:text-white">
-              {session?.user.name?.split(" ")?.[0]?.[0]?.toUpperCase()}
-              {session?.user.name?.split(" ")?.[1]?.[0]?.toUpperCase()}
+    <Card className="rounded-2xl border border-border/70 shadow-sm">
+      <CardHeader className="border-b border-border/50 pb-6">
+        <div className="flex items-center gap-4">
+          <Avatar className="size-16 ring-4 ring-orange-500/10">
+            <AvatarFallback className="bg-primary text-xl font-bold tracking-wider text-white">
+              {userInitials}
             </AvatarFallback>
           </Avatar>
-          <div className="flex flex-col justify-start">
-            <p className="font-bold capitalize">{session?.user.name}</p>
-            <p className="text-sm font-semibold capitalize">
-              {session?.user.role}
-            </p>
-            <p className="text-sm text-muted-foreground">
-              {session?.user.email}
-            </p>
+          <div className="flex flex-col justify-start space-y-1">
+            <div className="flex items-center gap-2">
+              <h2 className="text-xl font-bold text-foreground capitalize">
+                {session?.user.name}
+              </h2>
+              <span className="inline-flex items-center gap-1 rounded-full bg-orange-500/10 px-2.5 py-0.5 text-xs font-semibold text-orange-600 ring-1 ring-orange-500/20 dark:bg-orange-500/15 dark:text-orange-400 capitalize">
+                <ShieldCheck className="size-3" />
+                {session?.user.role}
+              </span>
+            </div>
+            <p className="text-xs text-muted-foreground">{session?.user.email}</p>
           </div>
         </div>
       </CardHeader>
-      <CardContent>
+      <CardContent className="pt-6">
         <FormUserProfile
           ref={formRef}
           initialValues={session}
           onSubmit={handleSubmit}
         />
       </CardContent>
-      <CardFooter className="mt-4 flex w-full flex-col-reverse gap-2 md:flex-row md:justify-end">
+      <CardFooter className="flex w-full flex-col-reverse justify-end gap-3 border-t border-border/50 pt-5 sm:flex-row">
         <Button
           type="button"
           variant="outline"
           onClick={handleBack}
-          className="flex items-center gap-2"
+          className="gap-2 rounded-xl"
         >
-          <ChevronLeft className="size-5" />
+          <ArrowLeft className="size-4" />
           Voltar
         </Button>
         <Button
           type="button"
           loading={isLoading}
           onClick={() => formRef.current?.submitForm()}
+          className="gap-2 rounded-xl"
         >
+          <Save className="size-4" />
           Salvar Alterações
         </Button>
       </CardFooter>

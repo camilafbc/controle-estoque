@@ -70,8 +70,8 @@ export default function ProductContainer({
   const turmaOptions = useMemo(
     () =>
       (fetchTurmas.data ?? [])
-        .filter((turma) => turma.status)
-        .map((turma) => ({
+        .filter((turma: Turma) => turma.status)
+        .map((turma: Turma) => ({
           label: `${turma.codigoTurma} - ${turma.turnoTurma}`,
           id: turma.uuid,
         })),
@@ -214,6 +214,7 @@ export default function ProductContainer({
             placeholder="Buscar produto"
             value={filterValue}
             onChange={(event) => setFilterValue(event.target.value)}
+            onClear={() => setFilterValue("")}
           />
         </form>
         <Button
@@ -230,6 +231,7 @@ export default function ProductContainer({
         onDelete={handleDelete}
         onEdit={handleEdit}
         filterValue={filterValue}
+        onClearFilter={() => setFilterValue("")}
         data={produtos.data || []}
         isLoading={produtos.isLoading || produto.isFetching}
       />

@@ -1,13 +1,14 @@
 "use server";
 
 import bcrypt from "bcryptjs";
+
 import { Prisma } from "@/generated/prisma";
 import { authorizeAdmin } from "@/lib/authz";
 import prisma from "@/lib/prisma";
-import { userValidationSchema } from "@/schemas/user-schema";
+import { userUpdateValidationSchema } from "@/schemas/user-schema";
 import { User } from "@/types/User";
-import { handleDatabaseError } from "@/utils/handleDbError";
 import { getValidationMessages } from "@/utils/getValidationMessages";
+import { handleDatabaseError } from "@/utils/handleDbError";
 
 export const updateUser = async (user: Partial<User>) => {
   try {
@@ -17,9 +18,7 @@ export const updateUser = async (user: Partial<User>) => {
 
     if (!user.idUser) return { error: "Usuário não selecionado." };
 
-    const validationSchema = userValidationSchema.omit(["confirmaSenha"]);
-
-    const validation = validationSchema.safeParse(user);
+    const validation = userUpdateValidationSchema.safeParse(user);
     if (!validation.success) {
       return {
         error: "Dados inválidos",
@@ -27,20 +26,30 @@ export const updateUser = async (user: Partial<User>) => {
       };
     }
 
-    const dataToUpdate: Prisma.UserUncheckedUpdateInput = {
-      nome: user.nome,
-      email: user.email?.toLowerCase(),
-      status: user.status,
-      role: user.role,
-      idCurso: user.role === "user" && user.idCurso ? user.idCurso : null,
-    };
+    const dataToUpdate: Prisma.UserUncheckedUpdateInput = {};
+    const validatedUser = validation.data;
 
-    if (user.password) {
-      dataToUpdate.password = bcrypt.hashSync(user.password, 10);
+    if (validatedUser.nome !== undefined) dataToUpdate.nome = validatedUser.nome;
+    if (validatedUser.email !== undefined) {
+      dataToUpdate.email = validatedUser.email.toLowerCase();
+    }
+    if (validatedUser.status !== undefined) {
+      dataToUpdate.status = validatedUser.status;
+    }
+    if (validatedUser.role !== undefined) {
+      dataToUpdate.role = validatedUser.role;
+      dataToUpdate.idCurso =
+        validatedUser.role === "user" ? validatedUser.idCurso ?? null : null;
+    } else if (validatedUser.idCurso !== undefined) {
+      dataToUpdate.idCurso = validatedUser.idCurso;
+    }
+
+    if (validatedUser.password !== undefined) {
+      dataToUpdate.password = bcrypt.hashSync(validatedUser.password, 10);
     }
 
     const updatedUser = await prisma.user.update({
-      where: { idUser: user.idUser },
+      where: { idUser: validatedUser.idUser },
       data: dataToUpdate,
     });
 

@@ -4,8 +4,8 @@ import { authorizeUser } from "@/lib/authz";
 import prisma from "@/lib/prisma";
 import { produtoValidationSchema } from "@/schemas/produto-schema";
 import { Produto } from "@/types/Produto";
-import { handleDatabaseError } from "@/utils/handleDbError";
 import { getValidationMessages } from "@/utils/getValidationMessages";
+import { handleDatabaseError } from "@/utils/handleDbError";
 
 export const updateProduto = async (
   produto: Omit<Produto, "idProduto" | "prodTurma">,

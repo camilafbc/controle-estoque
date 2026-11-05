@@ -135,6 +135,7 @@ export default function UsersContainer() {
           aria-label="Buscar usuários por nome, e-mail, tipo ou curso"
           value={filterValue}
           onChange={(event) => setFilterValue(event.target.value)}
+          onClear={() => setFilterValue("")}
         />
         <Button
           onClick={openForCreate}
@@ -152,6 +153,9 @@ export default function UsersContainer() {
         )}
         data={filteredItems}
         isLoading={usersLoading}
+        filterValue={filterValue}
+        onClearFilter={() => setFilterValue("")}
+        totalRawCount={usersData?.length}
         emptyTitle={filterValue ? "Nenhum usuário encontrado" : "Nenhum usuário cadastrado"}
         emptyDescription={
           filterValue

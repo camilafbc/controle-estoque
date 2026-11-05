@@ -1,4 +1,4 @@
-import { ShieldAlert, ArrowLeft, Home } from "lucide-react";
+import { ArrowLeft, Home, ShieldAlert } from "lucide-react";
 import Link from "next/link";
 
 import { Button } from "@/components/ui/button";
@@ -13,36 +13,30 @@ import {
 
 export default function AcessoNegado() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-slate-50 p-4 dark:bg-slate-950">
-      <Card className="w-full max-w-md border-red-200 shadow-lg dark:border-red-900">
+    <div className="flex min-h-screen items-center justify-center bg-background p-4">
+      <Card className="w-full max-w-md rounded-2xl border border-rose-500/30 shadow-md">
         <CardHeader className="text-center">
-          <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-red-100 dark:bg-red-900/30">
-            <ShieldAlert className="h-10 w-10 text-red-600 dark:text-red-500" />
+          <div className="mx-auto mb-4 flex size-14 items-center justify-center rounded-2xl bg-rose-500/10 text-rose-600 ring-1 ring-rose-500/20 dark:bg-rose-500/15 dark:text-rose-400">
+            <ShieldAlert className="size-8" />
           </div>
-          <CardTitle className="text-2xl font-bold text-slate-900 dark:text-slate-50">
-            Acesso Negado
+          <CardTitle className="text-2xl font-bold tracking-tight text-foreground">
+            Acesso Restrito
           </CardTitle>
-          <CardDescription className="text-slate-500">
-            Ops! Parece que você não tem permissão para acessar esta área.
+          <CardDescription className="text-muted-foreground">
+            Você não possui permissão para acessar esta área ou este recurso.
           </CardDescription>
         </CardHeader>
 
-        <CardContent className="text-center text-sm text-slate-600 dark:text-slate-400">
-          Esta página é restrita a administradores do sistema. Se você acredita
-          que isso é um erro, entre em contato com o suporte técnico do Senac.
+        <CardContent className="text-center text-sm text-muted-foreground leading-relaxed">
+          Esta funcionalidade exige permissões administrativas ou pertence a outro curso.
+          Se acreditar que se trata de um erro, entre em contato com a coordenação do Senac.
         </CardContent>
 
-        <CardFooter className="flex flex-col gap-2 sm:flex-row">
-          <Button asChild variant="outline" className="w-full">
-            <Link href="javascript:history.back()">
-              <ArrowLeft className="mr-2 h-4 w-4" />
-              Voltar
-            </Link>
-          </Button>
-          <Button asChild className="w-full bg-blue-senac hover:bg-blue-900">
+        <CardFooter className="flex flex-col gap-2 pt-2 sm:flex-row">
+          <Button asChild variant="outline" className="w-full rounded-xl">
             <Link href="/home">
-              <Home className="mr-2 h-4 w-4" />
-              Ir para Início
+              <Home className="mr-2 size-4" />
+              Ir para o Início
             </Link>
           </Button>
         </CardFooter>

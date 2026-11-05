@@ -4,8 +4,8 @@ import { authorizeUser } from "@/lib/authz";
 import prisma from "@/lib/prisma";
 import { turmaUpdateValidationSchema } from "@/schemas/turma-schema";
 import { Turma } from "@/types/Turma";
-import { handleDatabaseError } from "@/utils/handleDbError";
 import { getValidationMessages } from "@/utils/getValidationMessages";
+import { handleDatabaseError } from "@/utils/handleDbError";
 
 export const updateTurma = async (turma: Turma) => {
   try {

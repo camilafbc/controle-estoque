@@ -3,8 +3,8 @@
 import { authorizeUser } from "@/lib/authz";
 import prisma from "@/lib/prisma";
 import { operacaoValidationSchema } from "@/schemas/operacao-schema";
-import { handleDatabaseError } from "@/utils/handleDbError";
 import { getValidationMessages } from "@/utils/getValidationMessages";
+import { handleDatabaseError } from "@/utils/handleDbError";
 
 class EstoqueInsuficienteError extends Error {}
 

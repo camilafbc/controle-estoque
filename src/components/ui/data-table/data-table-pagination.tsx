@@ -1,100 +1,145 @@
-// import {
-//   ChevronLeftIcon,
-//   ChevronRightIcon,
-//   DoubleArrowLeftIcon,
-//   DoubleArrowRightIcon,
-// } from "@components/react-icons"
+"use client";
+
 import { Table } from "@tanstack/react-table";
 import {
-  ChevronLeftIcon,
+  ChevronLeft,
   ChevronRight,
-  ChevronRightIcon,
   ChevronsLeft,
   ChevronsRight,
 } from "lucide-react";
 
-import { Button } from "../button";
+import { Button } from "@/components/ui/button";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "../select";
+} from "@/components/ui/select";
 
 interface DataTablePaginationProps<TData> {
   table: Table<TData>;
+  pageSizeOptions?: number[];
+  totalFilteredCount?: number;
+  totalRawCount?: number;
 }
 
 export function DataTablePagination<TData>({
   table,
+  pageSizeOptions = [10, 20, 30, 50],
+  totalFilteredCount,
+  totalRawCount,
 }: DataTablePaginationProps<TData>) {
+  const pageIndex = table.getState().pagination.pageIndex;
+  const pageSize = table.getState().pagination.pageSize;
+  const pageCount = table.getPageCount();
+  const currentRowsCount = table.getRowModel().rows.length;
+  const filteredCount = totalFilteredCount ?? table.getFilteredRowModel().rows.length;
+
+  const startRecord = filteredCount === 0 ? 0 : pageIndex * pageSize + 1;
+  const endRecord = Math.min((pageIndex + 1) * pageSize, filteredCount);
+
   return (
-    <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-      <div className="text-sm text-muted-foreground">
-        {table.getRowModel().rows.length} registro(s) nesta página
+    <div className="flex w-full flex-col items-center justify-between gap-3 px-2 py-1 text-sm sm:flex-row">
+      <div className="flex items-center gap-2 text-xs text-muted-foreground sm:text-sm">
+        {filteredCount > 0 ? (
+          <span>
+            Mostrando{" "}
+            <span className="font-semibold text-foreground">
+              {startRecord}-{endRecord}
+            </span>{" "}
+            de{" "}
+            <span className="font-semibold text-foreground">
+              {filteredCount}
+            </span>{" "}
+            registro(s)
+            {totalRawCount && totalRawCount !== filteredCount ? (
+              <span className="text-xs text-muted-foreground">
+                {" "}
+                (filtrados de {totalRawCount})
+              </span>
+            ) : null}
+          </span>
+        ) : (
+          <span>0 registros</span>
+        )}
       </div>
-      <div className="flex items-center space-x-6 lg:space-x-8">
+
+      <div className="flex flex-wrap items-center gap-4 sm:gap-6">
         <div className="flex items-center space-x-2">
-          <p className="hidden text-sm font-medium sm:block">Itens por pág.</p>
+          <p className="text-xs font-medium text-muted-foreground sm:text-sm">
+            Linhas por página
+          </p>
           <Select
-            value={`${table.getState().pagination.pageSize}`}
+            value={`${pageSize}`}
             onValueChange={(value) => {
               table.setPageSize(Number(value));
             }}
           >
-            <SelectTrigger className="h-8 w-[70px]">
-              <SelectValue placeholder={table.getState().pagination.pageSize} />
+            <SelectTrigger className="h-8 w-[72px] rounded-lg border-border/70 text-xs">
+              <SelectValue placeholder={pageSize} />
             </SelectTrigger>
-            <SelectContent side="top">
-              {[10, 20, 30, 40, 50].map((pageSize) => (
-                <SelectItem key={pageSize} value={`${pageSize}`}>
-                  {pageSize}
+            <SelectContent side="top" className="rounded-xl">
+              {pageSizeOptions.map((size) => (
+                <SelectItem key={size} value={`${size}`} className="text-xs">
+                  {size}
                 </SelectItem>
               ))}
             </SelectContent>
           </Select>
         </div>
-        <div className="hidden w-[100px] items-center justify-center text-sm font-medium sm:inline-flex">
-          Pág. {table.getState().pagination.pageIndex + 1} de{" "}
-          {table.getPageCount()}
+
+        <div className="flex items-center justify-center text-xs font-medium text-muted-foreground sm:text-sm">
+          Página{" "}
+          <span className="mx-1 font-semibold text-foreground">
+            {pageCount === 0 ? 0 : pageIndex + 1}
+          </span>{" "}
+          de{" "}
+          <span className="mx-1 font-semibold text-foreground">
+            {pageCount === 0 ? 1 : pageCount}
+          </span>
         </div>
-        <div className="flex items-center space-x-2">
+
+        <div className="flex items-center space-x-1">
           <Button
             variant="outline"
-            className="hidden h-8 w-8 p-0 lg:flex"
+            size="icon"
+            className="hidden size-8 rounded-lg lg:flex"
             onClick={() => table.setPageIndex(0)}
             disabled={!table.getCanPreviousPage()}
+            aria-label="Primeira página"
           >
-            <span className="sr-only">Go to first page</span>
-            <ChevronsLeft className="h-4 w-4" />
+            <ChevronsLeft className="size-4" />
           </Button>
           <Button
             variant="outline"
-            className="h-8 w-8 p-0"
+            size="icon"
+            className="size-8 rounded-lg"
             onClick={() => table.previousPage()}
             disabled={!table.getCanPreviousPage()}
+            aria-label="Página anterior"
           >
-            <span className="sr-only">Go to previous page</span>
-            <ChevronLeftIcon className="h-4 w-4" />
+            <ChevronLeft className="size-4" />
           </Button>
           <Button
             variant="outline"
-            className="h-8 w-8 p-0"
+            size="icon"
+            className="size-8 rounded-lg"
             onClick={() => table.nextPage()}
             disabled={!table.getCanNextPage()}
+            aria-label="Próxima página"
           >
-            <span className="sr-only">Go to next page</span>
-            <ChevronRightIcon className="h-4 w-4" />
+            <ChevronRight className="size-4" />
           </Button>
           <Button
             variant="outline"
-            className="hidden h-8 w-8 p-0 lg:flex"
+            size="icon"
+            className="hidden size-8 rounded-lg lg:flex"
             onClick={() => table.setPageIndex(table.getPageCount() - 1)}
             disabled={!table.getCanNextPage()}
+            aria-label="Última página"
           >
-            <span className="sr-only">Go to last page</span>
-            <ChevronsRight className="h-4 w-4" />
+            <ChevronsRight className="size-4" />
           </Button>
         </div>
       </div>

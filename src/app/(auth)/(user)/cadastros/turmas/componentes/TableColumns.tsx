@@ -2,6 +2,7 @@
 
 import { ColumnDef } from "@tanstack/react-table";
 
+import { StatusBadge } from "@/components/common/StatusBadge";
 import {
   DataTableDeleteAction,
   DataTableEditAction,
@@ -16,15 +17,11 @@ export const columns = (
   {
     accessorKey: "acoes",
     header: ({ column }) => (
-      <DataTableColumnHeader
-        column={column}
-        title="Ações"
-        className="text-center text-base font-semibold text-gray-950 dark:text-white"
-      />
+      <DataTableColumnHeader column={column} title="Ações" />
     ),
     enableSorting: false,
     cell: ({ row }) => (
-      <div className="flex items-center justify-center">
+      <div className="flex items-center">
         <DataTableEditAction onClick={() => handleEdit(row.original.idTurma)} />
         <DataTableDeleteAction
           title="Turma"
@@ -38,31 +35,30 @@ export const columns = (
   {
     accessorKey: "status",
     header: ({ column }) => (
-      <DataTableColumnHeader
-        column={column}
-        title="Ativa"
-        className="justify-center"
-      />
+      <DataTableColumnHeader column={column} title="Status" />
+    ),
+    cell: ({ row }) => <StatusBadge active={row.original.status} />,
+    enableSorting: true,
+    size: 10,
+  },
+  {
+    accessorKey: "codigoTurma",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Código da Turma" />
     ),
     enableSorting: true,
-    meta: { type: "boolean", minWidth: "20" },
-    size: 5,
   },
   {
     accessorKey: "turnoTurma",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Turno" />
     ),
-    enableSorting: true,
-    meta: { type: "string", minWidth: "10" },
-    size: 10,
-  },
-  {
-    accessorKey: "codigoTurma",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Código" />
+    cell: ({ row }) => (
+      <span className="inline-flex rounded-lg bg-muted/60 px-2.5 py-1 text-xs font-medium text-foreground">
+        {row.original.turnoTurma}
+      </span>
     ),
     enableSorting: true,
-    meta: { type: "string" },
+    size: 15,
   },
 ];

@@ -1,22 +1,20 @@
 "use client";
 
-import { ReloadIcon } from "@radix-ui/react-icons";
 import {
-  Cell,
   ColumnDef,
-  ColumnFiltersState,
   SortingState,
   flexRender,
   getCoreRowModel,
-  getFilteredRowModel,
   getPaginationRowModel,
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import { CheckCircle2, XCircle } from "lucide-react";
+import { SearchX } from "lucide-react";
+import * as React from "react";
 import { useState } from "react";
 
-import { EmptyState } from "@/components/admin/EmptyState";
+import { EmptyState } from "@/components/common/EmptyState";
+import { Button } from "@/components/ui/button";
 import {
   Table,
   TableBody,
@@ -26,30 +24,39 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { cn } from "@/lib/utils";
-import { dateTimeFormatter } from "@/utils/utils";
-
-import { Card, CardContent, CardFooter } from "../card";
 
 import { DataTablePagination } from "./data-table-pagination";
 
-interface DataTableProps<TData, TValue> {
+export interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
   isLoading?: boolean;
-  striped?: boolean;
-  hoverEffect?: boolean;
+  filterValue?: string;
+  onClearFilter?: () => void;
   emptyTitle?: string;
   emptyDescription?: string;
+  striped?: boolean;
+  hoverEffect?: boolean;
+  defaultPageSize?: number;
+  pageSizeOptions?: number[];
+  className?: string;
+  totalRawCount?: number;
 }
 
 export function DataTable<TData, TValue>({
   columns,
   data,
-  isLoading,
+  isLoading = false,
+  filterValue,
+  onClearFilter,
+  emptyTitle = "Nenhum registro encontrado",
+  emptyDescription = "Cadastre um novo item ou aguarde novas movimentações.",
   striped = false,
   hoverEffect = true,
-  emptyTitle = "Nenhum registro encontrado",
-  emptyDescription = "Tente ajustar os filtros ou cadastre um novo registro.",
+  defaultPageSize = 10,
+  pageSizeOptions = [10, 20, 30, 50],
+  className,
+  totalRawCount,
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([]);
 
@@ -60,149 +67,130 @@ export function DataTable<TData, TValue>({
     getPaginationRowModel: getPaginationRowModel(),
     onSortingChange: setSorting,
     getSortedRowModel: getSortedRowModel(),
+    initialState: {
+      pagination: {
+        pageSize: defaultPageSize,
+      },
+    },
     state: {
       sorting,
     },
   });
 
-  const renderCellContent = (
-    cell: Cell<TData, unknown>,
-    meta: {
-      maxWidth?: string;
-      type?: string;
-    },
-  ) => {
-    const columnDef = cell.column.columnDef as any;
-    const cellValue = cell.getValue();
-
-    if (cellValue !== "" && cellValue !== null) {
-      let content;
-      switch (columnDef.meta?.type) {
-        case "boolean":
-          content =
-            cellValue === true || cellValue === "S" || cellValue === 1 ? (
-              <CheckCircle2 className="size-5 w-full text-center text-green-700" />
-            ) : (
-              <XCircle className="size-5 w-full text-center text-destructive" />
-            );
-          break;
-        case "dateTime":
-          content = cellValue ? (
-            dateTimeFormatter(cellValue as string, "DD/MM/YYYY HH:mm")
-          ) : (
-            <p className="font-bold">-</p>
-          );
-          break;
-        case "date":
-          content = cellValue ? (
-            dateTimeFormatter(cellValue as string, "DD/MM/YYYY")
-          ) : (
-            <p className="font-bold">-</p>
-          );
-          break;
-        default:
-          content = flexRender(columnDef.cell, cell.getContext());
-      }
-
-      return (
-        <div
-          className={`overflow-hidden text-ellipsis whitespace-nowrap max-w-[${
-            meta.maxWidth || "1000px"
-          }]`}
-        >
-          {content}
-        </div>
-      );
-    } else {
-      return <p className="font-bold">-</p>;
-    }
-  };
+  const isFilterActive = Boolean(filterValue && filterValue.trim().length > 0);
 
   return (
-    <Card className="space-y-8 rounded-lg border-none shadow-none">
-      <CardContent className="rounded-xl border p-0 shadow-sm">
-        <div className="overflow-x-auto rounded-xl">
-        <Table className="min-w-[680px]">
-          <TableHeader>
+    <div
+      className={cn(
+        "flex w-full flex-col overflow-hidden rounded-2xl border border-border/70 bg-card shadow-sm transition-all",
+        className
+      )}
+    >
+      <div className="relative w-full overflow-x-auto">
+        <Table className="min-w-full">
+          <TableHeader className="bg-muted/40">
             {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id}>
+              <TableRow
+                key={headerGroup.id}
+                className="border-b border-border/70 hover:bg-transparent"
+              >
                 {headerGroup.headers.map((header) => (
-                  <TableHead key={header.id} className="py-2">
-                    {flexRender(
-                      header.column.columnDef.header,
-                      header.getContext(),
-                    )}
+                  <TableHead
+                    key={header.id}
+                    className="h-11 px-4 text-xs font-semibold tracking-wider text-muted-foreground uppercase"
+                  >
+                    {header.isPlaceholder
+                      ? null
+                      : flexRender(
+                          header.column.columnDef.header,
+                          header.getContext()
+                        )}
                   </TableHead>
                 ))}
               </TableRow>
             ))}
           </TableHeader>
+
           <TableBody>
-            {table.getRowModel().rows.length ? (
+            {isLoading ? (
+              // Skeleton Loading moderno e suave
+              Array.from({ length: Math.min(defaultPageSize, 6) }).map(
+                (_, rowIndex) => (
+                  <TableRow
+                    key={`skeleton-row-${rowIndex}`}
+                    className="border-b border-border/40"
+                  >
+                    {columns.map((_, colIndex) => (
+                      <TableCell
+                        key={`skeleton-cell-${rowIndex}-${colIndex}`}
+                        className="px-4 py-3.5"
+                      >
+                        <div
+                          className={cn(
+                            "h-5 animate-pulse rounded-md bg-muted/60",
+                            colIndex === 0
+                              ? "w-16"
+                              : colIndex === 1
+                              ? "w-3/4"
+                              : colIndex % 2 === 0
+                              ? "w-1/2"
+                              : "w-2/3"
+                          )}
+                        />
+                      </TableCell>
+                    ))}
+                  </TableRow>
+                )
+              )
+            ) : table.getRowModel().rows.length > 0 ? (
               table.getRowModel().rows.map((row) => (
                 <TableRow
                   key={row.id}
-                  className={cn("transition-colors", {
-                    "bg-muted/50 dark:bg-muted/20":
-                      striped && row.index % 2 !== 0,
-                    "hover:bg-muted/30": hoverEffect,
-                  })}
+                  data-state={row.getIsSelected() && "selected"}
+                  className={cn(
+                    "border-b border-border/40 transition-colors",
+                    striped && row.index % 2 !== 0 && "bg-muted/20",
+                    hoverEffect && "hover:bg-muted/40"
+                  )}
                 >
                   {row.getVisibleCells().map((cell) => (
-                    // <TableCell key={cell.id} className="py-4">
-                    //   {flexRender(
-                    //     cell.column.columnDef.cell,
-                    //     cell.getContext(),
-                    //   )}
-                    // </TableCell>
                     <TableCell
-                      className={cn(
-                        "p-1 text-base",
-                        (cell.column.columnDef as any).meta?.type ===
-                          "number" && "pe-4 text-right",
-                        (cell.column.columnDef as any).meta?.type ===
-                          "boolean" && "text-center",
-                        (cell.column.columnDef as any).meta?.type === "date" &&
-                          "pe-4 text-right",
-                        (cell.column.columnDef as any).meta?.type ===
-                          "string" && "ps-4",
-                      )}
                       key={cell.id}
-                      style={{
-                        maxWidth:
-                          (cell.column.columnDef as any).maxSize?.toString() +
-                          "px",
-                        minWidth:
-                          (cell.column.columnDef as any).minSize?.toString() +
-                          "px",
-                        width:
-                          (cell.column.columnDef as any).size?.toString() + "%",
-                      }}
+                      className="px-4 py-3.5 align-middle text-sm text-foreground"
                     >
-                      {renderCellContent(cell, {
-                        maxWidth:
-                          (cell.column.columnDef as any).maxSize?.toString() +
-                          "px",
-                      })}
+                      {flexRender(
+                        cell.column.columnDef.cell,
+                        cell.getContext()
+                      )}
                     </TableCell>
                   ))}
                 </TableRow>
               ))
             ) : (
-              <TableRow>
+              <TableRow className="hover:bg-transparent">
                 <TableCell
-                  className="h-24 text-center"
                   colSpan={columns.length}
+                  className="h-64 p-6 text-center"
                 >
-                  {isLoading ? (
-                    <div
-                      className="flex flex-col items-center justify-center"
-                      // style={{ height: gridHeight }}
-                    >
-                      <ReloadIcon className="size-8 animate-spin text-muted-foreground" />
-                    </div>
+                  {isFilterActive ? (
+                    <EmptyState
+                      icon={<SearchX className="size-6 text-muted-foreground" />}
+                      title="Nenhum resultado encontrado"
+                      description={`Não encontramos nenhum registro correspondente ao filtro "${filterValue}".`}
+                      action={
+                        onClearFilter ? (
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={onClearFilter}
+                            className="rounded-xl border-dashed hover:border-solid"
+                          >
+                            Limpar busca
+                          </Button>
+                        ) : undefined
+                      }
+                    />
                   ) : (
-                    // <CustomNoRowsOverlay />
                     <EmptyState
                       title={emptyTitle}
                       description={emptyDescription}
@@ -213,11 +201,19 @@ export function DataTable<TData, TValue>({
             )}
           </TableBody>
         </Table>
+      </div>
+
+      {/* Barra de Paginação Integrada */}
+      {!isLoading && (
+        <div className="border-t border-border/70 bg-card/60 px-4 py-3">
+          <DataTablePagination
+            table={table}
+            pageSizeOptions={pageSizeOptions}
+            totalFilteredCount={data.length}
+            totalRawCount={totalRawCount}
+          />
         </div>
-      </CardContent>
-      <CardFooter className="justify-end pe-4">
-        <DataTablePagination table={table} />
-      </CardFooter>
-    </Card>
+      )}
+    </div>
   );
 }

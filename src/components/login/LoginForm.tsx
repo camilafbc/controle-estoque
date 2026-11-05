@@ -1,8 +1,7 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Loader2, LogIn } from "lucide-react";
-import Link from "next/link";
+import { Loader2, Lock, LogIn, Mail } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { getSession, signIn } from "next-auth/react";
 import { useState } from "react";
@@ -10,7 +9,6 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import { z } from "zod";
 
 import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Form, FormField, FormItem, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -21,7 +19,10 @@ interface FormInputs {
 }
 
 const validationSchema = z.object({
-  email: z.string().min(1, "E-mail obrigatório"),
+  email: z
+    .string()
+    .min(1, "E-mail obrigatório")
+    .email("Informe um e-mail válido"),
   password: z.string().min(1, "Senha obrigatória"),
 });
 
@@ -31,6 +32,10 @@ export default function LoginForm() {
 
   const form = useForm<FormInputs>({
     resolver: zodResolver(validationSchema),
+    defaultValues: {
+      email: "",
+      password: "",
+    },
   });
 
   const {
@@ -45,7 +50,7 @@ export default function LoginForm() {
       setLoading(true);
 
       const result = await signIn("credentials", {
-        redirect: false, // Mantém false para você decidir o destino
+        redirect: false,
         email: data.email.trim(),
         password: data.password.trim(),
       });
@@ -53,15 +58,12 @@ export default function LoginForm() {
       if (result?.ok) {
         const session = await getSession();
         const role = session?.user.role;
-
         const destino = role === "admin" ? "/admin/home" : "/home";
-
         router.replace(destino);
       } else {
-        // Exibe o erro vindo do authorize
         setError("password", {
           type: "login",
-          message: result?.error || "Usuário ou senha inválidos.",
+          message: result?.error || "E-mail ou senha incorretos.",
         });
       }
     } catch (error) {
@@ -73,80 +75,71 @@ export default function LoginForm() {
 
   return (
     <Form {...form}>
-      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-5">
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
         <FormField
           control={control}
           name="email"
           render={({ field }) => (
-            <FormItem className="flex flex-col">
-              <Label className="text-slate-900 dark:text-slate-900">
-                E-mail
+            <FormItem className="space-y-1.5">
+              <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                E-mail institucional
               </Label>
-              <Input
-                {...field}
-                autoFocus
-                type="email"
-                id="input-email"
-                placeholder="Informe seu e-mail"
-                disabled={loading}
-                error={!!errors.email}
-                className="border-primary text-zinc-900 focus:bg-white dark:border-primary dark:bg-white"
-              />
+              <div className="relative">
+                <Mail className="absolute left-3.5 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+                <Input
+                  {...field}
+                  autoFocus
+                  type="email"
+                  id="input-email"
+                  placeholder="seu.email@mg.senac.br"
+                  disabled={loading}
+                  className="rounded-xl pl-10"
+                />
+              </div>
               <FormMessage />
             </FormItem>
           )}
         />
+
         <FormField
           control={control}
           name="password"
           render={({ field }) => (
-            <FormItem className="flex flex-col">
-              <Label className="text-slate-900 dark:text-slate-900">
-                Senha
+            <FormItem className="space-y-1.5">
+              <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                Senha de acesso
               </Label>
-              <Input
-                {...field}
-                id="input-password"
-                placeholder="Informe sua senha"
-                disabled={loading}
-                type="password"
-                error={!!errors.password}
-                className="border-primary text-zinc-900 focus:bg-white dark:border-primary dark:bg-white"
-              />
+              <div className="relative">
+                <Lock className="absolute left-3.5 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+                <Input
+                  {...field}
+                  id="input-password"
+                  placeholder="••••••••"
+                  disabled={loading}
+                  type="password"
+                  className="rounded-xl pl-10"
+                />
+              </div>
               <FormMessage />
             </FormItem>
           )}
         />
-        {/* <div className="flex items-center justify-between">
-          <div className="flex gap-1">
-            <Checkbox />
-            <Label className="text-sm font-normal text-zinc-500 dark:text-zinc-500">
-              Manter conectado
-            </Label>
-          </div>
-          <Link href={"/recuperacao-senha"}>
-            <Button
-              variant={"link"}
-              className="p-0 text-sm font-normal text-zinc-500 hover:text-zinc-400 dark:text-zinc-500"
-            >
-              Esqueci minha senha
-            </Button>
-          </Link>
-        </div> */}
+
         <Button
           type="submit"
           size="lg"
           disabled={loading}
-          className="mt-2 w-full bg-blue-senac hover:bg-blue-950"
+          className="w-full gap-2 rounded-xl text-base font-semibold"
         >
-          {!loading ? (
+          {loading ? (
             <>
-              <LogIn className="mx-2 h-4" />
-              Entrar
+              <Loader2 className="size-4 animate-spin" />
+              Entrando...
             </>
           ) : (
             <>
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              <LogIn className="size-4" />
+              Entrar no Sistema
             </>
           )}
         </Button>

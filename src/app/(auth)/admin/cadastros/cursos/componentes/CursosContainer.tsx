@@ -131,6 +131,7 @@ export default function CursosContainer() {
           aria-label="Buscar cursos por nome"
           value={filterValue}
           onChange={(event) => setFilterValue(event.target.value)}
+          onClear={() => setFilterValue("")}
         />
         <Button
           onClick={openForCreate}
@@ -148,6 +149,9 @@ export default function CursosContainer() {
         )}
         data={filteredItems}
         isLoading={cursosLoading}
+        filterValue={filterValue}
+        onClearFilter={() => setFilterValue("")}
+        totalRawCount={cursosData?.length}
         emptyTitle={filterValue ? "Nenhum curso encontrado" : "Nenhum curso cadastrado"}
         emptyDescription={
           filterValue

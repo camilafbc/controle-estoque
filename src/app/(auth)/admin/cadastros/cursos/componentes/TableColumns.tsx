@@ -19,14 +19,10 @@ export const columns = (
   {
     accessorKey: "acoes",
     header: ({ column }) => (
-      <DataTableColumnHeader
-        column={column}
-        title="Ações"
-        className="text-center text-base font-semibold text-gray-950 dark:text-white"
-      />
+      <DataTableColumnHeader column={column} title="Ações" />
     ),
     cell: ({ row }) => (
-      <div className="flex items-center justify-center">
+      <div className="flex items-center">
         <DataTableEditAction onClick={() => handleEdit(row.original.idCurso)} />
         <DataTableDeleteAction
           title="Curso"
@@ -56,11 +52,7 @@ export const columns = (
   {
     accessorKey: "status",
     header: ({ column }) => (
-      <DataTableColumnHeader
-        column={column}
-        title="Ativo"
-        className="justify-center"
-      />
+      <DataTableColumnHeader column={column} title="Ativo" />
     ),
     cell: ({ row }) => <StatusBadge active={row.original.status} />,
     enableSorting: true,

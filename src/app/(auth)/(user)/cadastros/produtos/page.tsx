@@ -3,14 +3,14 @@ import {
   HydrationBoundary,
   QueryClient,
 } from "@tanstack/react-query";
-import { BoxesIcon } from "lucide-react";
+import { Boxes, GraduationCap, PlusCircle } from "lucide-react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getServerSession } from "next-auth";
 
-import MyBreadcrumb from "@/components/MyBreadcrumb";
+import { EmptyState } from "@/components/common/EmptyState";
+import { PageHeader } from "@/components/common/PageHeader";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { authOptions } from "@/lib/auth";
 import { getOperacoesPorProduto } from "@/services/operacoes";
 import { getProdutoById, getProdutos } from "@/services/produtos";
@@ -45,22 +45,33 @@ export default async function ProdutosPage({
 
   if (turmas.length === 0) {
     return (
-      <div className="flex h-[60vh] flex-col items-center justify-center space-y-4">
-        <BoxesIcon size={48} className="text-gray-300" />
-        <h2 className="text-xl font-semibold">Nenhuma turma encontrada</h2>
-        <p className="text-gray-500">
-          Você precisa cadastrar uma turma antes de gerenciar produtos.
-        </p>
-        <Button asChild>
-          <Link href="/cadastros/turmas">Cadastrar Turma</Link>
-        </Button>
+      <div className="space-y-6">
+        <PageHeader
+          title="Produtos"
+          description="Gerencie os itens em estoque de cada turma."
+          icon={<Boxes className="size-6" />}
+        />
+        <div className="rounded-2xl border border-border/70 bg-card p-6 shadow-sm">
+          <EmptyState
+            title="Nenhuma turma cadastrada"
+            description="Você precisa cadastrar uma turma antes de poder gerenciar e cadastrar produtos no estoque."
+            icon={<GraduationCap className="size-6 text-orange-500" />}
+            action={
+              <Button asChild className="gap-2">
+                <Link href="/cadastros/turmas">
+                  <PlusCircle className="size-4" />
+                  Cadastrar Turma
+                </Link>
+              </Button>
+            }
+          />
+        </div>
       </div>
     );
   }
 
   if (!turma && turmas.length > 0) {
     const primeiraTurma = turmas.filter((t) => t.status === true).at(0)?.uuid;
-
     if (primeiraTurma) redirect(`/cadastros/produtos?turma=${primeiraTurma}`);
   }
 
@@ -86,15 +97,13 @@ export default async function ProdutosPage({
     });
 
     return (
-      <div className="space-y-6">
-        <MyBreadcrumb
-          listItems={[
-            { label: "Cadastros" },
-            { label: "Produtos", href: `/cadastros/produtos?turma=${turma}` },
-            { label: "Movimentações" },
-          ]}
-        />
-        <HydrationBoundary state={dehydrate(queryClient)}>
+      <HydrationBoundary state={dehydrate(queryClient)}>
+        <div className="space-y-6">
+          <PageHeader
+            title="Movimentações de Estoque"
+            description={`Entradas e saídas registradas para o produto "${produtoData.prodDescricao}".`}
+            icon={<Boxes className="size-6" />}
+          />
           <Movimentacoes
             key={produto}
             turma={turma}
@@ -103,29 +112,22 @@ export default async function ProdutosPage({
               uuid: produto,
             }}
           />
-        </HydrationBoundary>
-      </div>
+        </div>
+      </HydrationBoundary>
     );
   }
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
       <div className="space-y-6">
-        <MyBreadcrumb
-          listItems={[
-            { label: "Cadastros" },
-            { label: "Produtos", href: `/cadastros/produtos?turma=${turma}` },
-          ]}
+        <PageHeader
+          title="Produtos"
+          description="Acompanhe o saldo em estoque, validade e movimentações dos itens por turma."
+          icon={<Boxes className="size-6" />}
         />
-        <Card>
-          <CardHeader className="flex flex-row items-end gap-2">
-            <BoxesIcon size={28} className="font-bold text-orange-500" />
-            <CardTitle>Produtos</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <Container idCurso={idCurso} turmas={turmas} />
-          </CardContent>
-        </Card>
+        <div className="rounded-2xl border border-border/70 bg-card p-5 shadow-sm sm:p-6">
+          <Container idCurso={idCurso} turmas={turmas} />
+        </div>
       </div>
     </HydrationBoundary>
   );

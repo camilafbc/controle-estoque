@@ -3,12 +3,11 @@ import {
   HydrationBoundary,
   QueryClient,
 } from "@tanstack/react-query";
-import { FileText } from "lucide-react";
+import { FileSpreadsheet } from "lucide-react";
 import { redirect } from "next/navigation";
 import { getServerSession } from "next-auth";
 
-import MyBreadcrumb from "@/components/MyBreadcrumb";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { PageHeader } from "@/components/common/PageHeader";
 import { authOptions } from "@/lib/auth";
 import { getTurmas } from "@/services/turmas";
 
@@ -35,23 +34,17 @@ export default async function Page() {
 
   return (
     <div className="space-y-6">
-      <MyBreadcrumb
-        listItems={[
-          { label: "Relatórios" },
-          { label: "Mov. por turma", href: "/relatorios/movimentacao-turma" },
-        ]}
+      <PageHeader
+        title="Relatório de Movimentação"
+        description="Emita relatórios consolidados em PDF de entradas e saídas de produtos por turma e período."
+        icon={<FileSpreadsheet className="size-6" />}
       />
-      <Card>
-        <CardHeader className="flex flex-row items-end gap-2">
-          <FileText size={28} className="font-bold text-orange-500" />
-          <CardTitle>Relatório de Movimentação por Turma</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <HydrationBoundary state={dehydrate(queryClient)}>
-            <MovTurmaContainer idCurso={idCurso} />
-          </HydrationBoundary>
-        </CardContent>
-      </Card>
+
+      <div className="rounded-2xl border border-border/70 bg-card p-6 shadow-sm sm:p-8">
+        <HydrationBoundary state={dehydrate(queryClient)}>
+          <MovTurmaContainer idCurso={idCurso} />
+        </HydrationBoundary>
+      </div>
     </div>
   );
 }

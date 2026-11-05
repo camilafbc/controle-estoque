@@ -1,111 +1,117 @@
-# 📋 Controle de Estoque - Projeto Integrador SENAC MG
+# 📋 Gestor de Estoque Senac - Projeto Integrador
 
-Este projeto é uma aplicação de controle de estoque desenvolvida como projeto integrador do curso Técnico em Desenvolvimento de Sistemas do SENAC MG. A aplicação foi criada para atender a uma demanda interna da instituição, que precisavam de um sistema para registrar a entrada e saída de produtos por turma, visando o controle de estoque e o acompanhamento do consumo de produtos por turma e por período.
+Sistema de controle, consumo e movimentação de estoque desenvolvido como solução para acompanhamento de entradas e saídas de insumos e produtos por turma e curso do SENAC MG.
 
-<img width="100%" src="https://raw.githubusercontent.com/camilafbc/controle-estoque/refs/heads/main/to_readme.jpeg"/>
+<img width="100%" src="https://raw.githubusercontent.com/camilafbc/controle-estoque/refs/heads/main/to_readme.jpeg" alt="Gestor de Estoque Senac" />
 
+---
 
-## 🚀 Refatoração
+## ✨ Características e Modernização
 
-Recentemente, o projeto passou por uma reestruturação da arquitetura para adotar as melhores práticas do Next.js e garantir uma melhor legibilidade do código:
+A aplicação é construída sob uma arquitetura moderna, escalável e segura:
 
-  - Migração de rotas de API para Server Actions, reduzindo a latência e simplificando a comunicação com o banco de dados;
-  - Utilização do HydrationBoundary do TanStack Query, permitindo que os dados sejam pré-carregados no servidor e entregues instantaneamente ao cliente;
-  - Implementação de Prisma Transactions para garantir atomicidade. Ex: A criação de um produto e sua movimentação inicial de estoque ocorrem como uma única operação "tudo ou nada";
-  - Controle de acesso baseado em funções (RBAC) via Middleware e integração direta do NextAuth com o banco de dados;
-  - Substituição de estado global (Zustand) por parâmetros de URL para controle de modais e filtros, facilitando o compartilhamento de links e a navegabilidade.
+- **Fullstack Next.js App Router**: Aplicação unificada sem separação legada de pastas, com separação clara de Server e Client Components.
+- **Identidade Visual Contemporânea**: Paleta oficial com azul institucional (`hsl(209, 100%, 28%)`) e laranja Senac (`hsl(25, 95%, 53%)`), cantos modernos (`rounded-xl` / `rounded-2xl`), suporte completo a Dark/Light Mode e layout com Sidebar colapsável.
+- **Autorização Robusta e Escopo no Servidor**: O perfil (`role`) e o vínculo do curso do usuário são validados diretamente no servidor em cada Server Action e rota de API, prevenindo acesso cruzado a dados de outros cursos.
+- **Validação Segura com Zod**: Schemas tipados e centralizados em `src/schemas/` substituindo a validação legada, com mensagens amigáveis em português.
+- **Camada de Dados com Prisma & PostgreSQL**: Relacionamentos íntegros, transações atômicas para movimentações de estoque e tipagem end-to-end com TypeScript em modo `strict`.
+- **Performance e Cache com TanStack Query v5**: Hidratação de dados no servidor (`HydrationBoundary`), hooks desacoplados em `src/hooks/` e `src/queries/` e invalidação inteligente de cache.
+- **PWA (Progressive Web App)**: Totalmente responsivo para smartphones, tablets e desktop, com service worker configurado.
 
-# Funcionalidades
+---
 
-- Área Administrativa:
-  - Cadastro de usuários (diretoria) e cursos.
-  - Autonomia para a instituição utilizar o sistema com diferentes cursos.
-- Área Comum:
-  - Cadastro de turmas e produtos.
-  - Registro de movimentações de entrada e saída de produtos por turma.
-  - Geração de relatório de movimentação por turma, com controle de consumo de produtos por período.
-- Geral:
-  - Suporte PWA para acesso e uso em dispositivos móveis
-  - Edição de dados de perfil
-  - Escolha de tema (Claro, Escuro ou Sistema)
+## 🎯 Funcionalidades
 
-# Tecnologias Utilizadas
+### 🔐 Autenticação e Perfis (RBAC)
+- **Perfil Administrador**:
+  - Gestão de cursos (criação, edição e status).
+  - Gestão de usuários (administradores e usuários de cursos).
+  - Visão geral gerencial de todos os cursos da unidade.
+- **Perfil Usuário (Coordenação/Docente)**:
+  - Gestão de turmas com turnos e códigos específicos do seu respectivo curso.
+  - Cadastro de produtos com fabricante, validade, lote e alertas de estoque baixo/zerado.
+  - Registro ágil de movimentações (entrada, saída/consumo e devolução).
+  - Emissão de relatórios em PDF com filtro por período e turma.
 
-- Framework: Next.js, React, TypeScript
-- Estilização: Tailwind CSS, Shadcn/UI e Framer Motion
-- Banco de Dados: PostgreSQL e Prisma (ORM)
-- Gestão de Dados: TanStack Query
-- Validações e segurança: React Hook Form, Yup e BCrypt
-- Relatórios: React PDF
+---
 
-# Instalação
+## 🛠️ Tecnologias Utilizadas
 
-Para configurar o projeto localmente, siga as etapas abaixo:
+- **Framework**: Next.js 14 (App Router), React 18, TypeScript (Strict Mode)
+- **Estilização & UI**: Tailwind CSS, Shadcn UI, Radix UI Primitives, Lucide Icons
+- **Banco de Dados & ORM**: PostgreSQL, Prisma ORM
+- **Gerenciamento de Estado de Servidor**: TanStack Query (React Query v5)
+- **Formulários & Validação**: React Hook Form, Zod
+- **Autenticação**: NextAuth.js com JWT e senhas criptografadas com BCrypt
+- **Relatórios**: `@react-pdf/renderer`
 
-1. Clonando o repositório
-   Clone o repositório para seu ambiente local:
+---
 
+## 🚀 Instalação e Execução Local
+
+### Pré-requisitos
+- [Node.js](https://nodejs.org/) versão 18+ ou 20+
+- Instância do PostgreSQL rodando localmente ou via container Docker
+
+### 1. Clonar o Repositório
 ```bash
-git clone https://github.com/camilafbc/controle-estoque/.git
+git clone https://github.com/camilafbc/controle-estoque.git
+cd controle-estoque
 ```
 
-2. Instalando Dependências
-
-No diretório raiz do projeto, instale as dependências do frontend e do backend:
-
-- Frontend:
-
+### 2. Instalar Dependências
 ```bash
-cd frontend
 npm install
 ```
 
-- Backend:
+### 3. Configurar Variáveis de Ambiente
+Crie um arquivo `.env` na raiz do projeto com base nas seguintes configurações:
 
-```bash
-cd backend
-npm install
+```env
+# Banco de Dados PostgreSQL
+DATABASE_URL="postgresql://usuario:senha@localhost:5432/controle_estoque?schema=public"
+
+# NextAuth & Segurança
+NEXTAUTH_URL="http://localhost:3000"
+NEXTAUTH_SECRET="sua_chave_secreta_jwt_deve_ter_pelo_menos_32_caracteres"
+JWT_KEY="sua_chave_secreta_adicional"
+
+# Configuração de Administrador
+DEVELOPER="1"
 ```
 
-3. Configuração de Variáveis de Ambiente
-
-Antes de iniciar a aplicação, é necessário configurar as variáveis de ambiente para o frontend e backend. Arquivos de exemplo .env.example foram disponibilizados em ambos os diretórios.
-
-- Backend
-  No diretório backend, renomeie o arquivo .env.example para .env e preencha os seguintes valores:
+### 4. Executar Migrações e Seed do Banco
+Gere o Prisma Client e sincronize a estrutura com o PostgreSQL:
 
 ```bash
-PORT=5000                 # Porta onde o servidor será executado
-NODE_ENV=development       # Ambiente de execução (development, production)
-JWT_KEY=                   # Chave secreta para geração de tokens JWT
-MYSQL_URL=                 # URL de conexão com o banco de dados MySQL
+npx prisma generate
+npx prisma db push
 ```
 
-- Frontend
-  No diretório frontend, renomeie o arquivo .env.example para .env.local e preencha os seguintes valores:
-
+*(Opcional)* Popule o banco com dados iniciais:
 ```bash
-NEXT_PUBLIC_BASE_URL= #
-NEXTAUTH_URL= http://localhost:3000
-NEXTAUTH_SECRET= #
-JWT_KEY= #
-DATABASE_URL= #
-DEVELOPER=# (recebe o id do usuário gerencial que é ocultado na listagem para os demais administradores)
+npm run seed
+# ou: npx tsx prisma/seed.ts
 ```
 
-Preencha também as variáveis do arquivo seed.ts para criar um usuário na base
-
-4. Rodando o Projeto
-
-Para rodar a aplicação:
-
+### 5. Iniciar o Servidor de Desenvolvimento
 ```bash
-cd ../controle-estoque
-npm start
+npm run dev
 ```
 
-A aplicação estará disponível em http://localhost:3000
+Acesse [http://localhost:3000](http://localhost:3000) no seu navegador.
 
-# Licença
+---
 
-Este projeto está licenciado sob a Licença [MIT](https://choosealicense.com/licenses/mit/)
+## 🧪 Scripts Disponíveis
+
+- `npm run dev`: Inicia o servidor de desenvolvimento.
+- `npm run build`: Compila a aplicação para produção com verificação estrita de tipos e otimização de páginas.
+- `npm run start`: Inicia o servidor Node.js em modo de produção.
+- `npm run lint`: Executa a verificação estática do ESLint.
+
+---
+
+## 📄 Licença
+
+Este projeto é desenvolvido para fins educacionais e institucionais sob licença [MIT](https://choosealicense.com/licenses/mit/).

@@ -37,12 +37,10 @@ export default async function Page() {
           title="Cursos"
           description="Organize os cursos disponíveis para as turmas e usuários."
           icon={<GraduationCap className="size-5" />}
-          breadcrumbs={[
-            { label: "Cadastros" },
-            { label: "Cursos", href: "/admin/cadastros/cursos" },
-          ]}
         />
-        <CursosContainer />
+        <div className="rounded-2xl border border-border/70 bg-card p-5 shadow-sm sm:p-6">
+          <CursosContainer />
+        </div>
       </div>
     </HydrationBoundary>
   );
