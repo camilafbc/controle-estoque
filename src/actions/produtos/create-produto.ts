@@ -1,9 +1,8 @@
 "use server";
 
-import { getServerSession } from "next-auth";
 import * as yup from "yup";
 
-import { authOptions } from "@/lib/auth";
+import { authorizeUser } from "@/lib/authz";
 import prisma from "@/lib/prisma";
 import { produtoValidationSchema } from "@/schemas/produto-schema";
 import { Produto } from "@/types/Produto";
@@ -14,24 +13,20 @@ export const createProduto = async (
   uuidTurma: string,
 ) => {
   try {
-    const session = await getServerSession(authOptions);
+    const auth = await authorizeUser();
+    if (!auth.ok) return { error: auth.error };
+    const { userId, idCurso } = auth.ctx;
 
-    if (!session || session.user.role !== "user") {
-      return { error: "Usuário não autorizado" };
-    }
-
-    if (!uuidTurma)
-      return { error: "Erro ao excluir dados; item não selecionado." };
-
-    const userDoing = +session.user.id;
+    if (!uuidTurma) return { error: "Turma não selecionada." };
 
     await produtoValidationSchema.validate(
       { ...produto, turma: uuidTurma },
       { abortEarly: false },
     );
 
-    const turma = await prisma.turma.findUnique({
-      where: { uuid: uuidTurma as string },
+    // A turma precisa pertencer ao curso do usuário autenticado
+    const turma = await prisma.turma.findFirst({
+      where: { uuid: uuidTurma, idCurso },
       select: { idTurma: true },
     });
 
@@ -45,22 +40,23 @@ export const createProduto = async (
           prodLote: produto.prodLote.trim(),
           prodQuantidade: produto.prodQuantidade,
           prodValidade: new Date(produto.prodValidade),
-          prodCurso: produto.prodCurso,
-          prodTurma: turma?.idTurma,
+          // O curso é sempre derivado da sessão, nunca do cliente
+          prodCurso: idCurso,
+          prodTurma: turma.idTurma,
         },
       });
 
-      if (prod) {
-        await tx.operacao.create({
-          data: {
-            tipoOperacao: 1,
-            idUsuario: userDoing,
-            idProduto: prod.idProduto,
-            data: new Date(),
-            quantidade: produto.prodQuantidade,
-          },
-        });
-      }
+      await tx.operacao.create({
+        data: {
+          tipoOperacao: 1,
+          idUsuario: userId,
+          idProduto: prod.idProduto,
+          data: new Date(),
+          quantidade: produto.prodQuantidade,
+        },
+      });
+
+      return prod;
     });
 
     return { message: "Produto criado com sucesso!", data: produtoCreated };

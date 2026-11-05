@@ -1,30 +1,35 @@
 "use server";
 
 import bcrypt from "bcryptjs";
-import { getServerSession } from "next-auth";
 import * as yup from "yup";
 
-import { authOptions } from "@/lib/auth";
+import { authorizeAuthenticated } from "@/lib/authz";
 import prisma from "@/lib/prisma";
 import { userProfileValidationSchema } from "@/schemas/user-profile-schema";
 import { handleDatabaseError } from "@/utils/handleDbError";
 
-export const updateProfile = async (user: {
-  idUser: number;
+interface UpdateProfileInput {
   nome?: string;
+  email?: string;
   password?: string;
-}) => {
-  try {
-    const session = await getServerSession(authOptions);
+  confirmaSenha?: string;
+}
 
-    if (!session) return { error: "Usuário não autorizado." };
+/**
+ * Atualiza o perfil do próprio usuário autenticado. O id é sempre derivado
+ * da sessão, nunca do cliente.
+ */
+export const updateProfile = async (user: UpdateProfileInput) => {
+  try {
+    const auth = await authorizeAuthenticated();
+    if (!auth.ok) return { error: auth.error };
 
     const dataToUpdate: Partial<{ nome: string; password: string }> = {};
 
     await userProfileValidationSchema.validate(user, { abortEarly: false });
 
     if (user.nome) {
-      dataToUpdate.nome = user.nome;
+      dataToUpdate.nome = user.nome.trim();
     }
 
     if (user.password) {
@@ -32,11 +37,10 @@ export const updateProfile = async (user: {
     }
 
     const updatedUser = await prisma.user.update({
-      where: { idUser: user.idUser },
+      where: { idUser: auth.ctx.userId },
       data: dataToUpdate,
     });
 
-    // return updatedUser.nome;
     return {
       message: "Dados atualizados com sucesso!",
       data: updatedUser.nome,
@@ -48,7 +52,7 @@ export const updateProfile = async (user: {
 
     const dbError = handleDatabaseError(error);
 
-    console.error("Erro ao criar usuário: ", dbError);
+    console.error("Erro ao atualizar perfil: ", dbError);
     return { error: dbError.message };
   }
 };

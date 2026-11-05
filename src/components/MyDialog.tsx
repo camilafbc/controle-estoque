@@ -14,7 +14,7 @@ import {
 import { Separator } from "./ui/separator";
 
 const DialogVariants = cva(
-  "m-2 min-w-wd   bg-white dark:bg-background flex flex-col",
+  "m-2 flex max-h-[95vh] min-w-0 flex-col bg-white dark:bg-background",
   {
     variants: {
       size: {
@@ -60,13 +60,19 @@ const MyDialog = ({
         onWheelCapture={(e) => e.stopPropagation()}
         className={cn(DialogVariants({ size }), className)}
       >
-        <DialogHeader>
+        <DialogHeader className="shrink-0 pr-8 text-left">
           <DialogTitle>{title}</DialogTitle>
           {description && <DialogDescription>{description}</DialogDescription>}
         </DialogHeader>
         <Separator orientation="horizontal" />
-        <div className="min-h-0 flex-1 overflow-y-auto py-4">{children}</div>
-        {footerChildren && <DialogFooter>{footerChildren}</DialogFooter>}
+        <div className="min-h-0 flex-1 overflow-y-auto px-1 py-4">
+          {children}
+        </div>
+        {footerChildren && (
+          <DialogFooter className="shrink-0 border-t pt-4">
+            {footerChildren}
+          </DialogFooter>
+        )}
       </DialogContent>
     </Dialog>
   );

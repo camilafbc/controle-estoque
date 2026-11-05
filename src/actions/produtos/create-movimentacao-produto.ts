@@ -1,22 +1,25 @@
 "use server";
 
-import dayjs from "dayjs";
-import { getServerSession } from "next-auth";
 import * as yup from "yup";
 
-import { authOptions } from "@/lib/auth";
+import { authorizeUser } from "@/lib/authz";
 import prisma from "@/lib/prisma";
 import { handleDatabaseError } from "@/utils/handleDbError";
 
 const operacaoValidationSchema = yup.object({
-  // idUser: yup.number().required("Parâmetro obrigatório"),
   uuidProduto: yup.string().required("Parâmetro obrigatório"),
-  tipoOp: yup.number().required("Parâmetro obrigatório"),
+  tipoOp: yup
+    .number()
+    .oneOf([0, 1], "Tipo de operação inválido.")
+    .required("Parâmetro obrigatório"),
   qtd: yup
     .number()
+    .integer("A quantidade deve ser um número inteiro.")
     .min(1, "Quantidade mínima para movimentação é 1.")
     .required("Parâmetro obrigatório"),
 });
+
+class EstoqueInsuficienteError extends Error {}
 
 export const createOperacao = async (
   uuidProduto: string,
@@ -24,64 +27,66 @@ export const createOperacao = async (
   qtd: number,
 ) => {
   try {
-    const session = await getServerSession(authOptions);
-
-    if (!session || session.user.role !== "user") {
-      return { error: "Usuário não autorizado" };
-    }
+    const auth = await authorizeUser();
+    if (!auth.ok) return { error: auth.error };
+    const { userId, idCurso } = auth.ctx;
 
     await operacaoValidationSchema.validate(
       { uuidProduto, tipoOp, qtd },
       { abortEarly: false },
     );
 
-    // 1. Buscamos o produto primeiro para validar estoque
-    const produtoData = await prisma.produto.findUnique({
-      where: { uuid: uuidProduto },
+    // O produto precisa pertencer ao curso do usuário autenticado
+    const produtoData = await prisma.produto.findFirst({
+      where: { uuid: uuidProduto, prodCurso: idCurso },
+      select: { idProduto: true },
     });
 
     if (!produtoData) {
       return { error: "Produto não encontrado!" };
     }
 
-    const tipoOperacao = tipoOp === 0 ? "decrement" : "increment";
+    const isSaida = tipoOp === 0;
 
-    if (tipoOperacao === "decrement" && qtd > produtoData.prodQuantidade) {
-      return { error: "Quantidade insuficiente para movimentação de saída!" };
-    }
+    const produtoAtualizado = await prisma.$transaction(async (tx) => {
+      // Atualização condicional e atômica: impede estoque negativo mesmo
+      // com movimentações simultâneas.
+      const { count } = await tx.produto.updateMany({
+        where: {
+          idProduto: produtoData.idProduto,
+          ...(isSaida && { prodQuantidade: { gte: qtd } }),
+        },
+        data: {
+          prodQuantidade: isSaida ? { decrement: qtd } : { increment: qtd },
+        },
+      });
 
-    const userDoing = +session.user.id;
+      if (count === 0) throw new EstoqueInsuficienteError();
 
-    // --- INÍCIO DA TRANSAÇÃO ---
-    const [operacao, produtoAtualizado] = await prisma.$transaction([
-      // Criar a operação
-      prisma.operacao.create({
+      await tx.operacao.create({
         data: {
           tipoOperacao: tipoOp,
-          idUsuario: userDoing,
+          idUsuario: userId,
           idProduto: produtoData.idProduto,
           data: new Date(),
           quantidade: qtd,
         },
-      }),
+      });
 
-      // Atualiza o estoque do produto
-      prisma.produto.update({
+      return tx.produto.findUniqueOrThrow({
         where: { idProduto: produtoData.idProduto },
-        data: {
-          prodQuantidade: {
-            [tipoOperacao]: Number(qtd),
-          },
-        },
-      }),
-    ]);
-    // --- FIM DA TRANSAÇÃO ---
+      });
+    });
 
     return {
       message: "Movimentação registrada e estoque atualizado com sucesso!",
       data: produtoAtualizado,
     };
   } catch (error) {
+    if (error instanceof EstoqueInsuficienteError) {
+      return { error: "Quantidade insuficiente para movimentação de saída!" };
+    }
+
     if (error instanceof yup.ValidationError) {
       return { error: "Dados inválidos", messages: error.errors };
     }

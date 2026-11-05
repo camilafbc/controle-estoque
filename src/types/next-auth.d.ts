@@ -1,24 +1,23 @@
-import NextAuth from "next-auth";
-import { AuthUser } from "./AuthUser";
+import "next-auth";
+import "next-auth/jwt";
+
+import { AppRole, AuthUser } from "./AuthUser";
 
 declare module "next-auth" {
-  // interface Session {
-  //   user: AuthUser;
-  // }
-
-  interface User extends AuthUser {}
+  interface User extends Omit<AuthUser, "id"> {
+    id: string;
+  }
 
   interface Session {
     user: AuthUser;
     accessToken: string;
   }
+}
 
+declare module "next-auth/jwt" {
   interface JWT {
-    id: number;
-    name: string;
-    email: string;
-    curso: string | null;
-    role: string;
-    accessToken: string;
+    id?: string;
+    curso?: number;
+    role?: AppRole;
   }
 }

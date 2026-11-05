@@ -2,12 +2,17 @@ import prisma from "@/lib/prisma";
 
 import { getProdutoById } from "./produtos";
 
-export const getOperacoesPorProduto = async (uuidProduto: string) => {
-  const produto = await getProdutoById(uuidProduto);
+export const getOperacoesPorProduto = async (
+  uuidProduto: string,
+  idCurso?: number,
+) => {
+  const produto = await getProdutoById(uuidProduto, idCurso);
+
+  if (!produto) return [];
 
   const operations = await prisma.operacao.findMany({
     where: {
-      idProduto: produto?.idProduto,
+      idProduto: produto.idProduto,
     },
     orderBy: {
       idOperacao: "desc",

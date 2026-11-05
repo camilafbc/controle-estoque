@@ -32,10 +32,7 @@ export default function ContainerProfile() {
     try {
       setIsLoading(true);
 
-      const profileUpdated = await updateProfile({
-        ...data,
-        idUser: Number(session?.user.id),
-      });
+      const profileUpdated = await updateProfile(data);
       if (profileUpdated) {
         //Atualização da Sessão
         const updateSession = await update({

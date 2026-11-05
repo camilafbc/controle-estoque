@@ -1,8 +1,8 @@
 "use server";
-import { getServerSession } from "next-auth";
+
 import * as yup from "yup";
 
-import { authOptions } from "@/lib/auth";
+import { authorizeAdmin } from "@/lib/authz";
 import prisma from "@/lib/prisma";
 import { cursoValidationSchema } from "@/schemas/curso-schema";
 import { Curso } from "@/types/Curso";
@@ -10,10 +10,8 @@ import { handleDatabaseError } from "@/utils/handleDbError";
 
 export const createCurso = async (curso: Omit<Curso, "idCurso">) => {
   try {
-    const session = await getServerSession(authOptions);
-
-    if (!session || session.user.role !== "admin")
-      return { error: "Usuário não autorizado" };
+    const auth = await authorizeAdmin();
+    if (!auth.ok) return { error: auth.error };
 
     await cursoValidationSchema.validate(curso, {
       abortEarly: false,

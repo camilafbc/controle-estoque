@@ -1,10 +1,10 @@
 "use server";
 
 import bcrypt from "bcryptjs";
-import { getServerSession } from "next-auth";
 import * as yup from "yup";
 
-import { authOptions } from "@/lib/auth";
+import { Prisma } from "@/generated/prisma";
+import { authorizeAdmin } from "@/lib/authz";
 import prisma from "@/lib/prisma";
 import { userValidationSchema } from "@/schemas/user-schema";
 import { User } from "@/types/User";
@@ -12,9 +12,11 @@ import { handleDatabaseError } from "@/utils/handleDbError";
 
 export const updateUser = async (user: Partial<User>) => {
   try {
-    const session = await getServerSession(authOptions);
+    // Somente administradores podem alterar dados, role e curso de usuários
+    const auth = await authorizeAdmin();
+    if (!auth.ok) return { error: auth.error };
 
-    if (!session) return { error: "Usuário não autorizado." };
+    if (!user.idUser) return { error: "Usuário não selecionado." };
 
     const validationSchema = userValidationSchema.omit(["confirmaSenha"]);
 
@@ -23,21 +25,16 @@ export const updateUser = async (user: Partial<User>) => {
       context: { isEdit: true },
     });
 
-    const dataToUpdate: any = {
+    const dataToUpdate: Prisma.UserUncheckedUpdateInput = {
       nome: user.nome,
-      email: user?.email?.toLowerCase(),
+      email: user.email?.toLowerCase(),
       status: user.status,
       role: user.role,
+      idCurso: user.role === "user" && user.idCurso ? user.idCurso : null,
     };
 
     if (user.password) {
       dataToUpdate.password = bcrypt.hashSync(user.password, 10);
-    }
-
-    if (user.role === "user" && user.idCurso) {
-      dataToUpdate.idCurso = user.idCurso;
-    } else {
-      dataToUpdate.idCurso = null;
     }
 
     const updatedUser = await prisma.user.update({
@@ -53,7 +50,7 @@ export const updateUser = async (user: Partial<User>) => {
 
     const dbError = handleDatabaseError(error);
 
-    console.error("Erro ao criar usuário: ", dbError);
+    console.error("Erro ao atualizar usuário: ", dbError);
     return { error: dbError.message };
   }
 };

@@ -74,12 +74,16 @@ export default async function ProdutosPage({
   }
 
   if (turma && produto) {
+    const produtoData = await getProdutoById(produto, idCurso);
+
+    if (!produtoData) {
+      redirect(`/cadastros/produtos?turma=${turma}`);
+    }
+
     await queryClient.prefetchQuery({
       queryKey: ["operacoes", produto],
-      queryFn: async () => await getOperacoesPorProduto(produto),
+      queryFn: async () => await getOperacoesPorProduto(produto, idCurso),
     });
-
-    const produtoData = await getProdutoById(produto);
 
     return (
       <div className="space-y-6">
@@ -95,7 +99,7 @@ export default async function ProdutosPage({
             key={produto}
             turma={turma}
             produto={{
-              descricao: produtoData?.prodDescricao ?? "-",
+              descricao: produtoData.prodDescricao,
               uuid: produto,
             }}
           />

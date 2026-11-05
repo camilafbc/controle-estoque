@@ -1,34 +1,30 @@
 "use server";
 
-import { getServerSession } from "next-auth";
-import * as yup from "yup";
-
-import { authOptions } from "@/lib/auth";
+import { authorizeUser } from "@/lib/authz";
 import prisma from "@/lib/prisma";
 import { handleDatabaseError } from "@/utils/handleDbError";
 
 export const deleteProduto = async (uuidProduto: string) => {
   try {
-    const session = await getServerSession(authOptions);
-
-    if (!session || session.user.role !== "user") {
-      return { error: "Usuário não autorizado" };
-    }
+    const auth = await authorizeUser();
+    if (!auth.ok) return { error: auth.error };
 
     if (!uuidProduto)
       return { error: "Erro ao excluir dados; item não selecionado." };
 
-    const produto = await prisma.produto.delete({
-      where: {
-        uuid: uuidProduto,
-      },
+    // Só remove produtos do curso do usuário autenticado
+    const produto = await prisma.produto.findFirst({
+      where: { uuid: uuidProduto, prodCurso: auth.ctx.idCurso },
+      select: { idProduto: true },
     });
-    return produto;
-  } catch (error) {
-    if (error instanceof yup.ValidationError) {
-      return { error: "Dados inválidos", messages: error.errors };
-    }
 
+    if (!produto) return { error: "Produto não encontrado!" };
+
+    const deleted = await prisma.produto.delete({
+      where: { idProduto: produto.idProduto },
+    });
+    return deleted;
+  } catch (error) {
     const dbError = handleDatabaseError(error);
 
     console.error("Erro ao excluir produto: ", dbError);

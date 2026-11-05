@@ -1,18 +1,13 @@
 "use server";
 
-import { getServerSession } from "next-auth";
-import * as yup from "yup";
-
-import { authOptions } from "@/lib/auth";
+import { authorizeAdmin } from "@/lib/authz";
 import prisma from "@/lib/prisma";
 import { handleDatabaseError } from "@/utils/handleDbError";
 
 export const deleteCurso = async (idCurso: number) => {
   try {
-    const session = await getServerSession(authOptions);
-
-    if (!session || session.user.role !== "admin")
-      return { error: "Usuário não autorizado" };
+    const auth = await authorizeAdmin();
+    if (!auth.ok) return { error: auth.error };
 
     if (!idCurso)
       return { error: "Erro ao excluir dados; item não selecionado." };
@@ -24,10 +19,6 @@ export const deleteCurso = async (idCurso: number) => {
     });
     return curso;
   } catch (error) {
-    if (error instanceof yup.ValidationError) {
-      return { error: "Dados inválidos", messages: error.errors };
-    }
-
     const dbError = handleDatabaseError(error);
 
     console.error("Erro ao excluir curso: ", dbError);

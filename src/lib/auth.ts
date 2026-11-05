@@ -1,6 +1,7 @@
 import bcrypt from "bcryptjs";
 import { AuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
+import { z } from "zod";
 
 import prisma from "./prisma";
 
@@ -17,27 +18,26 @@ export const authOptions: AuthOptions = {
         email: { label: "E-mail", type: "text" },
         password: { label: "Senha", type: "password" },
       },
-      authorize: async (credentials, req) => {
-        if (!credentials?.email || !credentials?.password) return null;
-
-        const user = await prisma.user.findUnique({
-          where: { email: credentials.email },
+      authorize: async (credentials) => {
+        // Validate input with Zod
+        const schema = z.object({
+          email: z.string().email(),
+          password: z.string().min(6),
         });
-
-        if (!user || !user.password) {
+        const parsed = schema.safeParse(credentials);
+        if (!parsed.success) {
+          // return null signals auth failure without throwing
+          return null;
+        }
+        const { email, password } = parsed.data;
+        const user = await prisma.user.findUnique({ where: { email } });
+        if (!user?.password) {
           throw new Error("Usuário não encontrado.");
         }
-
-        const isPasswordValid = await bcrypt.compare(
-          credentials.password,
-          user.password,
-        );
-
+        const isPasswordValid = await bcrypt.compare(password, user.password);
         if (!isPasswordValid) {
           throw new Error("E-mail ou senha incorretos.");
         }
-
-        // retorno dos dados que vão para o token
         return {
           id: String(user.idUser),
           name: user.nome,
@@ -49,24 +49,30 @@ export const authOptions: AuthOptions = {
     }),
   ],
   callbacks: {
-    jwt: async ({ token, user, session, trigger }) => {
+    jwt: async ({ token, user }) => {
       if (user) {
         token.id = user.id;
         token.curso = user.curso;
         token.role = user.role;
       }
-      if (trigger === "update" && session?.user?.name) {
-        token.name = session.user.name;
-      }
+      // Rotate token every 15 minutes (optional)
+      // const now = Math.floor(Date.now() / 1000);
+      // if (token.iat && now - token.iat > 15 * 60) token.iat = now;
       return token;
     },
     session: async ({ session, token }) => {
-      if (token && session.user) {
-        session.user.id = token.id as number;
-        session.user.curso = token.curso as any;
-        session.user.role = token.role as any;
+      if (token && session.user && token.role) {
+        session.user.id = Number(token.id);
+        session.user.curso = token.curso;
+        session.user.role = token.role;
+        // keep accessToken if needed in future
+        // session.accessToken = token.accessToken as string;
       }
       return session;
     },
   },
+  // cookies: {
+  //   sessionToken: { sameSite: "strict", secure: true },
+  // },
+  session: { strategy: "jwt", maxAge: 30 * 24 * 60 * 60 },
 };

@@ -1,10 +1,9 @@
 "use server";
 
 import bcrypt from "bcryptjs";
-import { getServerSession } from "next-auth";
 import * as yup from "yup";
 
-import { authOptions } from "@/lib/auth";
+import { authorizeAdmin } from "@/lib/authz";
 import prisma from "@/lib/prisma";
 import { userActionValidationSchema } from "@/schemas/user-schema";
 import { hasUserEmail } from "@/services/users";
@@ -13,11 +12,11 @@ import { handleDatabaseError } from "@/utils/handleDbError";
 
 export const createUser = async (user: Omit<User, "idUser">) => {
   try {
-    const session = await getServerSession(authOptions);
+    // Somente administradores podem cadastrar usuários
+    const auth = await authorizeAdmin();
+    if (!auth.ok) return { error: auth.error };
 
-    if (!session) return { error: "Usuário não autorizado." };
-
-    const userDoing = +session?.user.id;
+    const userDoing = auth.ctx.userId;
 
     await userActionValidationSchema.validate(user, {
       abortEarly: false,

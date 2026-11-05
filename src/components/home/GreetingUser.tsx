@@ -7,7 +7,7 @@ export default function GreetingUser() {
   const hour = new Date().getHours();
 
   return (
-    <div className="flex items-baseline gap-1 border-b-[1px] border-b-zinc-200">
+    <div className="flex items-baseline gap-1 border-b border-b-white/30 text-white">
       <p className="text-lg font-semibold">
         {hour >= 0 && hour < 12 && "Bom dia"}
         {hour >= 12 && hour < 18 && "Boa tarde"}

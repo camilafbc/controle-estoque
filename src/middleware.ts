@@ -8,6 +8,7 @@ export async function middleware(req: NextRequest) {
   const path = req.nextUrl.pathname;
   const token = await getToken({ req, secret: secret });
 
+  // Redireciona usuário autenticado que entra na raiz para a home correspondente
   if (path === "/" && token) {
     const newUrl = token.role === "admin" ? "/admin/home" : "/home";
     return NextResponse.redirect(new URL(newUrl, req.url));
@@ -15,13 +16,11 @@ export async function middleware(req: NextRequest) {
 
   // Rotas públicas (acesso sem autenticação)
   const publicPaths = ["/", "/api/auth/signin", "/recuperar-senha"];
-
-  // se a rota desejada está inclusa no array de rotas públicas, deixa acesar
   if (publicPaths.includes(path) || path.startsWith("/api/auth")) {
     return NextResponse.next();
   }
 
-  // se a rota não está inclusa nas rotas públicas e não há token, encaminha para o login
+  // Não autenticado tentando acessar rota protegida
   if (!token) {
     return NextResponse.redirect(new URL("/", req.url));
   }
@@ -30,13 +29,9 @@ export async function middleware(req: NextRequest) {
   const isAdminRoute =
     path.startsWith("/admin") || path.startsWith("/api/admin");
 
-  if ((isAdminRoute && !token) || (isAdminRoute && token?.role !== "admin")) {
-    return NextResponse.redirect(new URL("/", req.url));
-  }
-
-  // Proteção para outras rotas autenticadas (não-admin)
-  if (!token && !publicPaths.includes(path)) {
-    return NextResponse.redirect(new URL("/login", req.url));
+  if (isAdminRoute && token.role !== "admin") {
+    // Redireciona para tela de acesso negado sem deslogar
+    return NextResponse.redirect(new URL("/acesso-negado", req.url));
   }
 
   return NextResponse.next();

@@ -9,6 +9,7 @@ import {
   AlertDialogDescription,
   AlertDialogFooter,
   AlertDialogHeader,
+  AlertDialogTitle,
 } from "../alert-dialog";
 import { Button } from "../button";
 import { Tooltip, TooltipContent, TooltipTrigger } from "../tooltip";
@@ -22,6 +23,7 @@ interface DataTableActionsProps {
   justViewMode?: boolean;
   onClick: () => void;
   tooltipText?: string;
+  loading?: boolean;
 }
 
 export const DataTableAction = ({
@@ -104,6 +106,7 @@ export const DataTableDeleteAction = ({
   title,
   item,
   onClick,
+  loading = false,
 }: DataTableActionsProps) => {
   const [openAlert, setOpenAlert] = useState(false);
 
@@ -113,7 +116,7 @@ export const DataTableDeleteAction = ({
         <TooltipTrigger asChild>
           <Button
             className={cn("size-8 p-0 hover:text-destructive", className)}
-            disabled={disabled}
+            disabled={disabled || loading}
             onClick={() => setOpenAlert(true)}
             variant={"ghost"}
           >
@@ -129,7 +132,7 @@ export const DataTableDeleteAction = ({
             <AlertDialogHeader>
               <div className="flex items-end gap-2">
                 <TriangleAlert className="size-8 font-bold text-orange-400" />
-                <p className="text-xl font-semibold">Exclusão de {title}</p>
+                <AlertDialogTitle>Exclusão de {title}</AlertDialogTitle>
               </div>
             </AlertDialogHeader>
             <AlertDialogDescription>
@@ -140,10 +143,14 @@ export const DataTableDeleteAction = ({
                 Cancelar
               </Button>
               <Button
-                onClick={onClick}
-                className="bg-green-700 hover:bg-green-700/90"
+                onClick={() => {
+                  onClick();
+                  setOpenAlert(false);
+                }}
+                loading={loading}
+                variant="destructive"
               >
-                Excluir
+                {loading ? "Excluindo..." : "Excluir"}
               </Button>
             </AlertDialogFooter>
           </AlertDialogContent>

@@ -12,16 +12,17 @@ export const getTurmas = async (idCurso: number) => {
   return turmas;
 };
 
-export const getTurmaById = async (idTurma: number) => {
-  const turma = await prisma.turma.findUnique({
+export const getTurmaById = async (idTurma: number, idCurso?: number) => {
+  const turma = await prisma.turma.findFirst({
     where: {
       idTurma: Number(idTurma),
+      ...(idCurso ? { idCurso: Number(idCurso) } : {}),
     },
   });
   return turma;
 };
 
-export const countTurmas = async (idCurso: Number) => {
+export const countTurmas = async (idCurso: number) => {
   const turmas = await prisma.turma.count({
     where: {
       idCurso: Number(idCurso),

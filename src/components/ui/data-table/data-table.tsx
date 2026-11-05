@@ -16,6 +16,7 @@ import {
 import { CheckCircle2, XCircle } from "lucide-react";
 import { useState } from "react";
 
+import { EmptyState } from "@/components/admin/EmptyState";
 import {
   Table,
   TableBody,
@@ -37,6 +38,8 @@ interface DataTableProps<TData, TValue> {
   isLoading?: boolean;
   striped?: boolean;
   hoverEffect?: boolean;
+  emptyTitle?: string;
+  emptyDescription?: string;
 }
 
 export function DataTable<TData, TValue>({
@@ -45,6 +48,8 @@ export function DataTable<TData, TValue>({
   isLoading,
   striped = false,
   hoverEffect = true,
+  emptyTitle = "Nenhum registro encontrado",
+  emptyDescription = "Tente ajustar os filtros ou cadastre um novo registro.",
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([]);
 
@@ -115,8 +120,9 @@ export function DataTable<TData, TValue>({
 
   return (
     <Card className="space-y-8 rounded-lg border-none shadow-none">
-      <CardContent className="rounded-lg border p-0 shadow-sm">
-        <Table className="overflow-x-scroll rounded-lg [&::-webkit-scrollbar]:hidden">
+      <CardContent className="rounded-xl border p-0 shadow-sm">
+        <div className="overflow-x-auto rounded-xl">
+        <Table className="min-w-[680px]">
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
@@ -197,13 +203,17 @@ export function DataTable<TData, TValue>({
                     </div>
                   ) : (
                     // <CustomNoRowsOverlay />
-                    <div>Nenhum registro encontrado :(</div>
+                    <EmptyState
+                      title={emptyTitle}
+                      description={emptyDescription}
+                    />
                   )}
                 </TableCell>
               </TableRow>
             )}
           </TableBody>
         </Table>
+        </div>
       </CardContent>
       <CardFooter className="justify-end pe-4">
         <DataTablePagination table={table} />

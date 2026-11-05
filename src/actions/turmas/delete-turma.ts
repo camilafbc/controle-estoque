@@ -1,34 +1,30 @@
 "use server";
 
-import { getServerSession } from "next-auth";
-import * as yup from "yup";
-
-import { authOptions } from "@/lib/auth";
+import { authorizeUser } from "@/lib/authz";
 import prisma from "@/lib/prisma";
 import { handleDatabaseError } from "@/utils/handleDbError";
 
 export const deleteTurma = async (idTurma: number) => {
   try {
-    const session = await getServerSession(authOptions);
-
-    if (!session || session.user.role !== "user") {
-      return { error: "Usuário não autorizado" };
-    }
+    const auth = await authorizeUser();
+    if (!auth.ok) return { error: auth.error };
 
     if (!idTurma)
       return { error: "Erro ao excluir dados; item não selecionado." };
 
-    const turma = await prisma.turma.delete({
-      where: {
-        idTurma: Number(idTurma),
-      },
+    // Só remove turmas do curso do usuário autenticado
+    const turma = await prisma.turma.findFirst({
+      where: { idTurma: Number(idTurma), idCurso: auth.ctx.idCurso },
+      select: { idTurma: true },
     });
-    return turma;
-  } catch (error) {
-    if (error instanceof yup.ValidationError) {
-      return { error: "Dados inválidos", messages: error.errors };
-    }
 
+    if (!turma) return { error: "Turma não encontrada!" };
+
+    const deleted = await prisma.turma.delete({
+      where: { idTurma: turma.idTurma },
+    });
+    return deleted;
+  } catch (error) {
     const dbError = handleDatabaseError(error);
 
     console.error("Erro ao excluir turma: ", dbError);
