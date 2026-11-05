@@ -1,5 +1,7 @@
 "use client";
 
+import { useMemo } from "react";
+
 import { DataTable } from "@/components/ui/data-table/data-table";
 import { Produto } from "@/types/Produto";
 
@@ -23,17 +25,25 @@ export default function ProductTable({
   onDelete,
 }: ProductTableProps) {
   // A lógica de filtragem, que estava no componente pai, agora mora aqui
-  const filteredData = Array.isArray(data)
-    ? data.filter((produto) => {
+  const filteredData = useMemo(
+    () =>
+      Array.isArray(data)
+        ? data.filter((produto) => {
         return produto.prodDescricao
           .toLowerCase()
           .includes(filterValue.toLowerCase());
-      })
-    : [];
+          })
+        : [],
+    [data, filterValue],
+  );
+  const tableColumns = useMemo(
+    () => columns(onMovimentacoes, onEdit, onDelete),
+    [onDelete, onEdit, onMovimentacoes],
+  );
 
   return (
     <DataTable
-      columns={columns(onMovimentacoes, onEdit, onDelete)}
+      columns={tableColumns}
       data={filteredData || []} // Usa os dados filtrados
       isLoading={isLoading}
     />

@@ -38,12 +38,12 @@ export default async function Page() {
     last12Months,
     last10Ops,
   ] = await Promise.all([
-    await countTurmas(idCurso),
-    await countProdutos(idCurso),
-    await getEstoquePorCurso(idCurso),
-    await getProdutosExpirando(idCurso),
-    await getRelatorioUltimosDozeMeses(idCurso),
-    await getLastDezOperacoes(idCurso),
+    countTurmas(idCurso),
+    countProdutos(idCurso),
+    getEstoquePorCurso(idCurso),
+    getProdutosExpirando(idCurso),
+    getRelatorioUltimosDozeMeses(idCurso),
+    getLastDezOperacoes(idCurso),
   ]);
 
   const initialData = {

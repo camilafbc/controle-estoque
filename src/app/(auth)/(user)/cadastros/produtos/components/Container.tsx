@@ -2,7 +2,7 @@
 
 import { PlusCircle } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 
@@ -67,6 +67,16 @@ export default function ProductContainer({
   const [editingId, setEditingId] = useState<string>("");
   // queries e mutations
   const fetchTurmas = useTurmas(Number(idCurso), turmas);
+  const turmaOptions = useMemo(
+    () =>
+      (fetchTurmas.data ?? [])
+        .filter((turma) => turma.status)
+        .map((turma) => ({
+          label: `${turma.codigoTurma} - ${turma.turnoTurma}`,
+          id: turma.uuid,
+        })),
+    [fetchTurmas.data],
+  );
   const produtos = useProdutos(currentTurma, Number(idCurso));
   const produto = useProduto(editingId, currentTurma, Number(idCurso));
   const deleteMutation = useDeleteProductMutation();
@@ -190,14 +200,7 @@ export default function ProductContainer({
                   label="Turma"
                   id="select-turma"
                   height={200}
-                  options={
-                    fetchTurmas.data
-                      .filter((turma: Turma) => turma.status === true)
-                      .map((turma: Turma) => ({
-                        label: `${turma.codigoTurma} - ${turma.turnoTurma}`,
-                        id: turma.uuid,
-                      })) || []
-                  }
+                  options={turmaOptions}
                   placeholder="Buscar turma"
                   loading={fetchTurmas.isFetching}
                   error={errors.turma?.message}

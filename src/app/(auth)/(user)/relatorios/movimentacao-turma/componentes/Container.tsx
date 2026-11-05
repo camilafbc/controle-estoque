@@ -1,11 +1,10 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { pdf } from "@react-pdf/renderer";
 import { addDays } from "date-fns";
 import { FileText } from "lucide-react";
 import { useSession } from "next-auth/react";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { z } from "zod";
 
@@ -20,7 +19,6 @@ import { useTurmas } from "@/queries/turmas";
 import { Turma } from "@/types/Turma";
 
 import Alert from "./Alert";
-import RelatorioDocument from "./relatorioMovTurma";
 
 const validationSchema = z.object({
   turma: z.string().min(1, "Turma é obrigatória"),
@@ -45,6 +43,16 @@ export default function MovTurmaContainer({ idCurso }: MovTurmaContainerProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [alertMessage, setAlertMessage] = useState("");
   const { data: turmasData, isLoading: turmasLoading } = useTurmas(idCurso);
+  const turmaOptions = useMemo(
+    () =>
+      (turmasData ?? [])
+        .filter((turma) => turma.status)
+        .map((turma) => ({
+          label: `${turma.codigoTurma} - ${turma.turnoTurma}`,
+          id: turma.idTurma.toString(),
+        })),
+    [turmasData],
+  );
 
   const form = useForm<FormData>({
     resolver: zodResolver(validationSchema),
@@ -92,6 +100,10 @@ export default function MovTurmaContainer({ idCurso }: MovTurmaContainerProps) {
         return;
       }
 
+      const [{ pdf }, { default: RelatorioDocument }] = await Promise.all([
+        import("@react-pdf/renderer"),
+        import("./relatorioMovTurma"),
+      ]);
       const blob = await pdf(
         <RelatorioDocument
           data={fetchRelatorio}
@@ -128,14 +140,7 @@ export default function MovTurmaContainer({ idCurso }: MovTurmaContainerProps) {
                   id="select-turma"
                   size="lg"
                   height={100}
-                  options={
-                    turmasData
-                      .filter((turma: Turma) => turma.status === true)
-                      .map((turma: Turma) => ({
-                        label: `${turma.codigoTurma} - ${turma.turnoTurma}`,
-                        id: turma.idTurma.toString(),
-                      })) || []
-                  }
+                  options={turmaOptions}
                   placeholder="Buscar turma"
                   loading={turmasLoading}
                   value={field.value}

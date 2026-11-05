@@ -1,4 +1,4 @@
-import { ReactNode } from "react";
+import { ReactNode, Suspense } from "react";
 import { ToastContainer } from "react-toastify";
 
 import Header from "@/components/header/Header";
@@ -19,7 +19,9 @@ export default function Layout({ children }: Props) {
           autoClose={5000}
           hideProgressBar={true}
         />
-        {children}
+        <Suspense fallback={<div className="container mx-auto p-6" />}>
+          {children}
+        </Suspense>
       </div>
     </>
   );

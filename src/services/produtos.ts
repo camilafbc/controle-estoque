@@ -1,19 +1,10 @@
 import prisma from "@/lib/prisma";
 
 export const getProdutos = async (idCurso: number, turmaUuid: string) => {
-  const turma = await prisma.turma.findFirst({
-    where: { uuid: turmaUuid, idCurso },
-    select: { idTurma: true },
-  });
-
-  if (!turma) {
-    return [];
-  }
-
   const produtos = await prisma.produto.findMany({
     where: {
-      prodCurso: Number(idCurso),
-      prodTurma: Number(turma.idTurma),
+      prodCurso: idCurso,
+      turma: { uuid: turmaUuid },
     },
     orderBy: {
       idProduto: "desc",
@@ -79,6 +70,7 @@ export const getProdutosExpirando = async (cursoId: number) => {
     where: {
       prodCurso: cursoId,
       prodValidade: {
+        gte: today,
         lte: limitDate,
       },
     },
