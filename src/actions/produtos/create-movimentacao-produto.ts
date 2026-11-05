@@ -1,23 +1,10 @@
 "use server";
 
-import * as yup from "yup";
-
 import { authorizeUser } from "@/lib/authz";
 import prisma from "@/lib/prisma";
+import { operacaoValidationSchema } from "@/schemas/operacao-schema";
 import { handleDatabaseError } from "@/utils/handleDbError";
-
-const operacaoValidationSchema = yup.object({
-  uuidProduto: yup.string().required("Parâmetro obrigatório"),
-  tipoOp: yup
-    .number()
-    .oneOf([0, 1], "Tipo de operação inválido.")
-    .required("Parâmetro obrigatório"),
-  qtd: yup
-    .number()
-    .integer("A quantidade deve ser um número inteiro.")
-    .min(1, "Quantidade mínima para movimentação é 1.")
-    .required("Parâmetro obrigatório"),
-});
+import { getValidationMessages } from "@/utils/getValidationMessages";
 
 class EstoqueInsuficienteError extends Error {}
 
@@ -31,10 +18,17 @@ export const createOperacao = async (
     if (!auth.ok) return { error: auth.error };
     const { userId, idCurso } = auth.ctx;
 
-    await operacaoValidationSchema.validate(
-      { uuidProduto, tipoOp, qtd },
-      { abortEarly: false },
-    );
+    const validation = operacaoValidationSchema.safeParse({
+      uuidProduto,
+      tipoOp,
+      qtd,
+    });
+    if (!validation.success) {
+      return {
+        error: "Dados inválidos",
+        messages: getValidationMessages(validation.error),
+      };
+    }
 
     // O produto precisa pertencer ao curso do usuário autenticado
     const produtoData = await prisma.produto.findFirst({
@@ -85,10 +79,6 @@ export const createOperacao = async (
   } catch (error) {
     if (error instanceof EstoqueInsuficienteError) {
       return { error: "Quantidade insuficiente para movimentação de saída!" };
-    }
-
-    if (error instanceof yup.ValidationError) {
-      return { error: "Dados inválidos", messages: error.errors };
     }
 
     const dbError = handleDatabaseError(error);

@@ -19,6 +19,7 @@ import {
 import { useGetTurmaById, useTurmas } from "@/queries/turmas";
 import { FormTurmasFields } from "@/schemas/turma-schema";
 import { Turma } from "@/types/Turma";
+import { useListFilter } from "@/hooks/useListFilter";
 import { getErrorMessage } from "@/utils/getErrorMessage";
 import { getErrorMessageFromAction } from "@/utils/getErrorMessageFromAction";
 
@@ -31,7 +32,6 @@ export default function TurmasContainer() {
   const idCurso = user.data?.user.curso;
   const deleteMutation = useDeleteTurmaMutation();
   const { data: turmas, isLoading } = useTurmas(Number(idCurso));
-  const [filterValue, setFilterValue] = useState("");
   const [openDialog, setOpenDialog] = useState(false);
   const [editingId, setEditingId] = useState<number | null>();
 
@@ -41,11 +41,10 @@ export default function TurmasContainer() {
   const createTurma = useCreateTurmaMutation();
   const updateTurma = useUpdateTurmaMutation();
 
-  const filteredData = turmas
-    ? turmas.filter((turma: { codigoTurma: string }) =>
-        turma.codigoTurma.toLowerCase().includes(filterValue.toLowerCase()),
-      )
-    : [];
+  const { search, setSearch, filteredItems } = useListFilter({
+    items: turmas,
+    getSearchText: (turma: Turma) => turma.codigoTurma,
+  });
 
   const handleDelete = (id: number) => {
     deleteMutation.mutate(id, {
@@ -132,8 +131,8 @@ export default function TurmasContainer() {
       <div className="mb-8 flex flex-col items-start justify-between gap-2 md:flex-row md:items-center">
         <SearchInput
           placeholder="Buscar Turma"
-          value={filterValue}
-          onChange={(event) => setFilterValue(event.target.value)}
+          value={search}
+          onChange={(event) => setSearch(event.target.value)}
         />
         <Button
           onClick={handleNew}
@@ -146,7 +145,7 @@ export default function TurmasContainer() {
 
       <DataTable
         columns={columns(handleEdit, handleDelete)}
-        data={filteredData || []}
+        data={filteredItems}
         isLoading={isLoading}
       />
 

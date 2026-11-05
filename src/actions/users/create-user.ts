@@ -1,14 +1,13 @@
 "use server";
 
 import bcrypt from "bcryptjs";
-import * as yup from "yup";
-
 import { authorizeAdmin } from "@/lib/authz";
 import prisma from "@/lib/prisma";
 import { userActionValidationSchema } from "@/schemas/user-schema";
 import { hasUserEmail } from "@/services/users";
 import { User } from "@/types/User";
 import { handleDatabaseError } from "@/utils/handleDbError";
+import { getValidationMessages } from "@/utils/getValidationMessages";
 
 export const createUser = async (user: Omit<User, "idUser">) => {
   try {
@@ -18,9 +17,13 @@ export const createUser = async (user: Omit<User, "idUser">) => {
 
     const userDoing = auth.ctx.userId;
 
-    await userActionValidationSchema.validate(user, {
-      abortEarly: false,
-    });
+    const validation = userActionValidationSchema.safeParse(user);
+    if (!validation.success) {
+      return {
+        error: "Dados inválidos",
+        messages: getValidationMessages(validation.error),
+      };
+    }
 
     const userExist = await hasUserEmail(user.email);
     if (userExist) return { error: "E-mail já cadastrado." };
@@ -41,10 +44,6 @@ export const createUser = async (user: Omit<User, "idUser">) => {
 
     return { message: "Usuário criado com sucesso!", data: userData };
   } catch (error) {
-    if (error instanceof yup.ValidationError) {
-      return { error: "Dados inválidos", messages: error.errors };
-    }
-
     const dbError = handleDatabaseError(error);
 
     console.error("Erro ao criar usuário: ", dbError);

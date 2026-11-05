@@ -2,6 +2,20 @@ import prisma from "@/lib/prisma";
 
 import { getProdutoById } from "./produtos";
 
+interface RelatorioOperacoesRow {
+  prodDescricao: string;
+  prodFabricante: string;
+  entradas: number | bigint;
+  saidas: number | bigint;
+}
+
+interface RelatorioDozeMesesRow {
+  mes: number | string;
+  ano: number | string;
+  entradas: number | bigint;
+  saidas: number | bigint;
+}
+
 export const getOperacoesPorProduto = async (
   uuidProduto: string,
   idCurso?: number,
@@ -81,7 +95,7 @@ export const getRelatorioOperacoes = async (
   const fim = new Date(dataFinal);
   fim.setHours(23, 59, 59, 999);
 
-  const result = await prisma.$queryRaw<any[]>`
+  const result = await prisma.$queryRaw<RelatorioOperacoesRow[]>`
   SELECT 
     prod."prodDescricao", 
     prod."prodFabricante", 
@@ -105,7 +119,7 @@ export const getRelatorioOperacoes = async (
 };
 
 export const getRelatorioUltimosDozeMeses = async (idCurso: number) => {
-  const result = await prisma.$queryRaw<any[]>`
+  const result = await prisma.$queryRaw<RelatorioDozeMesesRow[]>`
       SELECT 
       EXTRACT(MONTH FROM op.data) AS mes,
       EXTRACT(YEAR FROM op.data) AS ano,

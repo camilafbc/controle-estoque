@@ -1,13 +1,13 @@
 "use client";
 
-import { yupResolver } from "@hookform/resolvers/yup";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2, LogIn } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { getSession, signIn } from "next-auth/react";
 import { useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
-import * as yup from "yup";
+import { z } from "zod";
 
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -20,9 +20,9 @@ interface FormInputs {
   password: string;
 }
 
-const validationSchema = yup.object({
-  email: yup.string().required("E-mail obrigatório"),
-  password: yup.string().required("Senha obrigatória"),
+const validationSchema = z.object({
+  email: z.string().min(1, "E-mail obrigatório"),
+  password: z.string().min(1, "Senha obrigatória"),
 });
 
 export default function LoginForm() {
@@ -30,7 +30,7 @@ export default function LoginForm() {
   const router = useRouter();
 
   const form = useForm<FormInputs>({
-    resolver: yupResolver(validationSchema),
+    resolver: zodResolver(validationSchema),
   });
 
   const {

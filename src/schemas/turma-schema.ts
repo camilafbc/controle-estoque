@@ -1,18 +1,14 @@
-import * as yup from "yup";
+import { z } from "zod";
 
-export const turmaValidationSchema = yup.object({
-  codigoTurma: yup
-    .string()
-    .min(2, "Mínimo 2 caracteres")
-    .required("Campo obrigatório"),
-  turnoTurma: yup.string().required("Campo obrigatório"),
-  status: yup.boolean().default(true).required(),
+export const turmaValidationSchema = z.object({
+  codigoTurma: z.string().min(2, "Mínimo 2 caracteres"),
+  turnoTurma: z.string().min(1, "Campo obrigatório"),
+  status: z.boolean().default(true),
 });
 
-export const turmaUpdateValidationSchema = turmaValidationSchema.concat(
-  yup.object({
-    idTurma: yup.number().required("Campo obrigatório"),
-  }),
-);
+export const turmaUpdateValidationSchema = z.object({
+  ...turmaValidationSchema.shape,
+  idTurma: z.number({ message: "Campo obrigatório" }),
+});
 
-export type FormTurmasFields = yup.InferType<typeof turmaValidationSchema>;
+export type FormTurmasFields = z.infer<typeof turmaValidationSchema>;

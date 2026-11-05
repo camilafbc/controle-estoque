@@ -1,6 +1,6 @@
 "use client";
 
-import { yupResolver } from "@hookform/resolvers/yup";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { forwardRef, useEffect, useImperativeHandle } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 
@@ -30,7 +30,7 @@ const FormCurso = forwardRef<FormCursoRef, FormCursoProps>(
     ref,
   ) => {
     const form = useForm<FormCursoFields>({
-      resolver: yupResolver(cursoValidationSchema),
+      resolver: zodResolver(cursoValidationSchema),
       defaultValues: {
         nomeCurso: "",
         status: true,

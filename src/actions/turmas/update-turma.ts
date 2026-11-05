@@ -1,19 +1,24 @@
 "use server";
 
-import * as yup from "yup";
-
 import { authorizeUser } from "@/lib/authz";
 import prisma from "@/lib/prisma";
 import { turmaUpdateValidationSchema } from "@/schemas/turma-schema";
 import { Turma } from "@/types/Turma";
 import { handleDatabaseError } from "@/utils/handleDbError";
+import { getValidationMessages } from "@/utils/getValidationMessages";
 
 export const updateTurma = async (turma: Turma) => {
   try {
     const auth = await authorizeUser();
     if (!auth.ok) return { error: auth.error };
 
-    await turmaUpdateValidationSchema.validate(turma, { abortEarly: false });
+    const validation = turmaUpdateValidationSchema.safeParse(turma);
+    if (!validation.success) {
+      return {
+        error: "Dados inválidos",
+        messages: getValidationMessages(validation.error),
+      };
+    }
 
     // Atualiza somente se a turma pertencer ao curso do usuário autenticado
     const { count } = await prisma.turma.updateMany({
@@ -36,10 +41,6 @@ export const updateTurma = async (turma: Turma) => {
     });
     return { message: "Dados atualizados com sucesso!", data: turmaUpdated };
   } catch (error) {
-    if (error instanceof yup.ValidationError) {
-      return { error: "Dados inválidos", messages: error.errors };
-    }
-
     const dbError = handleDatabaseError(error);
 
     console.error("Erro ao atualizar dados de turma: ", dbError.message);

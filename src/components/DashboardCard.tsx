@@ -10,6 +10,7 @@ import {
 import { cn } from "@/lib/utils";
 
 type DashCardProps = {
+  delay?: number;
   className?: string;
   title?: string | ReactNode;
   description?: string | ReactNode;
@@ -23,6 +24,7 @@ type DashCardProps = {
 };
 
 export default function DashboardCard({
+  delay: _delay,
   className,
   title,
   description,

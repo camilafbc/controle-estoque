@@ -1,12 +1,11 @@
 "use server";
 
 import bcrypt from "bcryptjs";
-import * as yup from "yup";
-
 import { authorizeAuthenticated } from "@/lib/authz";
 import prisma from "@/lib/prisma";
 import { userProfileValidationSchema } from "@/schemas/user-profile-schema";
 import { handleDatabaseError } from "@/utils/handleDbError";
+import { getValidationMessages } from "@/utils/getValidationMessages";
 
 interface UpdateProfileInput {
   nome?: string;
@@ -26,7 +25,13 @@ export const updateProfile = async (user: UpdateProfileInput) => {
 
     const dataToUpdate: Partial<{ nome: string; password: string }> = {};
 
-    await userProfileValidationSchema.validate(user, { abortEarly: false });
+    const validation = userProfileValidationSchema.safeParse(user);
+    if (!validation.success) {
+      return {
+        error: "Dados inválidos",
+        messages: getValidationMessages(validation.error),
+      };
+    }
 
     if (user.nome) {
       dataToUpdate.nome = user.nome.trim();
@@ -46,10 +51,6 @@ export const updateProfile = async (user: UpdateProfileInput) => {
       data: updatedUser.nome,
     };
   } catch (error) {
-    if (error instanceof yup.ValidationError) {
-      return { error: "Dados inválidos", messages: error.errors };
-    }
-
     const dbError = handleDatabaseError(error);
 
     console.error("Erro ao atualizar perfil: ", dbError);

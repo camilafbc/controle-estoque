@@ -1,12 +1,11 @@
 "use server";
 
-import * as yup from "yup";
-
 import { authorizeUser } from "@/lib/authz";
 import prisma from "@/lib/prisma";
 import { produtoValidationSchema } from "@/schemas/produto-schema";
 import { Produto } from "@/types/Produto";
 import { handleDatabaseError } from "@/utils/handleDbError";
+import { getValidationMessages } from "@/utils/getValidationMessages";
 
 export const updateProduto = async (
   produto: Omit<Produto, "idProduto" | "prodTurma">,
@@ -20,10 +19,17 @@ export const updateProduto = async (
     if (!uuidTurma) return { error: "Turma não selecionada." };
     if (!produto.uuid) return { error: "Produto não selecionado." };
 
-    await produtoValidationSchema.validate(
-      { ...produto, turma: uuidTurma },
-      { abortEarly: false },
-    );
+    const validation = produtoValidationSchema.safeParse({
+      ...produto,
+      prodQuantidade: String(produto.prodQuantidade),
+      turma: uuidTurma,
+    });
+    if (!validation.success) {
+      return {
+        error: "Dados inválidos",
+        messages: getValidationMessages(validation.error),
+      };
+    }
 
     // Produto e turma precisam pertencer ao curso do usuário autenticado
     const [produtoAtual, turma] = await Promise.all([
@@ -53,10 +59,6 @@ export const updateProduto = async (
     });
     return { data: { ...produtoUpdated, turma: { uuid: turma.uuid } } };
   } catch (error) {
-    if (error instanceof yup.ValidationError) {
-      return { error: "Dados inválidos", messages: error.errors };
-    }
-
     const dbError = handleDatabaseError(error);
 
     console.error("Erro ao atualizar produto: ", dbError);

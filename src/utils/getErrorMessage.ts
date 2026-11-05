@@ -1,16 +1,17 @@
 import { AxiosError } from "axios";
 
-export function getErrorMessage(error: any): string {
-  const axiosError = error as AxiosError<any>;
+type ErrorResponse = {
+  error?: string;
+  err?: { message?: string };
+  message?: string;
+};
 
-  return (
-    axiosError.response?.data?.error ||
-    axiosError.response?.data?.err?.message ||
-    axiosError.response?.data?.message ||
-    axiosError.message ||
-    error ||
-    error.message ||
-    error.data ||
-    "Erro inesperado!"
-  );
+export function getErrorMessage(error: unknown): string {
+  if (error instanceof AxiosError) {
+    const data = error.response?.data as ErrorResponse | undefined;
+    return data?.error ?? data?.err?.message ?? data?.message ?? error.message;
+  }
+  if (error instanceof Error) return error.message;
+  if (typeof error === "string") return error;
+  return "Erro inesperado!";
 }

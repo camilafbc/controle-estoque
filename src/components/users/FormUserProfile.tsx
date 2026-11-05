@@ -1,35 +1,20 @@
 "use client";
 
-import { yupResolver } from "@hookform/resolvers/yup";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { Key } from "lucide-react";
 import { Session } from "next-auth";
 import { forwardRef, useEffect, useImperativeHandle, useState } from "react";
-import { useForm } from "react-hook-form";
-import * as yup from "yup";
+import { SubmitHandler, useForm } from "react-hook-form";
 
+import {
+  FormUserProfileFields,
+  userProfileValidationSchema,
+} from "@/schemas/user-profile-schema";
+
+export type { FormUserProfileFields };
 import { Button } from "../ui/button";
 import { Form, FormField, FormItem, FormMessage } from "../ui/form";
 import { Input } from "../ui/input";
-
-const validationSchema = yup.object({
-  nome: yup.string().required("Campo obrigatório"),
-  email: yup.string().email("E-mail inválido").required("Campo obrigatório"),
-  password: yup
-    .string()
-    .test(
-      "min-length",
-      "A senha deve ter no mínimo 6 caracteres",
-      (value) => !value || value.length >= 6,
-    ),
-  confirmaSenha: yup
-    .string()
-    .test("confirmaSenha", "As senhas não coincidem", function (value) {
-      const { password } = this.parent;
-      return !password || password === value;
-    }),
-});
-
-export type FormUserProfileFields = yup.InferType<typeof validationSchema>;
 
 export interface FormUserProfileRef {
   resetForm: () => void;
@@ -38,7 +23,7 @@ export interface FormUserProfileRef {
 }
 interface FormUserProfileProps {
   initialValues?: Session | null;
-  onSubmit?: any;
+  onSubmit?: SubmitHandler<FormUserProfileFields>;
 }
 
 const FormUserProfile = forwardRef<FormUserProfileRef, FormUserProfileProps>(
@@ -47,7 +32,7 @@ const FormUserProfile = forwardRef<FormUserProfileRef, FormUserProfileProps>(
       useState<boolean>(false);
 
     const form = useForm<FormUserProfileFields>({
-      resolver: yupResolver(validationSchema),
+      resolver: zodResolver(userProfileValidationSchema),
       defaultValues: {
         nome: "",
         email: "",

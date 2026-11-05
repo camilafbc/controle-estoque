@@ -1,7 +1,11 @@
-export const getErrorMessageFromAction = (data: any) => {
-  console.log("ERROR: ", data);
-  const mensagens = Array.isArray(data.message)
+type ActionError = {
+  error?: string;
+  message?: string | string[];
+};
+
+export const getErrorMessageFromAction = (data: ActionError): string => {
+  const message = Array.isArray(data.message)
     ? data.message.join(", ")
     : data.message;
-  return mensagens ?? data.error;
+  return message ?? data.error ?? "Erro inesperado!";
 };

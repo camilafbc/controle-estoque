@@ -1,4 +1,5 @@
 import api from "@/lib/axios";
+import { DashboardOperacao, RelatorioDozeMeses } from "@/types/Operacao";
 
 export const getDashTotalProdutos = async () => {
   const response = await api.get("/dashboard/totalGeral");
@@ -16,14 +17,14 @@ export const getDashTotalVencimento = async () => {
 };
 
 export const getRelatorioDozeMeses = async (idCurso: number) => {
-  const response = await api.get(
+  const response = await api.get<RelatorioDozeMeses[]>(
     `/api/user/operacoes/relatorios/${idCurso}/last-12-months`,
   );
   return response.data;
 };
 
 export const getDashLastOperacoes = async (idCurso: number) => {
-  const response = await api.get(
+  const response = await api.get<DashboardOperacao[]>(
     `/api/user/operacoes/relatorios/${idCurso}/last-10-op`,
   );
   return response.data;

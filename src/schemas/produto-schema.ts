@@ -1,22 +1,14 @@
-import * as yup from "yup";
+import { z } from "zod";
 
-export const produtoValidationSchema = yup.object({
-  prodDescricao: yup.string().required("Campo obrigatório"),
-  prodFabricante: yup.string().required("Campo obrigatório"),
-  prodLote: yup.string().required("Campo obrigatório"),
-  prodQuantidade: yup
+export const produtoValidationSchema = z.object({
+  prodDescricao: z.string().min(1, "Campo obrigatório"),
+  prodFabricante: z.string().min(1, "Campo obrigatório"),
+  prodLote: z.string().min(1, "Campo obrigatório"),
+  prodQuantidade: z
     .string()
-    .matches(/^\d+$/, "Quantidade deve ser um número inteiro")
-    .required("Campo obrigatório"),
-  prodValidade: yup.date().required("Campo obrigatório"),
-
-  turma: yup.string().required("Campo obrigatório"),
+    .regex(/^\d+$/, "Quantidade deve ser um número inteiro"),
+  prodValidade: z.coerce.date({ message: "Campo obrigatório" }),
+  turma: z.string().min(1, "Campo obrigatório"),
 });
 
-// export const produtoUpdateValidationSchema = produtoValidationSchema.concat(
-//   yup.object({
-//     idProduto: yup.number().required("Id obrigatório!"),
-//   }),
-// );
-
-export type FormProdutoFields = yup.InferType<typeof produtoValidationSchema>;
+export type FormProdutoFields = z.infer<typeof produtoValidationSchema>;

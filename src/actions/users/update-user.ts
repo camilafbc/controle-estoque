@@ -1,14 +1,13 @@
 "use server";
 
 import bcrypt from "bcryptjs";
-import * as yup from "yup";
-
 import { Prisma } from "@/generated/prisma";
 import { authorizeAdmin } from "@/lib/authz";
 import prisma from "@/lib/prisma";
 import { userValidationSchema } from "@/schemas/user-schema";
 import { User } from "@/types/User";
 import { handleDatabaseError } from "@/utils/handleDbError";
+import { getValidationMessages } from "@/utils/getValidationMessages";
 
 export const updateUser = async (user: Partial<User>) => {
   try {
@@ -20,10 +19,13 @@ export const updateUser = async (user: Partial<User>) => {
 
     const validationSchema = userValidationSchema.omit(["confirmaSenha"]);
 
-    await validationSchema.validate(user, {
-      abortEarly: false,
-      context: { isEdit: true },
-    });
+    const validation = validationSchema.safeParse(user);
+    if (!validation.success) {
+      return {
+        error: "Dados inválidos",
+        messages: getValidationMessages(validation.error),
+      };
+    }
 
     const dataToUpdate: Prisma.UserUncheckedUpdateInput = {
       nome: user.nome,
@@ -44,10 +46,6 @@ export const updateUser = async (user: Partial<User>) => {
 
     return { message: "Dados atualizados com sucesso!", data: updatedUser };
   } catch (error) {
-    if (error instanceof yup.ValidationError) {
-      return { error: "Dados inválidos", messages: error.errors };
-    }
-
     const dbError = handleDatabaseError(error);
 
     console.error("Erro ao atualizar usuário: ", dbError);

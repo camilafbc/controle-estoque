@@ -24,6 +24,7 @@ import {
   ChartTooltipContent,
 } from "@/components/ui/chart";
 import { cn } from "@/lib/utils";
+import { RelatorioDozeMeses } from "@/types/Operacao";
 
 const meses = [
   "Janeiro",
@@ -40,7 +41,7 @@ const meses = [
   "Dezembro",
 ];
 
-const processarDadosUltimosDozeMeses = (dados: any[]) => {
+const processarDadosUltimosDozeMeses = (dados: RelatorioDozeMeses[]) => {
   // Obter o mês atual
   const dataAtual = new Date();
   const mesAtual = dataAtual.getMonth();
@@ -61,8 +62,8 @@ const processarDadosUltimosDozeMeses = (dados: any[]) => {
   }
 
   dados.forEach((dado) => {
-    const mesIndex = parseInt(dado.mes) - 1;
-    const anoDado = parseInt(dado.ano);
+    const mesIndex = Number(dado.mes) - 1;
+    const anoDado = Number(dado.ano);
 
     // Encontrar o mês correspondente no array de últimos 12 meses
     const mesEncontrado = ultimosDozeMeses.find(
@@ -77,14 +78,8 @@ const processarDadosUltimosDozeMeses = (dados: any[]) => {
   return ultimosDozeMeses;
 };
 
-type ChartData = {
-  month: string;
-  entradas: number;
-  saidas: number;
-};
-
 interface GraficoDozeMesesProps {
-  data: ChartData[];
+  data: RelatorioDozeMeses[];
   isLoading?: boolean;
   className?: string;
   delay: number;

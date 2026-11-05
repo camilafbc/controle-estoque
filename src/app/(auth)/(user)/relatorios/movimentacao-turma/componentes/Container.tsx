@@ -1,13 +1,13 @@
 "use client";
 
-import { yupResolver } from "@hookform/resolvers/yup";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { pdf } from "@react-pdf/renderer";
 import { addDays } from "date-fns";
 import { FileText } from "lucide-react";
 import { useSession } from "next-auth/react";
 import { useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
-import * as yup from "yup";
+import { z } from "zod";
 
 import { createRelatorioMovimentacoes } from "@/api/relatorio";
 import { DatePickerWithRange } from "@/components/DatePickerWithRange";
@@ -22,19 +22,18 @@ import { Turma } from "@/types/Turma";
 import Alert from "./Alert";
 import RelatorioDocument from "./relatorioMovTurma";
 
-const validationSchema = yup.object().shape({
-  turma: yup.string().required("Turma é obrigatória"),
-  dateRange: yup
-    .object()
-    .shape({
-      from: yup.date().required("Data de início é obrigatória"),
-      to: yup.date().notRequired().nullable().default(undefined),
+const validationSchema = z.object({
+  turma: z.string().min(1, "Turma é obrigatória"),
+  dateRange: z
+    .object({
+      from: z.date({ message: "Data de início é obrigatória" }),
+      to: z.date().nullable().optional(),
     })
     .nullable()
-    .required("Intervalo de datas é obrigatório"),
+    .refine((value) => value?.from, "Intervalo de datas é obrigatório"),
 });
 
-type FormData = yup.InferType<typeof validationSchema>;
+type FormData = z.infer<typeof validationSchema>;
 
 interface MovTurmaContainerProps {
   idCurso: number;
@@ -47,8 +46,8 @@ export default function MovTurmaContainer({ idCurso }: MovTurmaContainerProps) {
   const [alertMessage, setAlertMessage] = useState("");
   const { data: turmasData, isLoading: turmasLoading } = useTurmas(idCurso);
 
-  const form = useForm({
-    resolver: yupResolver(validationSchema),
+  const form = useForm<FormData>({
+    resolver: zodResolver(validationSchema),
     defaultValues: {
       turma: turmasData
         .filter((turma: Turma) => turma.status === true)

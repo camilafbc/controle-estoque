@@ -1,12 +1,11 @@
 "use client";
 
-import { yupResolver } from "@hookform/resolvers/yup";
+import { zodResolver } from "@hookform/resolvers/zod";
 import dayjs from "dayjs";
 import { useSearchParams } from "next/navigation";
 import { forwardRef, ReactNode, useEffect, useImperativeHandle } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { NumericFormat } from "react-number-format";
-import * as yup from "yup";
 
 import {
   FormProdutoFields,
@@ -64,7 +63,7 @@ const FormProduto = forwardRef<FormProdutoRef, FormProdutoProps>(
     const turmaSelected = params.get("turma");
 
     const form = useForm<FormProdutoFields>({
-      resolver: yupResolver(produtoValidationSchema),
+      resolver: zodResolver(produtoValidationSchema),
       defaultValues: {
         prodDescricao: "",
         prodFabricante: "",

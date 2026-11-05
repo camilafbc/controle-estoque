@@ -1,6 +1,6 @@
 "use client";
 
-import { yupResolver } from "@hookform/resolvers/yup";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { Key } from "lucide-react";
 import { forwardRef, useImperativeHandle } from "react";
 import { useEffect, useState } from "react";
@@ -49,7 +49,7 @@ const FormUser = forwardRef<FormUserRef, FormUserProps>(
     const [showPasswordContainer, setShowPasswordContainer] = useState(true);
 
     const form = useForm<FormUserFields>({
-      resolver: yupResolver(userValidationSchema),
+      resolver: zodResolver(userValidationSchema),
       defaultValues: {
         nome: "",
         email: "",

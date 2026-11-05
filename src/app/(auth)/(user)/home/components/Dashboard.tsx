@@ -1,13 +1,13 @@
 "use client";
 
 import { Boxes, CalendarDays, GraduationCap, Package } from "lucide-react";
-import { getServerSession } from "next-auth";
 
 import DashboardCard from "@/components/dashboard/DashboardCard";
 import GraficoDozeMeses from "@/components/dashboard/GraficoDozeMeses";
 import TableOperacoes from "@/components/dashboard/TabelaOperacoes";
 import { authOptions } from "@/lib/auth";
 import { useDashRelatorioDozeMeses } from "@/queries/dashboard";
+import { DashboardOperacao, RelatorioDozeMeses } from "@/types/Operacao";
 
 interface DashboardProps {
   initialData: {
@@ -15,8 +15,8 @@ interface DashboardProps {
     produtos: number;
     estoque: number;
     validade: number;
-    lastMonths: any;
-    lastOps: any;
+    lastMonths: RelatorioDozeMeses[];
+    lastOps: DashboardOperacao[];
   };
   idCurso: number | undefined;
 }
@@ -90,7 +90,7 @@ export default function Dashboard({ initialData, idCurso }: DashboardProps) {
           }
         />
         <GraficoDozeMeses
-          data={lastMonthsData.data}
+          data={lastMonthsData.data ?? []}
           isLoading={lastMonthsData.isFetching}
           delay={4}
           className="sm:col-span-2"

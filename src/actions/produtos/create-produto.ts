@@ -1,12 +1,11 @@
 "use server";
 
-import * as yup from "yup";
-
 import { authorizeUser } from "@/lib/authz";
 import prisma from "@/lib/prisma";
 import { produtoValidationSchema } from "@/schemas/produto-schema";
 import { Produto } from "@/types/Produto";
 import { handleDatabaseError } from "@/utils/handleDbError";
+import { getValidationMessages } from "@/utils/getValidationMessages";
 
 export const createProduto = async (
   produto: Omit<Produto, "idProduto" | "prodTurma">,
@@ -19,10 +18,17 @@ export const createProduto = async (
 
     if (!uuidTurma) return { error: "Turma não selecionada." };
 
-    await produtoValidationSchema.validate(
-      { ...produto, turma: uuidTurma },
-      { abortEarly: false },
-    );
+    const validation = produtoValidationSchema.safeParse({
+      ...produto,
+      prodQuantidade: String(produto.prodQuantidade),
+      turma: uuidTurma,
+    });
+    if (!validation.success) {
+      return {
+        error: "Dados inválidos",
+        messages: getValidationMessages(validation.error),
+      };
+    }
 
     // A turma precisa pertencer ao curso do usuário autenticado
     const turma = await prisma.turma.findFirst({
@@ -61,10 +67,6 @@ export const createProduto = async (
 
     return { message: "Produto criado com sucesso!", data: produtoCreated };
   } catch (error) {
-    if (error instanceof yup.ValidationError) {
-      return { error: "Dados inválidos", messages: error.errors };
-    }
-
     const dbError = handleDatabaseError(error);
 
     console.error("Erro ao criar produto: ", dbError);

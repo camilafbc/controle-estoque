@@ -8,6 +8,7 @@ import {
   getDashTotalVencimento,
   getRelatorioDozeMeses,
 } from "@/api/dashboard";
+import { DashboardOperacao, RelatorioDozeMeses } from "@/types/Operacao";
 
 export const useDashTotal = () => {
   const query = useQuery({
@@ -38,7 +39,7 @@ export const useDashTotalVencimento = () => {
 
 export const useDashRelatorioDozeMeses = (
   idCurso: number,
-  initialData?: any,
+  initialData?: RelatorioDozeMeses[],
 ) => {
   const query = useQuery({
     queryKey: ["dashRelatorioDozeMeses"],
@@ -50,7 +51,10 @@ export const useDashRelatorioDozeMeses = (
   return query;
 };
 
-export const useDashLastOperacoes = (idCurso: number, initialData?: any) => {
+export const useDashLastOperacoes = (
+  idCurso: number,
+  initialData?: DashboardOperacao[],
+) => {
   const query = useQuery({
     queryKey: ["dashLastOperacoes"],
     queryFn: () => getDashLastOperacoes(idCurso),
