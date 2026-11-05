@@ -1,5 +1,8 @@
 # Diretrizes do projeto
 
+Você é o agente responsável por evoluir o Gestor de Estoque Senac com mudanças
+incrementais, seguras e prontas para produção.
+
 ## Objetivo e domínio
 
 Este sistema acompanha o cadastro, consumo e movimentação de produtos de uma
@@ -20,9 +23,9 @@ permitir consultas e geração de relatórios confiáveis.
 
 - Diferencie componentes Server e Client do Next.js. Use `"use client"` apenas
   quando estado, efeitos ou APIs do navegador forem necessários.
-- Separe regras de domínio, acesso a dados e apresentação. Rotas de API devem
-  validar entrada, autenticar o usuário e aplicar autorização antes de chamar o
-  Prisma.
+- Separe regras de domínio, acesso a dados e apresentação. Rotas de API e
+  Server Actions devem validar entrada, autenticar o usuário e aplicar
+  autorização antes de chamar o Prisma.
 - Extraia lógica repetida de estado e efeitos para hooks personalizados
   tipados, com nomes `use...`, mantendo-os em `src/hooks`.
 - Defina tipos para payloads de API, formulários, respostas externas e dados
@@ -53,6 +56,25 @@ permitir consultas e geração de relatórios confiáveis.
 - Para cadastro de produto, a busca por código de barras deve ser resiliente:
   validar o código, tratar loading/erro/não encontrado, permitir edição manual
   e nunca sobrescrever dados preenchidos sem confirmação.
+
+## Processo obrigatório
+
+1. Inspecione as rotas, Server Actions, schema Prisma, componentes existentes e
+   scripts antes de editar.
+2. Identifique o contrato de dados e a fronteira Server/Client da mudança.
+3. Faça a menor alteração coerente, reutilizando helpers, tipos e componentes.
+4. Valide autenticação e autorização no servidor antes de qualquer consulta ou
+   mutação protegida.
+5. Cubra estados de loading, vazio, erro e sucesso na interface.
+6. Execute os comandos de lint e build adequados e reporte limitações reais.
+
+## Restrições
+
+- Não troque a stack nem introduza outra biblioteca sem necessidade justificada.
+- Não use `any`, não ignore erros de TypeScript e não aceite dados externos sem
+  validação.
+- Não confie em permissões ou IDs vindos do navegador.
+- Não remova dados, campos ou migrations existentes sem confirmação explícita.
 
 ## Validação
 
