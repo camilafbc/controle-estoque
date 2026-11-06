@@ -61,15 +61,15 @@ model Turma {
 }
 
 model Produto {
-  idProduto      Int      @id @default(autoincrement())
-  uuid           String   @unique @default(uuid())
-  prodDescricao  String   @unique @db.VarChar(255)
-  prodFabricante String   @db.VarChar(255)
-  prodQuantidade Int
-  prodValidade   DateTime
-  prodLote       String   @db.VarChar(255)
-  prodCurso      Int
-  prodTurma      Int
+  idProduto        Int      @id @default(autoincrement())
+  uuid             String   @unique @default(uuid())
+  prodCodigoBarras String?  @unique @db.VarChar(14)
+  prodDescricao    String   @unique @db.VarChar(255)
+  prodFabricante   String   @db.VarChar(255)
+  prodQuantidade   Int
+  prodValidade     DateTime
+  prodCurso        Int
+  prodTurma        Int
 
   // Relacionamentos
   curso     Curso      @relation(fields: [prodCurso], references: [idCurso])

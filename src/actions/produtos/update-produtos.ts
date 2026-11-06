@@ -49,9 +49,9 @@ export const updateProduto = async (
     const produtoUpdated = await prisma.produto.update({
       where: { idProduto: produtoAtual.idProduto },
       data: {
+        prodCodigoBarras: produto.prodCodigoBarras?.trim() || null,
         prodDescricao: produto.prodDescricao.trim(),
         prodFabricante: produto.prodFabricante.trim(),
-        prodLote: produto.prodLote.trim(),
         prodQuantidade: produto.prodQuantidade,
         prodValidade: produto.prodValidade,
         prodTurma: turma.idTurma,

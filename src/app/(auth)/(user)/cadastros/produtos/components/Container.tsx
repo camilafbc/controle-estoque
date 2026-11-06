@@ -169,11 +169,11 @@ export default function ProductContainer({
   const onSubmit: SubmitHandler<FormProdutoFields> = (data) => {
     const payload = {
       uuid: produto.data?.uuid,
+      prodCodigoBarras: data.prodCodigoBarras?.trim() || null,
       prodDescricao: data.prodDescricao.trim(),
       prodFabricante: data.prodFabricante.trim(),
       prodQuantidade: +data.prodQuantidade,
       prodValidade: data.prodValidade,
-      prodLote: data.prodLote.trim(),
       turmaUuid: data.turma,
       prodCurso: Number(idCurso),
     };
@@ -221,7 +221,7 @@ export default function ProductContainer({
           className="flex items-center gap-2 hover:bg-orange-500/90"
           onClick={handleNew}
         >
-          <PlusCircle className="size-4 md:size-8" />
+          <PlusCircle />
           Novo Produto
         </Button>
       </div>

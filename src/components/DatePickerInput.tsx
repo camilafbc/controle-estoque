@@ -27,7 +27,7 @@ const inputVariants = cva(
       },
       size: {
         default: "h-9 px-4 py-2",
-        lg: "h-10 rounded-md px-3",
+        lg: "h-11 rounded-xl text-base",
         sm: "h-8 rounded-md px-3 text-xs",
       },
     },
@@ -73,13 +73,13 @@ const DatePickerInput = forwardRef<HTMLInputElement, InputProps>(
         <Label
           className={cn(
             error ? "text-destructive" : "",
-            "text-xs font-semibold md:text-sm",
+            "text-xs font-semibold uppercase tracking-wider text-muted-foreground",
           )}
           htmlFor={id}
         >
           {label} {!!required && <span className="text-destructive">*</span>}
         </Label>
-        <div className="group flex items-stretch">
+        <div className="group flex h-11 items-stretch">
           <input
             {...props}
             className={cn(

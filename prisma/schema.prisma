@@ -63,11 +63,11 @@ model Turma {
 model Produto {
   idProduto       Int      @id @default(autoincrement())
   uuid            String  @default(uuid()) @unique
+  prodCodigoBarras String?  @unique @db.VarChar(14)
   prodDescricao   String   @unique @db.VarChar(255)
   prodFabricante  String   @db.VarChar(255)
   prodQuantidade  Int
   prodValidade    DateTime
-  prodLote        String   @db.VarChar(255)
   prodCurso       Int
   prodTurma       Int
   

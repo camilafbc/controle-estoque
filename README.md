@@ -29,7 +29,7 @@ A aplicação é construída sob uma arquitetura moderna, escalável e segura:
   - Visão geral gerencial de todos os cursos da unidade.
 - **Perfil Usuário (Coordenação/Docente)**:
   - Gestão de turmas com turnos e códigos específicos do seu respectivo curso.
-  - Cadastro de produtos com fabricante, validade, lote e alertas de estoque baixo/zerado.
+  - Cadastro de produtos por código de barras, fabricante, validade e alertas de estoque baixo/zerado.
   - Registro ágil de movimentações (entrada, saída/consumo e devolução).
   - Emissão de relatórios em PDF com filtro por período e turma.
 
@@ -78,6 +78,10 @@ JWT_KEY="sua_chave_secreta_adicional"
 
 # Configuração de Administrador
 DEVELOPER="1"
+
+# API GTIN OSCBR (V3)
+GTIN_API_USERNAME="seu_usuario"
+GTIN_API_PASSWORD="sua_senha"
 ```
 
 ### 4. Executar Migrações e Seed do Banco

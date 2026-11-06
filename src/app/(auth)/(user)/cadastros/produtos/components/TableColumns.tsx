@@ -62,19 +62,6 @@ export const columns = (
     meta: { type: "string", minWidth: "120" },
   },
   {
-    accessorKey: "prodLote",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Lote" />
-    ),
-    cell: ({ row }) => (
-      <span className="font-mono text-xs font-medium text-muted-foreground">
-        {row.original.prodLote}
-      </span>
-    ),
-    enableSorting: true,
-    meta: { type: "string", minWidth: "80" },
-  },
-  {
     accessorKey: "prodValidade",
     header: ({ column }) => (
       <DataTableColumnHeader

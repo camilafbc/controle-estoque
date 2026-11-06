@@ -41,9 +41,9 @@ export const createProduto = async (
     const produtoCreated = await prisma.$transaction(async (tx) => {
       const prod = await tx.produto.create({
         data: {
+          prodCodigoBarras: produto.prodCodigoBarras?.trim() || null,
           prodDescricao: produto.prodDescricao.trim(),
           prodFabricante: produto.prodFabricante.trim(),
-          prodLote: produto.prodLote.trim(),
           prodQuantidade: produto.prodQuantidade,
           prodValidade: new Date(produto.prodValidade),
           // O curso é sempre derivado da sessão, nunca do cliente

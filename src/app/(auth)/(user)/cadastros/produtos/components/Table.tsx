@@ -35,7 +35,7 @@ export default function ProductTable({
       (produto) =>
         produto.prodDescricao.toLowerCase().includes(term) ||
         produto.prodFabricante.toLowerCase().includes(term) ||
-        produto.prodLote.toLowerCase().includes(term)
+        produto.prodCodigoBarras?.includes(term)
     );
   }, [data, filterValue]);
 
