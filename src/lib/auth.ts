@@ -49,11 +49,15 @@ export const authOptions: AuthOptions = {
     }),
   ],
   callbacks: {
-    jwt: async ({ token, user }) => {
+    jwt: async ({ token, user, trigger, session }) => {
       if (user) {
         token.id = user.id;
         token.curso = user.curso;
         token.role = user.role;
+      }
+
+      if (trigger === "update" && typeof session?.name === "string") {
+        token.name = session.name;
       }
 
       return token;
@@ -63,6 +67,9 @@ export const authOptions: AuthOptions = {
         session.user.id = Number(token.id);
         session.user.curso = token.curso;
         session.user.role = token.role;
+        if (typeof token.name === "string") {
+          session.user.name = token.name;
+        }
         // keep accessToken if needed in future
         // session.accessToken = token.accessToken as string;
       }

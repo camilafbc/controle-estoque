@@ -43,10 +43,7 @@ export default function ContainerProfile() {
       const profileUpdated = await updateProfile(data);
       if (profileUpdated && "data" in profileUpdated) {
         await update({
-          user: {
-            ...session?.user,
-            name: profileUpdated.data,
-          },
+          name: profileUpdated.data,
         });
         toast.success(profileUpdated.message);
       } else if (profileUpdated && "error" in profileUpdated) {

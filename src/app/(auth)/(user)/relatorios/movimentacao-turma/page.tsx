@@ -36,15 +36,13 @@ export default async function Page() {
     <div className="space-y-6">
       <PageHeader
         title="Relatório de Movimentação"
-        description="Emita relatórios consolidados em PDF de entradas e saídas de produtos por turma e período."
-        icon={<FileSpreadsheet className="size-6" />}
+        description="Consulte e emita relatórios analíticos de entradas e saídas de produtos por turma e período, com visualização em tela, exportação em PDF institucional e planilha CSV."
+        icon={<FileSpreadsheet className="size-6 text-primary" />}
       />
 
-      <div className="rounded-2xl border border-border/70 bg-card p-6 shadow-sm sm:p-8">
-        <HydrationBoundary state={dehydrate(queryClient)}>
-          <MovTurmaContainer idCurso={idCurso} />
-        </HydrationBoundary>
-      </div>
+      <HydrationBoundary state={dehydrate(queryClient)}>
+        <MovTurmaContainer idCurso={idCurso} userName={session.user.name} />
+      </HydrationBoundary>
     </div>
   );
 }

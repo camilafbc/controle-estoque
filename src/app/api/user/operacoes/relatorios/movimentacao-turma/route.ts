@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 
 import { authErrorResponse, authorizeUser } from "@/lib/authz";
+import { getCursoById } from "@/services/cursos";
 import { getRelatorioOperacoes } from "@/services/operacoes";
 import { getTurmaById } from "@/services/turmas";
 import { handleDatabaseError } from "@/utils/handleDbError";
@@ -29,15 +30,19 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const relatorio = await getRelatorioOperacoes(
-      auth.ctx.idCurso,
-      turma.idTurma,
-      new Date(dataInicial),
-      new Date(dataFinal),
-    );
+    const [relatorio, curso] = await Promise.all([
+      getRelatorioOperacoes(
+        auth.ctx.idCurso,
+        turma.idTurma,
+        new Date(dataInicial),
+        new Date(dataFinal),
+      ),
+      getCursoById(auth.ctx.idCurso),
+    ]);
 
     return NextResponse.json(
       {
+        curso: curso?.nomeCurso ?? "Curso Senac",
         turma: turma.codigoTurma,
         turnoTurma: turma.turnoTurma,
         data: relatorio,
