@@ -57,15 +57,15 @@ export default function TableOperacoes({
       }}
       className={cn("w-full", className)}
     >
-      <Card className="h-full shadow-md">
-        <CardHeader>
+      <Card className="flex h-full max-h-[470px] flex-col shadow-md">
+        <CardHeader className="shrink-0">
           <CardTitle className="text-lg">Últimas Movimentações</CardTitle>
           <CardDescription className="text-xs">
             Últimas movimentações realizadas
           </CardDescription>
         </CardHeader>
-        <CardContent>
-          <div className="max-h-[346px] overflow-y-auto">
+        <CardContent className="min-h-0 flex-1">
+          <div className="h-full overflow-y-auto">
             <Table>
               <TableHeader>
                 <TableRow>
