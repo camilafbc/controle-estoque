@@ -1,7 +1,7 @@
 "use client";
 
 import { PlusCircle } from "lucide-react";
-import { useRef, useState } from "react";
+import { useRef } from "react";
 import { SubmitHandler } from "react-hook-form";
 import { toast } from "react-toastify";
 
@@ -10,6 +10,8 @@ import { SearchInput } from "@/components/SearchInput";
 import { Button } from "@/components/ui/button";
 import { DataTable } from "@/components/ui/data-table/data-table";
 import FormUser, { FormUserRef } from "@/components/users/FormUser";
+import { useCrudDialog } from "@/hooks/useCrudDialog";
+import { useListFilter } from "@/hooks/useListFilter";
 import {
   useDeleteUserMutation,
   useCreatetUserMutation,
@@ -28,9 +30,13 @@ export default function UsersContainer() {
   // ref
   const formRef = useRef<FormUserRef>(null);
   // states
-  const [filterValue, setFilterValue] = useState("");
-  const [openDialog, setOpenDialog] = useState(false);
-  const [editingId, setEditingId] = useState<number | null>(null);
+  const {
+    isOpen: openDialog,
+    editingId,
+    openForCreate,
+    openForEdit,
+    close: closeDialog,
+  } = useCrudDialog<number>();
   // data
   const { data: usersData, isLoading: usersLoading } = useUsers();
   const { data: usuario } = useGetUser(Number(editingId));
@@ -40,24 +46,17 @@ export default function UsersContainer() {
   const createUser = useCreatetUserMutation();
   const updateUser = useUpdateUserMutation();
 
-  const filteredData = usersData
-    ? usersData?.filter((user: { nome: string }) =>
-        user.nome.toLowerCase().includes(filterValue.toLowerCase()),
-      )
-    : [];
-
-  const handleAddButton = () => {
-    setEditingId(null);
-    setOpenDialog(true);
-  };
+  const { search: filterValue, setSearch: setFilterValue, filteredItems } =
+    useListFilter({
+      items: usersData,
+      getSearchText: (user) =>
+        [user.nome, user.email, user.role, user.curso?.nomeCurso]
+          .filter(Boolean)
+          .join(" "),
+    });
 
   const handleClose = () => {
-    setOpenDialog(false);
-  };
-
-  const handleEdit = (id: number) => {
-    setEditingId(id);
-    setOpenDialog(true);
+    closeDialog();
   };
 
   const handleDelete = (id: number) => {
@@ -86,7 +85,7 @@ export default function UsersContainer() {
         }
         toast.success("Usuário criado com sucesso!");
         formRef.current?.resetForm();
-        setOpenDialog(false);
+        closeDialog();
       },
       onError: (error) => {
         toast.error(getErrorMessage(error));
@@ -103,7 +102,7 @@ export default function UsersContainer() {
           return;
         }
         toast.success("Dados atualizados com sucesso!");
-        setOpenDialog(false);
+        closeDialog();
       },
       onError: (error) => {
         toast.error(getErrorMessage(error));
@@ -130,14 +129,16 @@ export default function UsersContainer() {
 
   return (
     <>
-      <div className="mb-8 flex flex-col items-start justify-between gap-2 md:flex-row md:items-center">
+      <div className="mb-6 flex flex-col items-start justify-between gap-3 md:flex-row md:items-center">
         <SearchInput
-          placeholder="Buscar Usuário"
+          placeholder="Buscar por nome, e-mail ou curso"
+          aria-label="Buscar usuários por nome, e-mail, tipo ou curso"
           value={filterValue}
           onChange={(event) => setFilterValue(event.target.value)}
+          onClear={() => setFilterValue("")}
         />
         <Button
-          onClick={handleAddButton}
+          onClick={openForCreate}
           className="flex items-center gap-2 hover:bg-orange-500/90"
         >
           <PlusCircle className="size-4" />
@@ -145,17 +146,43 @@ export default function UsersContainer() {
         </Button>
       </div>
       <DataTable
-        columns={columns(handleEdit, handleDelete)}
-        data={filteredData || []}
+        columns={columns(
+          openForEdit,
+          handleDelete,
+          deleteMutation.isPending ? deleteMutation.variables : undefined,
+        )}
+        data={filteredItems}
         isLoading={usersLoading}
+        filterValue={filterValue}
+        onClearFilter={() => setFilterValue("")}
+        totalRawCount={usersData?.length}
+        emptyTitle={filterValue ? "Nenhum usuário encontrado" : "Nenhum usuário cadastrado"}
+        emptyDescription={
+          filterValue
+            ? "Tente buscar por outro nome, e-mail ou curso."
+            : "Cadastre um usuário para liberar o acesso ao sistema."
+        }
       />
+      {!usersLoading && usersData?.length ? (
+        <p className="mt-3 text-sm text-muted-foreground" aria-live="polite">
+          {filteredItems.length}{" "}
+          {filteredItems.length === 1 ? "usuário encontrado" : "usuários encontrados"}
+        </p>
+      ) : null}
 
       <MyDialog
         size="xl"
         open={openDialog}
-        setIsOpen={setOpenDialog}
+        setIsOpen={(state) => {
+          if (!state) closeDialog();
+        }}
         title={
           usuario?.idUser ? `Usuário: ${usuario.nome}` : "Cadastro de Usuários"
+        }
+        description={
+          usuario?.idUser
+            ? "Atualize os dados de acesso e o vínculo deste usuário."
+            : "Preencha os dados abaixo para criar um novo acesso."
         }
         footerChildren={
           <div className="grid grid-cols-1 justify-end gap-2 sm:grid-cols-2">

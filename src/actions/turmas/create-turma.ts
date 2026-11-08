@@ -1,40 +1,36 @@
 "use server";
 
-import { getServerSession } from "next-auth";
-import * as yup from "yup";
-
-import { authOptions } from "@/lib/auth";
+import { authorizeUser } from "@/lib/authz";
 import prisma from "@/lib/prisma";
 import { turmaValidationSchema } from "@/schemas/turma-schema";
 import { Turma } from "@/types/Turma";
+import { getValidationMessages } from "@/utils/getValidationMessages";
 import { handleDatabaseError } from "@/utils/handleDbError";
 
 export const createTurma = async (turma: Omit<Turma, "idTurma">) => {
   try {
-    const session = await getServerSession(authOptions);
+    const auth = await authorizeUser();
+    if (!auth.ok) return { error: auth.error };
 
-    if (!session || session.user.role !== "user") {
-      return { error: "Usuário não autorizado" };
+    const validation = turmaValidationSchema.safeParse(turma);
+    if (!validation.success) {
+      return {
+        error: "Dados inválidos",
+        messages: getValidationMessages(validation.error),
+      };
     }
-
-    const teste = await turmaValidationSchema.validate(turma, {
-      abortEarly: false,
-    });
 
     const turmaCreated = await prisma.turma.create({
       data: {
         codigoTurma: turma.codigoTurma.trim(),
-        idCurso: Number(turma.idCurso),
+        // O curso é sempre derivado da sessão, nunca do cliente
+        idCurso: auth.ctx.idCurso,
         turnoTurma: turma.turnoTurma.trim(),
         status: turma.status,
       },
     });
     return { message: "Turma criada com sucesso!", data: turmaCreated };
   } catch (error) {
-    if (error instanceof yup.ValidationError) {
-      return { error: "Dados inválidos", messages: error.errors };
-    }
-
     const dbError = handleDatabaseError(error);
 
     console.error("Erro ao criar nova turma: ", dbError);

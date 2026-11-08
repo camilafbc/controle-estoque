@@ -1,12 +1,10 @@
 "use server";
 
-import { getServerSession } from "next-auth";
-import * as yup from "yup";
-
-import { authOptions } from "@/lib/auth";
+import { authorizeUser } from "@/lib/authz";
 import prisma from "@/lib/prisma";
 import { produtoValidationSchema } from "@/schemas/produto-schema";
 import { Produto } from "@/types/Produto";
+import { getValidationMessages } from "@/utils/getValidationMessages";
 import { handleDatabaseError } from "@/utils/handleDbError";
 
 export const updateProduto = async (
@@ -14,55 +12,56 @@ export const updateProduto = async (
   uuidTurma: string,
 ) => {
   try {
-    const session = await getServerSession(authOptions);
+    const auth = await authorizeUser();
+    if (!auth.ok) return { error: auth.error };
+    const { idCurso } = auth.ctx;
 
-    if (!session || session.user.role !== "user") {
-      return { error: "Usuário não autorizado" };
+    if (!uuidTurma) return { error: "Turma não selecionada." };
+    if (!produto.uuid) return { error: "Produto não selecionado." };
+
+    const validation = produtoValidationSchema.safeParse({
+      ...produto,
+      prodQuantidade: String(produto.prodQuantidade),
+      turma: uuidTurma,
+    });
+    if (!validation.success) {
+      return {
+        error: "Dados inválidos",
+        messages: getValidationMessages(validation.error),
+      };
     }
 
-    if (!uuidTurma)
-      return { error: "Erro ao excluir dados; item não selecionado." };
+    // Produto e turma precisam pertencer ao curso do usuário autenticado
+    const [produtoAtual, turma] = await Promise.all([
+      prisma.produto.findFirst({
+        where: { uuid: produto.uuid, prodCurso: idCurso },
+        select: { idProduto: true },
+      }),
+      prisma.turma.findFirst({
+        where: { uuid: uuidTurma, idCurso },
+        select: { idTurma: true, uuid: true },
+      }),
+    ]);
 
-    await produtoValidationSchema.validate(
-      { ...produto, turma: uuidTurma },
-      { abortEarly: false },
-    );
-
-    const turma = await prisma.turma.findUnique({
-      where: {
-        uuid: uuidTurma,
-      },
-      select: {
-        idTurma: true,
-        uuid: true,
-      },
-    });
-
+    if (!produtoAtual) return { error: "Produto não encontrado!" };
     if (!turma) return { error: "Turma vinculada não existe." };
 
     const produtoUpdated = await prisma.produto.update({
-      where: {
-        uuid: produto.uuid,
-      },
+      where: { idProduto: produtoAtual.idProduto },
       data: {
-        prodDescricao: produto?.prodDescricao?.trim(),
-        prodFabricante: produto?.prodFabricante?.trim(),
-        prodLote: produto?.prodLote?.trim(),
+        prodCodigoBarras: produto.prodCodigoBarras?.trim() || null,
+        prodDescricao: produto.prodDescricao.trim(),
+        prodFabricante: produto.prodFabricante.trim(),
         prodQuantidade: produto.prodQuantidade,
         prodValidade: produto.prodValidade,
-        prodCurso: produto.prodCurso,
         prodTurma: turma.idTurma,
       },
     });
     return { data: { ...produtoUpdated, turma: { uuid: turma.uuid } } };
   } catch (error) {
-    if (error instanceof yup.ValidationError) {
-      return { error: "Dados inválidos", messages: error.errors };
-    }
-
     const dbError = handleDatabaseError(error);
 
-    console.error("Erro ao criar produto: ", dbError);
+    console.error("Erro ao atualizar produto: ", dbError);
     return { error: dbError.message };
   }
 };

@@ -2,6 +2,7 @@
 
 import { ColumnDef } from "@tanstack/react-table";
 
+import { StatusBadge } from "@/components/admin/StatusBadge";
 import {
   DataTableDeleteAction,
   DataTableEditAction,
@@ -13,23 +14,21 @@ import { formatarCodigo } from "@/utils/utils";
 export const columns = (
   handleEdit: (id: number) => void,
   handleDelete: (id: number) => void,
+  deletingId?: number,
 ): ColumnDef<Curso>[] => [
   {
     accessorKey: "acoes",
     header: ({ column }) => (
-      <DataTableColumnHeader
-        column={column}
-        title="Ações"
-        className="text-center text-base font-semibold text-gray-950 dark:text-white"
-      />
+      <DataTableColumnHeader column={column} title="Ações" />
     ),
     cell: ({ row }) => (
-      <div className="flex items-center justify-center">
+      <div className="flex items-center">
         <DataTableEditAction onClick={() => handleEdit(row.original.idCurso)} />
         <DataTableDeleteAction
           title="Curso"
           item={row.original.nomeCurso}
           onClick={() => handleDelete(row.original.idCurso)}
+          loading={deletingId === row.original.idCurso}
         />
       </div>
     ),
@@ -41,7 +40,11 @@ export const columns = (
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Código" />
     ),
-    cell: ({ row }) => formatarCodigo(row.getValue("idCurso"), 2),
+    cell: ({ row }) => (
+      <span className="font-mono text-xs font-medium text-muted-foreground">
+        {formatarCodigo(row.getValue("idCurso"), 2)}
+      </span>
+    ),
     enableSorting: true,
     meta: { type: "number" },
     size: 5,
@@ -49,14 +52,11 @@ export const columns = (
   {
     accessorKey: "status",
     header: ({ column }) => (
-      <DataTableColumnHeader
-        column={column}
-        title="Ativo"
-        className="justify-center"
-      />
+      <DataTableColumnHeader column={column} title="Ativo" />
     ),
+    cell: ({ row }) => <StatusBadge active={row.original.status} />,
     enableSorting: true,
-    meta: { type: "boolean", minWidth: "20" },
+    meta: { type: "string", minWidth: "20" },
     size: 5,
   },
   {

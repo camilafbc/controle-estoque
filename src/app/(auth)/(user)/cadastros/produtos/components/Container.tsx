@@ -2,7 +2,7 @@
 
 import { PlusCircle } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 
@@ -67,6 +67,16 @@ export default function ProductContainer({
   const [editingId, setEditingId] = useState<string>("");
   // queries e mutations
   const fetchTurmas = useTurmas(Number(idCurso), turmas);
+  const turmaOptions = useMemo(
+    () =>
+      (fetchTurmas.data ?? [])
+        .filter((turma: Turma) => turma.status)
+        .map((turma: Turma) => ({
+          label: `${turma.codigoTurma} - ${turma.turnoTurma}`,
+          id: turma.uuid,
+        })),
+    [fetchTurmas.data],
+  );
   const produtos = useProdutos(currentTurma, Number(idCurso));
   const produto = useProduto(editingId, currentTurma, Number(idCurso));
   const deleteMutation = useDeleteProductMutation();
@@ -159,11 +169,11 @@ export default function ProductContainer({
   const onSubmit: SubmitHandler<FormProdutoFields> = (data) => {
     const payload = {
       uuid: produto.data?.uuid,
+      prodCodigoBarras: data.prodCodigoBarras?.trim() || null,
       prodDescricao: data.prodDescricao.trim(),
       prodFabricante: data.prodFabricante.trim(),
       prodQuantidade: +data.prodQuantidade,
       prodValidade: data.prodValidade,
-      prodLote: data.prodLote.trim(),
       turmaUuid: data.turma,
       prodCurso: Number(idCurso),
     };
@@ -190,14 +200,7 @@ export default function ProductContainer({
                   label="Turma"
                   id="select-turma"
                   height={200}
-                  options={
-                    fetchTurmas.data
-                      .filter((turma: Turma) => turma.status === true)
-                      .map((turma: Turma) => ({
-                        label: `${turma.codigoTurma} - ${turma.turnoTurma}`,
-                        id: turma.uuid,
-                      })) || []
-                  }
+                  options={turmaOptions}
                   placeholder="Buscar turma"
                   loading={fetchTurmas.isFetching}
                   error={errors.turma?.message}
@@ -211,13 +214,14 @@ export default function ProductContainer({
             placeholder="Buscar produto"
             value={filterValue}
             onChange={(event) => setFilterValue(event.target.value)}
+            onClear={() => setFilterValue("")}
           />
         </form>
         <Button
           className="flex items-center gap-2 hover:bg-orange-500/90"
           onClick={handleNew}
         >
-          <PlusCircle className="size-4 md:size-8" />
+          <PlusCircle />
           Novo Produto
         </Button>
       </div>
@@ -227,6 +231,7 @@ export default function ProductContainer({
         onDelete={handleDelete}
         onEdit={handleEdit}
         filterValue={filterValue}
+        onClearFilter={() => setFilterValue("")}
         data={produtos.data || []}
         isLoading={produtos.isLoading || produto.isFetching}
       />

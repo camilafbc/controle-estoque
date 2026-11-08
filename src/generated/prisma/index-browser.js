@@ -151,11 +151,11 @@ exports.Prisma.TurmaScalarFieldEnum = {
 exports.Prisma.ProdutoScalarFieldEnum = {
   idProduto: 'idProduto',
   uuid: 'uuid',
+  prodCodigoBarras: 'prodCodigoBarras',
   prodDescricao: 'prodDescricao',
   prodFabricante: 'prodFabricante',
   prodQuantidade: 'prodQuantidade',
   prodValidade: 'prodValidade',
-  prodLote: 'prodLote',
   prodCurso: 'prodCurso',
   prodTurma: 'prodTurma'
 };

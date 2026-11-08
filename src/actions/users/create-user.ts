@@ -1,27 +1,30 @@
 "use server";
 
 import bcrypt from "bcryptjs";
-import { getServerSession } from "next-auth";
-import * as yup from "yup";
 
-import { authOptions } from "@/lib/auth";
+import { authorizeAdmin } from "@/lib/authz";
 import prisma from "@/lib/prisma";
 import { userActionValidationSchema } from "@/schemas/user-schema";
 import { hasUserEmail } from "@/services/users";
 import { User } from "@/types/User";
+import { getValidationMessages } from "@/utils/getValidationMessages";
 import { handleDatabaseError } from "@/utils/handleDbError";
 
 export const createUser = async (user: Omit<User, "idUser">) => {
   try {
-    const session = await getServerSession(authOptions);
+    // Somente administradores podem cadastrar usuários
+    const auth = await authorizeAdmin();
+    if (!auth.ok) return { error: auth.error };
 
-    if (!session) return { error: "Usuário não autorizado." };
+    const userDoing = auth.ctx.userId;
 
-    const userDoing = +session?.user.id;
-
-    await userActionValidationSchema.validate(user, {
-      abortEarly: false,
-    });
+    const validation = userActionValidationSchema.safeParse(user);
+    if (!validation.success) {
+      return {
+        error: "Dados inválidos",
+        messages: getValidationMessages(validation.error),
+      };
+    }
 
     const userExist = await hasUserEmail(user.email);
     if (userExist) return { error: "E-mail já cadastrado." };
@@ -42,10 +45,6 @@ export const createUser = async (user: Omit<User, "idUser">) => {
 
     return { message: "Usuário criado com sucesso!", data: userData };
   } catch (error) {
-    if (error instanceof yup.ValidationError) {
-      return { error: "Dados inválidos", messages: error.errors };
-    }
-
     const dbError = handleDatabaseError(error);
 
     console.error("Erro ao criar usuário: ", dbError);

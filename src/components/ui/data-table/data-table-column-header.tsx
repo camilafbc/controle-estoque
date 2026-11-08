@@ -1,5 +1,8 @@
+"use client";
+
 import { Column } from "@tanstack/react-table";
-import { ArrowUpDown } from "lucide-react";
+import { ArrowDown, ArrowUp, ArrowUpDown } from "lucide-react";
+import * as React from "react";
 
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -16,18 +19,32 @@ export function DataTableColumnHeader<TData, TValue>({
   className,
 }: DataTableColumnHeaderProps<TData, TValue>) {
   if (!column.getCanSort()) {
-    return <div className={cn(className)}>{title}</div>;
+    return <div className={cn("text-xs font-semibold text-muted-foreground", className)}>{title}</div>;
   }
 
+  const isSorted = column.getIsSorted();
+
   return (
-    <div className={cn("flex items-center space-x-2", className)}>
+    <div className={cn("flex items-center space-x-1.5", className)}>
       <Button
         variant="ghost"
-        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        className="h-8 px-0 text-base font-semibold text-gray-900 hover:bg-transparent dark:text-white"
+        size="sm"
+        onClick={() => column.toggleSorting(isSorted === "asc")}
+        className={cn(
+          "-ml-2.5 h-8 px-2.5 text-xs font-semibold tracking-tight transition-colors hover:bg-muted/60",
+          isSorted
+            ? "text-primary font-bold"
+            : "text-muted-foreground hover:text-foreground"
+        )}
       >
-        {title}
-        <ArrowUpDown className="ml-2 h-3 w-3" />
+        <span>{title}</span>
+        {isSorted === "desc" ? (
+          <ArrowDown className="ml-1.5 size-3.5 text-primary" />
+        ) : isSorted === "asc" ? (
+          <ArrowUp className="ml-1.5 size-3.5 text-primary" />
+        ) : (
+          <ArrowUpDown className="ml-1.5 size-3 text-muted-foreground/60" />
+        )}
       </Button>
     </div>
   );

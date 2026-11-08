@@ -45,7 +45,6 @@
     "dayjs": "^1.11.13",
     "framer-motion": "^12.18.1",
     "jsonwebtoken": "^9.0.2",
-    "jwt-decode": "^4.0.0",
     "lucide-react": "^0.429.0",
     "next": "14.2.6",
     "next-auth": "^4.24.7",
@@ -60,7 +59,7 @@
     "recharts": "^2.12.7",
     "tailwind-merge": "^2.5.2",
     "tailwindcss-animate": "^1.0.7",
-    "yup": "^1.4.0"
+    "zod": "^4.6.7"
   },
   "devDependencies": {
     "@types/minimatch": "^6.0.0",

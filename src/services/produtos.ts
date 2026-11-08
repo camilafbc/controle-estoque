@@ -1,15 +1,10 @@
 import prisma from "@/lib/prisma";
 
 export const getProdutos = async (idCurso: number, turmaUuid: string) => {
-  const turma = await prisma.turma.findUnique({
-    where: { uuid: turmaUuid as string },
-    select: { idTurma: true },
-  });
-
   const produtos = await prisma.produto.findMany({
     where: {
-      prodCurso: Number(idCurso),
-      prodTurma: Number(turma?.idTurma),
+      prodCurso: idCurso,
+      turma: { uuid: turmaUuid },
     },
     orderBy: {
       idProduto: "desc",
@@ -18,10 +13,11 @@ export const getProdutos = async (idCurso: number, turmaUuid: string) => {
   return produtos;
 };
 
-export const getProdutoById = async (uuidProduto: string) => {
-  const produto = await prisma.produto.findUnique({
+export const getProdutoById = async (uuidProduto: string, idCurso?: number) => {
+  const produto = await prisma.produto.findFirst({
     where: {
       uuid: uuidProduto,
+      ...(idCurso ? { prodCurso: Number(idCurso) } : {}),
     },
     include: {
       turma: {
@@ -56,106 +52,6 @@ export const getEstoquePorCurso = async (idCurso: number) => {
   return produtos._sum.prodQuantidade || 0;
 };
 
-// export const deleteProduto = async (uuidProduto: string) => {
-//   const produto = await prisma.produto.delete({
-//     where: {
-//       uuid: uuidProduto,
-//     },
-//   });
-//   return produto;
-// };
-
-// export const createProduto = async (
-//   produto: Omit<Produto, "idProduto" | "prodTurma">,
-//   turmaUuid: string,
-// ) => {
-//   const turma = await prisma.turma.findUnique({
-//     where: { uuid: turmaUuid as string },
-//     select: { idTurma: true },
-//   });
-
-//   if (turma) {
-//     const produtoCreated = await prisma.produto.create({
-//       data: {
-//         prodDescricao: produto.prodDescricao.trim(),
-//         prodFabricante: produto.prodFabricante.trim(),
-//         prodLote: produto.prodLote.trim(),
-//         prodQuantidade: produto.prodQuantidade,
-//         prodValidade: new Date(produto.prodValidade),
-//         prodCurso: produto.prodCurso,
-//         prodTurma: turma?.idTurma,
-//       },
-//     });
-//     return produtoCreated;
-//   }
-// };
-
-// export const updateProduto = async (
-//   produto: Partial<Produto>,
-//   uuidTurma: string,
-// ) => {
-//   const turma = await prisma.turma.findUnique({
-//     where: {
-//       uuid: uuidTurma,
-//     },
-//     select: {
-//       idTurma: true,
-//       uuid: true,
-//     },
-//   });
-
-//   if (!turma) {
-//     throw new Error("Turma não encontrada");
-//   }
-
-//   const produtoUpdated = await prisma.produto.update({
-//     where: {
-//       uuid: produto.uuid,
-//     },
-//     data: {
-//       prodDescricao: produto?.prodDescricao?.trim(),
-//       prodFabricante: produto?.prodFabricante?.trim(),
-//       prodLote: produto?.prodLote?.trim(),
-//       prodQuantidade: produto.prodQuantidade,
-//       prodValidade: produto.prodValidade,
-//       prodCurso: produto.prodCurso,
-//       prodTurma: turma.idTurma,
-//     },
-//   });
-//   return { ...produtoUpdated, turma: { uuid: turma.uuid } };
-// };
-
-// export const updateQuantidadeProduto = async (
-//   idProduto: number,
-//   quantidade: number,
-//   tipo: "increment" | "decrement",
-// ) => {
-//   const produto = await prisma.produto.findUnique({
-//     where: {
-//       idProduto: idProduto,
-//     },
-//   });
-
-//   if (!produto) throw new Error("Produto não encontrado.");
-
-//   // impedir valores negativos
-//   if (tipo === "decrement" && produto.prodQuantidade < quantidade) {
-//     throw new Error("Quantidade insuficiente para retirada.");
-//   }
-
-//   const produtoUpdated = await prisma.produto.update({
-//     where: {
-//       idProduto: produto.idProduto,
-//     },
-//     data: {
-//       prodQuantidade: {
-//         [tipo]: Number(quantidade),
-//       },
-//     },
-//   });
-//   return produtoUpdated;
-// };
-
 export const countProdutos = async (idCurso: number) => {
   const produtos = await prisma.produto.count({
     where: {
@@ -174,11 +70,9 @@ export const getProdutosExpirando = async (cursoId: number) => {
     where: {
       prodCurso: cursoId,
       prodValidade: {
+        gte: today,
         lte: limitDate,
       },
-    },
-    orderBy: {
-      prodValidade: "asc",
     },
   });
 

@@ -1,4 +1,4 @@
-import { yupResolver } from "@hookform/resolvers/yup";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { forwardRef, useEffect, useImperativeHandle } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 
@@ -22,7 +22,7 @@ import { Switch } from "../ui/switch";
 // export type FormTurmasFields = yup.InferType<typeof validationSchema>;
 
 interface FormTurmasProps {
-  initialValues?: any;
+  initialValues?: Partial<FormTurmasFields>;
   isLoading?: boolean;
   defaultFocus?: keyof FormTurmasFields;
   onSubmit: SubmitHandler<FormTurmasFields>;
@@ -45,7 +45,7 @@ const FormTurmas = forwardRef<FormTurmasRef, FormTurmasProps>(
     ref,
   ) => {
     const form = useForm<FormTurmasFields>({
-      resolver: yupResolver(turmaValidationSchema),
+      resolver: zodResolver(turmaValidationSchema),
       defaultValues: { codigoTurma: "", turnoTurma: "Manhã", status: true },
     });
 

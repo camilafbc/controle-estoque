@@ -11,6 +11,7 @@ import { SearchInput } from "@/components/SearchInput";
 import FormTurmas, { FormTurmasRef } from "@/components/turmas/FormTurmas";
 import { Button } from "@/components/ui/button";
 import { DataTable } from "@/components/ui/data-table/data-table";
+import { useListFilter } from "@/hooks/useListFilter";
 import {
   useCreateTurmaMutation,
   useDeleteTurmaMutation,
@@ -31,7 +32,6 @@ export default function TurmasContainer() {
   const idCurso = user.data?.user.curso;
   const deleteMutation = useDeleteTurmaMutation();
   const { data: turmas, isLoading } = useTurmas(Number(idCurso));
-  const [filterValue, setFilterValue] = useState("");
   const [openDialog, setOpenDialog] = useState(false);
   const [editingId, setEditingId] = useState<number | null>();
 
@@ -41,11 +41,10 @@ export default function TurmasContainer() {
   const createTurma = useCreateTurmaMutation();
   const updateTurma = useUpdateTurmaMutation();
 
-  const filteredData = turmas
-    ? turmas.filter((turma: { codigoTurma: string }) =>
-        turma.codigoTurma.toLowerCase().includes(filterValue.toLowerCase()),
-      )
-    : [];
+  const { search, setSearch, filteredItems } = useListFilter({
+    items: turmas,
+    getSearchText: (turma: Turma) => turma.codigoTurma,
+  });
 
   const handleDelete = (id: number) => {
     deleteMutation.mutate(id, {
@@ -132,8 +131,9 @@ export default function TurmasContainer() {
       <div className="mb-8 flex flex-col items-start justify-between gap-2 md:flex-row md:items-center">
         <SearchInput
           placeholder="Buscar Turma"
-          value={filterValue}
-          onChange={(event) => setFilterValue(event.target.value)}
+          value={search}
+          onChange={(event) => setSearch(event.target.value)}
+          onClear={() => setSearch("")}
         />
         <Button
           onClick={handleNew}
@@ -146,8 +146,13 @@ export default function TurmasContainer() {
 
       <DataTable
         columns={columns(handleEdit, handleDelete)}
-        data={filteredData || []}
+        data={filteredItems}
         isLoading={isLoading}
+        filterValue={search}
+        onClearFilter={() => setSearch("")}
+        totalRawCount={turmas.length}
+        emptyTitle="Nenhuma turma cadastrada"
+        emptyDescription="Cadastre uma nova turma para começar a organizar os produtos e relatórios."
       />
 
       <MyDialog

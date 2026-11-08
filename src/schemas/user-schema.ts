@@ -1,65 +1,91 @@
-import * as yup from "yup";
+import { z } from "zod";
 
 // Schema para validação no formulário e update
-export const userValidationSchema = yup.object({
-  nome: yup
-    .string()
-    .min(2, "Mínimo 2 caracteres")
-    .required("Campo obrigatório"),
-  email: yup.string().email("E-mail inválido").required("Campo obrigatório"),
-  role: yup.string().required("Campo obrigatório"),
-  idCurso: yup
-    .string()
-    .nullable()
-    .when("role", {
-      is: "user",
-      then: (schema) => schema.required("Campo obrigatório"),
-      otherwise: (schema) => schema.notRequired(),
-    }),
-  status: yup.boolean().required("Campo obrigatório"),
-  password: yup
-    .string()
-    .test("senha-required", "Campo obrigatório", function (value) {
-      const isRequired = !this.options?.context?.isEdit;
-      if (isRequired && !value) {
-        return this.createError({ message: "Senha é obrigatória" });
-      }
-      return true;
-    })
-    .test(
-      "min-length",
-      "A senha deve ter no mínimo 6 caracteres",
-      (value) => !value || value.length >= 6,
-    ),
-  confirmaSenha: yup
-    .string()
-    .test("confirmaSenha", "As senhas não coincidem", function (value) {
-      const { password } = this.parent;
-      return !password || password === value;
-    }),
-});
+export const userValidationSchema = z
+  .object({
+    nome: z.string().min(2, "Mínimo 2 caracteres"),
+    email: z.string().email("E-mail inválido"),
+    role: z.enum(["admin", "user"]),
+    idCurso: z.string().nullable().optional(),
+    status: z.boolean(),
+    password: z
+      .string()
+      .min(6, "A senha deve ter no mínimo 6 caracteres")
+      .optional()
+      .or(z.literal("")),
+    confirmaSenha: z.string().optional().or(z.literal("")),
+  })
+  .superRefine((data, ctx) => {
+    if (data.role === "user" && !data.idCurso) {
+      ctx.addIssue({
+        code: "custom",
+        path: ["idCurso"],
+        message: "Campo obrigatório",
+      });
+    }
+    if (data.password && data.password !== data.confirmaSenha) {
+      ctx.addIssue({
+        code: "custom",
+        path: ["confirmaSenha"],
+        message: "As senhas não coincidem",
+      });
+    }
+  });
 
-export type FormUserFields = yup.InferType<typeof userValidationSchema>;
+export type FormUserFields = z.infer<typeof userValidationSchema>;
+
+// Schema para atualizações parciais. O idUser identifica o registro e os
+// demais campos são opcionais para permitir, por exemplo, alterar somente a
+// senha.
+export const userUpdateValidationSchema = z
+  .object({
+    idUser: z.number().int().positive("Usuário inválido"),
+    nome: z.string().min(2, "Mínimo 2 caracteres").optional(),
+    email: z.string().email("E-mail inválido").optional(),
+    role: z.enum(["admin", "user"]).optional(),
+    idCurso: z.number().int().positive("Curso inválido").nullable().optional(),
+    status: z.boolean().optional(),
+    password: z
+      .string()
+      .min(6, "A senha deve ter no mínimo 6 caracteres")
+      .optional(),
+  })
+  .refine(
+    ({ idUser: _idUser, ...fields }) =>
+      Object.values(fields).some((value) => value !== undefined),
+    {
+      message: "Informe ao menos um campo para atualizar.",
+    },
+  )
+  .superRefine((data, ctx) => {
+    if (data.role === "user" && data.idCurso == null) {
+      ctx.addIssue({
+        code: "custom",
+        path: ["idCurso"],
+        message: "Campo obrigatório",
+      });
+    }
+  });
 
 // Schema para validação na server action (criação de usuário)
-export const userActionValidationSchema = yup.object({
-  nome: yup
-    .string()
-    .min(2, "Mínimo 2 caracteres")
-    .required("Campo obrigatório"),
-  email: yup.string().email("E-mail inválido").required("Campo obrigatório"),
-  role: yup.string().oneOf(["admin", "user"]).required("Campo obrigatório"),
-  idCurso: yup
-    .number()
-    .nullable()
-    .when("role", {
-      is: "user",
-      then: (schema) => schema.required("Campo obrigatório"),
-      otherwise: (schema) => schema.nullable().notRequired(),
-    }),
-  status: yup.boolean().required("Campo obrigatório"),
-  password: yup
-    .string()
-    .required("Senha é obrigatória")
-    .min(6, "A senha deve ter no mínimo 6 caracteres"),
-});
+export const userActionValidationSchema = z
+  .object({
+    nome: z.string().min(2, "Mínimo 2 caracteres"),
+    email: z.string().email("E-mail inválido"),
+    role: z.enum(["admin", "user"]),
+    idCurso: z.number().nullable().optional(),
+    status: z.boolean(),
+    password: z
+      .string()
+      .min(6, "A senha deve ter no mínimo 6 caracteres")
+      .min(1, "Senha é obrigatória"),
+  })
+  .superRefine((data, ctx) => {
+    if (data.role === "user" && data.idCurso == null) {
+      ctx.addIssue({
+        code: "custom",
+        path: ["idCurso"],
+        message: "Campo obrigatório",
+      });
+    }
+  });

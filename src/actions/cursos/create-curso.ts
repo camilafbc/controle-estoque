@@ -1,23 +1,24 @@
 "use server";
-import { getServerSession } from "next-auth";
-import * as yup from "yup";
 
-import { authOptions } from "@/lib/auth";
+import { authorizeAdmin } from "@/lib/authz";
 import prisma from "@/lib/prisma";
 import { cursoValidationSchema } from "@/schemas/curso-schema";
 import { Curso } from "@/types/Curso";
+import { getValidationMessages } from "@/utils/getValidationMessages";
 import { handleDatabaseError } from "@/utils/handleDbError";
 
 export const createCurso = async (curso: Omit<Curso, "idCurso">) => {
   try {
-    const session = await getServerSession(authOptions);
+    const auth = await authorizeAdmin();
+    if (!auth.ok) return { error: auth.error };
 
-    if (!session || session.user.role !== "admin")
-      return { error: "Usuário não autorizado" };
-
-    await cursoValidationSchema.validate(curso, {
-      abortEarly: false,
-    });
+    const validation = cursoValidationSchema.safeParse(curso);
+    if (!validation.success) {
+      return {
+        error: "Dados inválidos",
+        messages: getValidationMessages(validation.error),
+      };
+    }
 
     const cursoCreated = await prisma.curso.create({
       data: {
@@ -27,10 +28,6 @@ export const createCurso = async (curso: Omit<Curso, "idCurso">) => {
     });
     return cursoCreated;
   } catch (error) {
-    if (error instanceof yup.ValidationError) {
-      return { error: "Dados inválidos", messages: error.errors };
-    }
-
     const dbError = handleDatabaseError(error);
 
     console.error("Erro ao criar novo curso: ", dbError);

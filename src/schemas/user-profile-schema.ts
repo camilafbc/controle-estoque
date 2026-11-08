@@ -1,19 +1,26 @@
-import * as yup from "yup";
+import { z } from "zod";
 
-export const userProfileValidationSchema = yup.object({
-  nome: yup.string().required("Campo obrigatório"),
-  email: yup.string().email("E-mail inválido").required("Campo obrigatório"),
-  password: yup
-    .string()
-    .test(
-      "min-length",
-      "A senha deve ter no mínimo 6 caracteres",
-      (value) => !value || value.length >= 6,
-    ),
-  confirmaSenha: yup
-    .string()
-    .test("confirmaSenha", "As senhas não coincidem", function (value) {
-      const { password } = this.parent;
-      return !password || password === value;
-    }),
-});
+export const userProfileValidationSchema = z
+  .object({
+    nome: z.string().min(1, "Campo obrigatório"),
+    email: z.string().email("E-mail inválido"),
+    password: z
+      .string()
+      .min(6, "A senha deve ter no mínimo 6 caracteres")
+      .optional()
+      .or(z.literal("")),
+    confirmaSenha: z.string().optional().or(z.literal("")),
+  })
+  .superRefine((data, ctx) => {
+    if (data.password && data.password !== data.confirmaSenha) {
+      ctx.addIssue({
+        code: "custom",
+        path: ["confirmaSenha"],
+        message: "As senhas não coincidem",
+      });
+    }
+  });
+
+export type FormUserProfileFields = z.infer<
+  typeof userProfileValidationSchema
+>;

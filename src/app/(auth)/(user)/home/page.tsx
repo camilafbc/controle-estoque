@@ -1,10 +1,9 @@
-import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { getServerSession } from "next-auth";
 
 import GreetingUser from "@/components/home/GreetingUser";
-import MyBreadcrumb from "@/components/MyBreadcrumb";
 import { authOptions } from "@/lib/auth";
+import prisma from "@/lib/prisma";
 import {
   getLastDezOperacoes,
   getRelatorioUltimosDozeMeses,
@@ -27,10 +26,11 @@ export default async function Page() {
   }
 
   if (!idCurso) {
-    throw new Error("Erro ao carregar dados!");
+    throw new Error("Erro ao carregar dados do curso!");
   }
 
   const [
+    cursoData,
     turmasCount,
     produtosCount,
     estoqueCount,
@@ -38,12 +38,16 @@ export default async function Page() {
     last12Months,
     last10Ops,
   ] = await Promise.all([
-    await countTurmas(idCurso),
-    await countProdutos(idCurso),
-    await getEstoquePorCurso(idCurso),
-    await getProdutosExpirando(idCurso),
-    await getRelatorioUltimosDozeMeses(idCurso),
-    await getLastDezOperacoes(idCurso),
+    prisma.curso.findUnique({
+      where: { idCurso },
+      select: { nomeCurso: true },
+    }),
+    countTurmas(idCurso),
+    countProdutos(idCurso),
+    getEstoquePorCurso(idCurso),
+    getProdutosExpirando(idCurso),
+    getRelatorioUltimosDozeMeses(idCurso),
+    getLastDezOperacoes(idCurso),
   ]);
 
   const initialData = {
@@ -57,8 +61,20 @@ export default async function Page() {
 
   return (
     <div className="space-y-6">
-      <MyBreadcrumb />
-      <GreetingUser />
+      {/* Banner de Boas-Vindas */}
+      <div className="relative overflow-hidden rounded-2xl border border-border/60 bg-gradient-to-br from-card via-card to-orange-500/5 p-6 shadow-sm sm:p-8">
+        <div className="flex flex-col gap-4">
+          <GreetingUser />
+          {cursoData?.nomeCurso && (
+            <div className="flex items-center gap-2">
+              <span className="inline-flex items-center rounded-lg bg-orange-500/10 px-2.5 py-1 text-xs font-semibold text-orange-600 ring-1 ring-orange-500/20 dark:bg-orange-500/15 dark:text-orange-400">
+                Curso: {cursoData.nomeCurso}
+              </span>
+            </div>
+          )}
+        </div>
+      </div>
+
       <Dashboard initialData={initialData} idCurso={idCurso} />
     </div>
   );

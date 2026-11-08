@@ -4,18 +4,14 @@ import {
   QueryClient,
 } from "@tanstack/react-query";
 import { GraduationCap } from "lucide-react";
-import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { getServerSession } from "next-auth";
 
-import MyBreadcrumb from "@/components/MyBreadcrumb";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { PageHeader } from "@/components/common/PageHeader";
 import { authOptions } from "@/lib/auth";
 import { getTurmas } from "@/services/turmas";
 
 import TurmasContainer from "./componentes/TurmasContainer";
-
-const customCookie = process.env.NEXT_PUBLIC_CUSTOM_COOKIE;
 
 export default async function Page() {
   const session = await getServerSession(authOptions);
@@ -36,34 +32,17 @@ export default async function Page() {
     queryFn: async () => await getTurmas(idCurso),
   });
 
-  // const cookieStore = cookies();
-  // const sessionCookie = cookieStore.get(customCookie || "");
-
-  // const turmas = await fetch(
-  //   `${process.env.NEXTAUTH_URL}/api/user/turmas/curso/${idCurso}`,
-  //   {
-  //     cache: "no-store",
-  //     headers: {
-  //       Cookie: `${sessionCookie?.name}=${sessionCookie?.value}`,
-  //     },
-  //   },
-  // ).then((res) => res.json());
-
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
       <div className="space-y-6">
-        <MyBreadcrumb
-          listItems={[{ label: "Cadastros" }, { label: "Turmas" }]}
+        <PageHeader
+          title="Turmas"
+          description="Cadastre, organize os turnos e controle o status das turmas do seu curso."
+          icon={<GraduationCap className="size-6" />}
         />
-        <Card>
-          <CardHeader className="flex flex-row items-end gap-2">
-            <GraduationCap size={28} className="font-bold text-orange-500" />
-            <CardTitle>Turmas</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <TurmasContainer />
-          </CardContent>
-        </Card>
+        <div className="rounded-2xl border border-border/70 bg-card p-5 shadow-sm sm:p-6">
+          <TurmasContainer />
+        </div>
       </div>
     </HydrationBoundary>
   );

@@ -1,10 +1,19 @@
-export function handleDatabaseError(error: any): {
+type DatabaseError = {
+  code?: string;
+  errno?: string | number;
+  sqlMessage?: string;
+  sqlState?: string;
+};
+
+export function handleDatabaseError(error: unknown): {
   status: number;
   message: string;
 } {
   // Tratamento de erros do Prisma
-  if (error.code) {
-    switch (error.code) {
+  const dbError = isDatabaseError(error) ? error : {};
+
+  if (dbError.code) {
+    switch (dbError.code) {
       case "P2002":
         return {
           status: 400,
@@ -44,8 +53,8 @@ export function handleDatabaseError(error: any): {
   }
 
   // Tratamento de erros MySQL
-  if (error.errno || error.sqlMessage || error.sqlState) {
-    switch (error.code) {
+  if (dbError.errno || dbError.sqlMessage || dbError.sqlState) {
+    switch (dbError.code) {
       case "ER_DUP_ENTRY":
         return {
           status: 400,
@@ -74,6 +83,7 @@ export function handleDatabaseError(error: any): {
       default:
         break;
     }
+
   }
 
   // Fallback
@@ -81,4 +91,8 @@ export function handleDatabaseError(error: any): {
     status: 500,
     message: "Erro interno no servidor. Tente novamente mais tarde.",
   };
+}
+
+function isDatabaseError(error: unknown): error is DatabaseError {
+  return typeof error === "object" && error !== null;
 }

@@ -1,10 +1,10 @@
 "use client";
 
-import { yupResolver } from "@hookform/resolvers/yup";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { Minus, Plus } from "lucide-react";
 import { forwardRef, useImperativeHandle } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
-import * as yup from "yup";
+import { z } from "zod";
 
 import { MySelect } from "../MySelect";
 import { Button } from "../ui/button";
@@ -12,19 +12,15 @@ import { Form, FormField, FormItem, FormMessage } from "../ui/form";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
 
-const validationSchema = yup.object({
-  tipo: yup.string().required("Campo obrigatório"),
-  quantidade: yup
-    .number()
-    .transform((value, originalValue) => {
-      return originalValue === "" ? undefined : Number(originalValue);
-    })
-    .typeError("A quantidade deve ser um número")
-    .required("A quantidade é obrigatória")
+const validationSchema = z.object({
+  tipo: z.string().min(1, "Campo obrigatório"),
+  quantidade: z
+    .number({ message: "A quantidade deve ser um número" })
+    .int("A quantidade deve ser um número inteiro")
     .min(1, "A quantidade deve ser pelo menos 1"),
 });
 
-export type FormMovimentacoesFields = yup.InferType<typeof validationSchema>;
+export type FormMovimentacoesFields = z.infer<typeof validationSchema>;
 
 export interface FormMovimentacoesRef {
   resetForm: () => void;
@@ -40,7 +36,7 @@ const FormMovimentacoes = forwardRef<
   FormMovientacoesProps
 >(({ onSubmit }, ref) => {
   const form = useForm({
-    resolver: yupResolver(validationSchema),
+    resolver: zodResolver(validationSchema),
     defaultValues: {
       tipo: "0",
       quantidade: 1,
@@ -130,7 +126,7 @@ const FormMovimentacoes = forwardRef<
                         setValue("quantidade", Number(value));
                       }
                     }}
-                    className="h-9 rounded-none text-center focus:border focus:ring"
+                    className="h-10 rounded-none text-center focus:border focus:ring"
                   />
                   <Button
                     onClick={handleIncrease}

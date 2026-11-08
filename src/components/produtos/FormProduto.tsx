@@ -1,22 +1,25 @@
 "use client";
 
-import { yupResolver } from "@hookform/resolvers/yup";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { AxiosError } from "axios";
 import dayjs from "dayjs";
+import { Search } from "lucide-react";
 import { useSearchParams } from "next/navigation";
-import { forwardRef, ReactNode, useEffect, useImperativeHandle } from "react";
+import { forwardRef, useEffect, useImperativeHandle, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { NumericFormat } from "react-number-format";
-import * as yup from "yup";
 
+import { getProdutoByCodigoBarras } from "@/api/produtos";
+import { gtinSchema } from "@/schemas/gtin-schema";
 import {
   FormProdutoFields,
   produtoValidationSchema,
 } from "@/schemas/produto-schema";
 import { Produto } from "@/types/Produto";
 import { Turma } from "@/types/Turma";
+import { getErrorMessage } from "@/utils/getErrorMessage";
 
 import DatePickerInput from "../DatePickerInput";
-import { MySelect } from "../MySelect";
+import { Button } from "../ui/button";
 import { Form, FormField, FormItem, FormMessage } from "../ui/form";
 import { Input } from "../ui/input";
 import { VirtualizedCombobox } from "../ui/virtualized-combobox/VirtualizedCombobox";
@@ -55,7 +58,7 @@ const FormProduto = forwardRef<FormProdutoRef, FormProdutoProps>(
       initialValues,
       turmas,
       turmasLoading,
-      defaultFocus = "prodDescricao",
+      defaultFocus = "prodCodigoBarras",
       onSubmit,
     },
     ref,
@@ -64,11 +67,11 @@ const FormProduto = forwardRef<FormProdutoRef, FormProdutoProps>(
     const turmaSelected = params.get("turma");
 
     const form = useForm<FormProdutoFields>({
-      resolver: yupResolver(produtoValidationSchema),
+      resolver: zodResolver(produtoValidationSchema),
       defaultValues: {
         prodDescricao: "",
         prodFabricante: "",
-        prodLote: "",
+        prodCodigoBarras: "",
         prodQuantidade: "",
         turma: turmaSelected ?? "",
       },
@@ -87,7 +90,7 @@ const FormProduto = forwardRef<FormProdutoRef, FormProdutoProps>(
         reset({
           prodDescricao: "",
           prodFabricante: "",
-          prodLote: "",
+          prodCodigoBarras: "",
           prodQuantidade: "",
           turma: "",
         });
@@ -104,7 +107,7 @@ const FormProduto = forwardRef<FormProdutoRef, FormProdutoProps>(
         reset({
           prodDescricao: initialValues.prodDescricao ?? "",
           prodFabricante: initialValues.prodFabricante ?? "",
-          prodLote: initialValues.prodLote ?? "",
+          prodCodigoBarras: initialValues.prodCodigoBarras ?? "",
           prodQuantidade: initialValues.prodQuantidade.toString() ?? "",
           prodValidade: initialValues.prodValidade
             ? dayjs(initialValues.prodValidade).isValid()
@@ -116,6 +119,60 @@ const FormProduto = forwardRef<FormProdutoRef, FormProdutoProps>(
       }
     }, [initialValues, reset]);
 
+    const [barcodeLoading, setBarcodeLoading] = useState(false);
+    const [barcodeMessage, setBarcodeMessage] = useState<string | null>(null);
+
+    const lookupBarcode = async () => {
+      const codigoBarras = (form.getValues("prodCodigoBarras") ?? "").replace(
+        /\D/g,
+        "",
+      );
+      form.setValue("prodCodigoBarras", codigoBarras, { shouldDirty: true });
+      setBarcodeMessage(null);
+      const validation = gtinSchema.safeParse(codigoBarras);
+      if (!validation.success) {
+        setBarcodeMessage(
+          "Informe um GTIN válido, com dígito verificador correto.",
+        );
+        return;
+      }
+
+      setBarcodeLoading(true);
+      try {
+        const produto = await getProdutoByCodigoBarras(codigoBarras);
+        const descricaoAtual = form.getValues("prodDescricao").trim();
+        const fabricanteAtual = form.getValues("prodFabricante").trim();
+        const hasValues =
+          descricaoAtual.length > 0 || fabricanteAtual.length > 0;
+        const shouldReplace =
+          !hasValues ||
+          window.confirm(
+            "Substituir a descrição e o fabricante preenchidos pelos dados encontrados?",
+          );
+
+        if (shouldReplace) {
+          form.setValue("prodDescricao", produto.descricao, {
+            shouldDirty: true,
+          });
+          if (produto.fabricante) {
+            form.setValue("prodFabricante", produto.fabricante, {
+              shouldDirty: true,
+            });
+          }
+        }
+        form.setValue("prodCodigoBarras", produto.codigoBarras, {
+          shouldDirty: true,
+        });
+        setBarcodeMessage(
+          "Produto encontrado. Confira os dados antes de salvar.",
+        );
+      } catch (error) {
+        setBarcodeMessage(getErrorMessage(error));
+      } finally {
+        setBarcodeLoading(false);
+      }
+    };
+
     return (
       <Form {...form}>
         <form
@@ -124,11 +181,60 @@ const FormProduto = forwardRef<FormProdutoRef, FormProdutoProps>(
         >
           <FormField
             control={control}
+            name="prodCodigoBarras"
+            render={({ field }) => (
+              <FormItem className="col-span-1 p-1">
+                <div className="flex items-end gap-2">
+                  <Input
+                    id="input-codigo-barras"
+                    label="Código de barras"
+                    placeholder="Digite o código de barras do produto"
+                    size="lg"
+                    error={!!errors.prodCodigoBarras}
+                    ref={field.ref}
+                    value={field.value}
+                    onKeyDown={(event) => {
+                      if (event.key === "Enter") {
+                        event.preventDefault();
+                        void lookupBarcode();
+                      }
+                    }}
+                    onInput={(event) => {
+                      const value = event.currentTarget.value.replace(
+                        /\D/g,
+                        "",
+                      );
+                      event.currentTarget.value = value;
+                      field.onChange(value);
+                    }}
+                  />
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="lg"
+                    loading={barcodeLoading}
+                    onClick={lookupBarcode}
+                    aria-label="Buscar produto pelo código de barras"
+                    className="text-orange-500 hover:text-orange-500/90"
+                  >
+                    <Search className="mr-2 size-4" />
+                    Buscar
+                  </Button>
+                </div>
+                <FormMessage />
+                {barcodeMessage && (
+                  <p className="text-sm text-orange-400">{barcodeMessage}</p>
+                )}
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={control}
             name="prodDescricao"
             render={({ field }) => (
               <FormItem className="col-span-1 p-1 lg:col-span-2">
                 <Input
-                  autoFocus
                   id="input-produto"
                   label="Produto"
                   placeholder="Informe a descrição do produto"
@@ -165,26 +271,6 @@ const FormProduto = forwardRef<FormProdutoRef, FormProdutoProps>(
 
           <FormField
             control={control}
-            name="prodLote"
-            render={({ field }) => (
-              <FormItem className="col-span-1 p-1">
-                <Input
-                  id="input-lote"
-                  label="Lote"
-                  placeholder="Informe o lote do produto"
-                  size="lg"
-                  required
-                  error={!!errors.prodLote}
-                  value={field.value}
-                  onChange={(value) => field.onChange(value)}
-                />
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={control}
             name="prodQuantidade"
             render={({ field }) => (
               <FormItem className="col-span-1 p-1">
@@ -195,7 +281,6 @@ const FormProduto = forwardRef<FormProdutoRef, FormProdutoProps>(
                   size="lg"
                   required
                   error={!!errors.prodQuantidade}
-                  // {...register("quantidade")}
                   value={field.value}
                   onInput={(ev) => {
                     const value = ev.currentTarget.value.replace(/\D/g, "");

@@ -18,9 +18,10 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { cn } from "@/lib/utils";
+import { DashboardOperacao } from "@/types/Operacao";
 
 interface TableOperacoesProps {
-  data: any[];
+  data: DashboardOperacao[];
   isLoading: boolean;
   className?: string;
   delay: number;
@@ -76,7 +77,7 @@ export default function TableOperacoes({
               </TableHeader>
               <TableBody>
                 {data.length > 0 ? (
-                  data.map((linha: any, i: number) => (
+                  data.map((linha, i) => (
                     <TableRow key={i} className="text-xs">
                       <TableCell className="whitespace-nowrap font-medium">
                         {linha.prodDescricao}

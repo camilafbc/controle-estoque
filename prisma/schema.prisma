@@ -41,6 +41,8 @@ model User {
   // Relacionamentos
   curso      Curso?   @relation("CursoUsers", fields: [idCurso], references: [idCurso])
   operacoes  Operacao[]
+
+  @@index([idCurso])
 }
 
 model Turma {
@@ -54,16 +56,18 @@ model Turma {
   // Relacionamento
   curso       Curso    @relation(fields: [idCurso], references: [idCurso])
   produtos    Produto[]
+
+  @@index([idCurso])
 }
 
 model Produto {
   idProduto       Int      @id @default(autoincrement())
   uuid            String  @default(uuid()) @unique
+  prodCodigoBarras String?  @unique @db.VarChar(14)
   prodDescricao   String   @unique @db.VarChar(255)
   prodFabricante  String   @db.VarChar(255)
   prodQuantidade  Int
   prodValidade    DateTime
-  prodLote        String   @db.VarChar(255)
   prodCurso       Int
   prodTurma       Int
   
@@ -72,6 +76,8 @@ model Produto {
   curso           Curso    @relation(fields: [prodCurso], references: [idCurso])
   turma           Turma    @relation(fields: [prodTurma], references: [idTurma])
   operacoes       Operacao[]
+
+  @@index([prodCurso, prodTurma])
 }
 
 model Operacao {
@@ -85,6 +91,8 @@ model Operacao {
   // Relacionamentos
   usuario     User     @relation(fields: [idUsuario], references: [idUser], onDelete: Cascade)
   produto     Produto  @relation(fields: [idProduto], references: [idProduto], onDelete: Cascade)
+
+  @@index([idProduto, data])
 }
 
 enum Role {

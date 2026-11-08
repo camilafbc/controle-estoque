@@ -7,8 +7,7 @@ import { GraduationCap } from "lucide-react";
 import { redirect } from "next/navigation";
 import { getServerSession } from "next-auth";
 
-import MyBreadcrumb from "@/components/MyBreadcrumb";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { PageHeader } from "@/components/admin/PageHeader";
 import { authOptions } from "@/lib/auth";
 import { getCursos } from "@/services/cursos";
 
@@ -34,22 +33,14 @@ export default async function Page() {
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
       <div className="space-y-6">
-        <MyBreadcrumb
-          listItems={[
-            { label: "Cadastros" },
-            { label: "Cursos", href: "/admin/Cursos" },
-          ]}
-          homeHref="/admin/home"
+        <PageHeader
+          title="Cursos"
+          description="Organize os cursos disponíveis para as turmas e usuários."
+          icon={<GraduationCap className="size-5" />}
         />
-        <Card>
-          <CardHeader className="flex flex-row items-end gap-2">
-            <GraduationCap size={28} className="font-bold text-orange-500" />
-            <CardTitle>Cursos</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <CursosContainer />
-          </CardContent>
-        </Card>
+        <div className="rounded-2xl border border-border/70 bg-card p-5 shadow-sm sm:p-6">
+          <CursosContainer />
+        </div>
       </div>
     </HydrationBoundary>
   );

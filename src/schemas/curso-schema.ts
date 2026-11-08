@@ -1,17 +1,13 @@
-import * as yup from "yup";
+import { z } from "zod";
 
-export const cursoValidationSchema = yup.object({
-  nomeCurso: yup
-    .string()
-    .min(3, "Mínimo 3 caracteres")
-    .required("Campo obrigatório"),
-  status: yup.boolean().required("Campo obrigatório"),
+export const cursoValidationSchema = z.object({
+  nomeCurso: z.string().min(3, "Mínimo 3 caracteres"),
+  status: z.boolean(),
 });
 
-export const cursoUpdateSchema = cursoValidationSchema.concat(
-  yup.object({
-    idCurso: yup.number().required("ID é necessário para atualizar"),
-  }),
-);
+export const cursoUpdateSchema = z.object({
+  ...cursoValidationSchema.shape,
+  idCurso: z.number({ message: "ID é necessário para atualizar" }),
+});
 
-export type FormCursoFields = yup.InferType<typeof cursoValidationSchema>;
+export type FormCursoFields = z.infer<typeof cursoValidationSchema>;

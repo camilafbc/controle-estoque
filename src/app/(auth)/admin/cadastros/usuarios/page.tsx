@@ -7,8 +7,7 @@ import { Users } from "lucide-react";
 import { redirect } from "next/navigation";
 import { getServerSession } from "next-auth";
 
-import MyBreadcrumb from "@/components/MyBreadcrumb";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { PageHeader } from "@/components/admin/PageHeader";
 import { authOptions } from "@/lib/auth";
 import { getUsers } from "@/services/users";
 
@@ -30,24 +29,16 @@ export default async function Page() {
 
   return (
     <div className="space-y-6">
-      <MyBreadcrumb
-        listItems={[
-          { label: "Cadastros" },
-          { label: "Usuários", href: "/admin/cadastros/usuarios" },
-        ]}
-        homeHref="/admin/home"
+      <PageHeader
+        title="Usuários"
+        description="Gerencie perfis, permissões e o curso associado a cada usuário."
+        icon={<Users className="size-5" />}
       />
-      <Card>
-        <CardHeader className="flex flex-row items-end gap-2">
-          <Users size={28} className="font-bold text-orange-500" />
-          <CardTitle>Usuários</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <HydrationBoundary state={dehydrate(queryClient)}>
-            <UsersContainer />
-          </HydrationBoundary>
-        </CardContent>
-      </Card>
+      <HydrationBoundary state={dehydrate(queryClient)}>
+        <div className="rounded-2xl border border-border/70 bg-card p-5 shadow-sm sm:p-6">
+          <UsersContainer />
+        </div>
+      </HydrationBoundary>
     </div>
   );
 }

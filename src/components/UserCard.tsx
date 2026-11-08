@@ -1,11 +1,12 @@
 "use client"
 
-import { signOut, useSession } from "next-auth/react"
-import { useRouter } from "next/navigation"
-import { HoverCard, HoverCardContent, HoverCardTrigger } from "./ui/hover-card"
-import { Avatar, AvatarFallback } from "./ui/avatar"
 import { GraduationCap } from "lucide-react"
+import { useRouter } from "next/navigation"
+import { signOut, useSession } from "next-auth/react"
+
+import { Avatar, AvatarFallback } from "./ui/avatar"
 import { Button } from "./ui/button"
+import { HoverCard, HoverCardContent, HoverCardTrigger } from "./ui/hover-card"
 
 export function UserCard() {
   const router = useRouter()

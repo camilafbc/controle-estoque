@@ -1,21 +1,19 @@
 "use server";
 
-import { getServerSession } from "next-auth";
-import * as yup from "yup";
-
-import { authOptions } from "@/lib/auth";
+import { authorizeAdmin } from "@/lib/authz";
 import prisma from "@/lib/prisma";
 import { handleDatabaseError } from "@/utils/handleDbError";
 
 export const deleteUser = async (idUser: number) => {
   try {
-    const session = await getServerSession(authOptions);
-
-    if (!session || session.user.role !== "admin")
-      return { error: "Usuário não autorizado" };
+    const auth = await authorizeAdmin();
+    if (!auth.ok) return { error: auth.error };
 
     if (!idUser)
       return { error: "Erro ao excluir dados; item não selecionado." };
+
+    if (Number(idUser) === auth.ctx.userId)
+      return { error: "Não é possível excluir o próprio usuário." };
 
     const user = await prisma.user.delete({
       where: {
@@ -24,13 +22,9 @@ export const deleteUser = async (idUser: number) => {
     });
     return { message: "Dados excluídos com sucesso!", data: user };
   } catch (error) {
-    if (error instanceof yup.ValidationError) {
-      return { error: "Dados inválidos", messages: error.errors };
-    }
-
     const dbError = handleDatabaseError(error);
 
-    console.error("Erro ao criar usuário: ", dbError);
+    console.error("Erro ao excluir usuário: ", dbError);
     return { error: dbError.message };
   }
 };

@@ -1,9 +1,9 @@
 "use client";
 
-import { yupResolver } from "@hookform/resolvers/yup";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { Key } from "lucide-react";
 import { forwardRef, useImperativeHandle } from "react";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 
 import "react-toastify/dist/ReactToastify.css";
@@ -49,7 +49,7 @@ const FormUser = forwardRef<FormUserRef, FormUserProps>(
     const [showPasswordContainer, setShowPasswordContainer] = useState(true);
 
     const form = useForm<FormUserFields>({
-      resolver: yupResolver(userValidationSchema),
+      resolver: zodResolver(userValidationSchema),
       defaultValues: {
         nome: "",
         email: "",
@@ -75,6 +75,14 @@ const FormUser = forwardRef<FormUserRef, FormUserProps>(
     } = form;
 
     const userRole = watch("role");
+    const cursoOptions = useMemo(
+      () =>
+        cursos.map((curso) => ({
+          label: curso.nomeCurso,
+          id: curso.idCurso.toString(),
+        })),
+      [cursos],
+    );
 
     useImperativeHandle(ref, () => ({
       resetForm: () => {
@@ -227,12 +235,7 @@ const FormUser = forwardRef<FormUserRef, FormUserProps>(
                         id="select-curso"
                         size="lg"
                         height={100}
-                        options={
-                          cursos.map((curso: Curso) => ({
-                            label: curso.nomeCurso.toString(),
-                            id: curso.idCurso.toString(),
-                          })) || []
-                        }
+                        options={cursoOptions}
                         placeholder="Buscar curso"
                         loading={cursosLoading}
                         error={errors.idCurso?.message}

@@ -2,188 +2,130 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Estiliza a barra de rolagem */
-table::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
-  border-radius: 5px;
-}
-
-/*Estiliza o polegar da barra de rolagem (parte que arrasta) */
-table::-webkit-scrollbar-thumb {
-  background-color: #888;
-  border-radius: 10px;
-  padding: 3px;
-}
-
-/* Estiliza quando o polegar da barra de rolagem está sendo sobreposto */
-table::-webkit-scrollbar-thumb:hover {
-  background-color: #555;
-}
-
-/* Remove as setas da barra de rolagem */
-table::-webkit-scrollbar-button {
-  display: none;
-}
-
-/* TESTE BARRA DE ROLAGEM */
-
-/* Barra de rolagem neutra e delicada */
-::-webkit-scrollbar {
-  width: 10px;
-  height: 10px;
-}
-
-/* Trilha - cinza muito claro */
-::-webkit-scrollbar-track {
-  background: #f1f1f1;
-  border-radius: 5px;
-}
-
-/* Polegar - cinza médio suave */
-::-webkit-scrollbar-thumb {
-  background: #c0c0c0;
-  border-radius: 5px;
-  border: 2px solid #f1f1f1;
-  transition: background 0.3s ease;
-}
-
-/* Hover - cinza um pouco mais escuro */
-::-webkit-scrollbar-thumb:hover {
-  background: #a0a0a0;
-}
-
-/* Setinhas com tom discreto */
-::-webkit-scrollbar-button {
-  display: block;
-  height: 12px;
-  background-color: #f1f1f1;
-  background-repeat: no-repeat;
-  background-position: center;
-  background-size: 6px;
-}
-
-/* Setinha para cima */
-::-webkit-scrollbar-button:start:decrement {
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='6' height='6' viewBox='0 0 8 8'%3E%3Cpath fill='%23c0c0c0' d='M4 0l4 8H0z'/%3E%3C/svg%3E");
-}
-
-/* Setinha para baixo */
-::-webkit-scrollbar-button:end:increment {
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='6' height='6' viewBox='0 0 8 8'%3E%3Cpath fill='%23c0c0c0' d='M4 8l4-8H0z'/%3E%3C/svg%3E");
-}
-
-/* Setinha pressionada */
-::-webkit-scrollbar-button:active {
-  background-color: #e2e2e2;
-}
-
-/* Firefox */
+/* Scrollbar moderna e discreta */
 * {
   scrollbar-width: thin;
-  scrollbar-color: #c0c0c0 #f1f1f1;
+  scrollbar-color: hsl(var(--muted-foreground) / 0.3) transparent;
 }
 
-/* ===== MODIFICADO PARA MELHOR CONTRASTE NO DARK ===== */
-.dark ::-webkit-scrollbar-track {
-  background: #2d2d2d; /* Mais claro que #1e1e1e */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
 }
 
-.dark ::-webkit-scrollbar-thumb {
-  background: #6b6b6b; /* Mais claro que #555 */
-  border: 2px solid #2d2d2d; /* Combinar com a trilha */
+::-webkit-scrollbar-track {
+  background: transparent;
 }
 
-.dark ::-webkit-scrollbar-thumb:hover {
-  background: #8e8e8e; /* Mais contrastante */
+::-webkit-scrollbar-thumb {
+  background-color: hsl(var(--muted-foreground) / 0.25);
+  border-radius: 9999px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
 }
 
-.dark ::-webkit-scrollbar-button {
-  background-color: #2d2d2d;
-}
-
-.dark * {
-  scrollbar-color: #6b6b6b #2d2d2d; /* Atualizado para match */
-}
-
-/* ===== MELHORIA PARA AS SETINHAS ===== */
-.dark ::-webkit-scrollbar-button:start:decrement {
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='6' height='6' viewBox='0 0 8 8'%3E%3Cpath fill='%236b6b6b' d='M4 0l4 8H0z'/%3E%3C/svg%3E");
-}
-
-.dark ::-webkit-scrollbar-button:end:increment {
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='6' height='6' viewBox='0 0 8 8'%3E%3Cpath fill='%236b6b6b' d='M4 8l4-8H0z'/%3E%3C/svg%3E");
+::-webkit-scrollbar-thumb:hover {
+  background-color: hsl(var(--muted-foreground) / 0.45);
 }
 
 @layer base {
   :root {
-    --font-sans: "Inter", sans-serif;
-    --background: 0 0% 97%;
-    --foreground: 222.2 84% 4.9%;
+    --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    
+    /* Superfícies e bases */
+    --background: 210 20% 98%;
+    --foreground: 222.2 47% 11%;
+
     --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    --card-foreground: 222.2 47% 11%;
+
     --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
-    /* --primary: 222.2 47.4% 11.2%; */
+    --popover-foreground: 222.2 47% 11%;
+
+    /* Identidade Senac: Laranja Primário e Azul Institucional */
     --primary: 25 95% 53%;
-    --primary-foreground: 210 40% 98%;
-    --secondary: 210 40% 96.1%;
-    /* --secondary: 33, 93%, 54%; */
-    --secondary-foreground: 222.2 47.4% 11.2%;
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    /* --ring: 222.2 84% 4.9%; */
-    --ring: 33, 93%, 54%;
-    --radius: 0.5rem;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 210 30% 96%;
+    --secondary-foreground: 222.2 47% 11%;
+
+    --muted: 210 25% 95%;
+    --muted-foreground: 215 16% 47%;
+
+    --accent: 25 95% 96%;
+    --accent-foreground: 25 95% 42%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 214 20% 90%;
+    --input: 214 20% 90%;
+    --ring: 25 95% 53%;
+
+    --radius: 0.75rem;
+
+    /* Cores de Gráficos e Senac */
     --chart-1: 25 95% 53%;
-    --chart-2: 210 80% 50%;
+    --chart-2: 209 100% 32%;
     --chart-3: 142 71% 45%;
-    --chart-4: 43 74% 66%;
-    --chart-5: 27 87% 67%;
-    --navbar: 209, 100%, 28%;
-    --blue-senac: 209, 100%, 28%;
+    --chart-4: 38 92% 50%;
+    --chart-5: 280 65% 60%;
+
+    --navbar: 209 100% 28%;
+    --blue-senac: 209 100% 28%;
+
+    /* Sidebar tokens */
+    --sidebar-bg: 209 100% 18%;
+    --sidebar-foreground: 210 40% 98%;
+    --sidebar-muted: 209 40% 70%;
+    --sidebar-accent: 209 90% 25%;
+    --sidebar-border: 209 60% 25%;
   }
 
   .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 0 0% 95%;
+    --background: 224 25% 8%;
+    --foreground: 210 20% 98%;
 
-    --card: 222.2 84% 7%;
-    --card-foreground: 0 0% 95%;
+    --card: 224 25% 11%;
+    --card-foreground: 210 20% 98%;
 
-    --popover: 222.2 84% 7%;
-    --popover-foreground: 0 0% 95%;
+    --popover: 224 25% 11%;
+    --popover-foreground: 210 20% 98%;
 
     --primary: 25 95% 53%;
-    --primary-foreground: 222.2 84% 4.9%;
+    --primary-foreground: 0 0% 100%;
 
-    --secondary: 33 93% 60%;
-    --secondary-foreground: 222.2 84% 4.9%;
+    --secondary: 224 20% 16%;
+    --secondary-foreground: 210 20% 98%;
 
-    --muted: 222.2 84% 15%;
+    --muted: 224 20% 16%;
     --muted-foreground: 215 20% 65%;
 
-    --accent: 209 100% 35%;
-    --accent-foreground: 0 0% 95%;
+    --accent: 25 95% 20%;
+    --accent-foreground: 25 95% 65%;
 
-    --destructive: 0 84% 62%;
-    --destructive-foreground: 0 0% 95%;
+    --destructive: 0 75% 55%;
+    --destructive-foreground: 0 0% 100%;
 
-    --border: 222.2 84% 15%;
-    --input: 222, 62%, 28%;
+    --border: 224 20% 18%;
+    --input: 224 20% 20%;
+    --ring: 25 95% 53%;
 
-    --ring: 33 93% 60%;
+    --chart-1: 25 95% 53%;
+    --chart-2: 209 85% 45%;
+    --chart-3: 142 70% 50%;
+    --chart-4: 38 92% 55%;
+    --chart-5: 280 65% 65%;
 
-    --navbar: 222.2 84% 4.9%;
+    --navbar: 224 25% 8%;
+    --blue-senac: 209 90% 40%;
 
-    --chart-1: 15, 75%, 28%;
-    --chart-2: 224, 64%, 33%;
+    /* Sidebar tokens no dark mode */
+    --sidebar-bg: 224 28% 9%;
+    --sidebar-foreground: 210 20% 98%;
+    --sidebar-muted: 215 15% 60%;
+    --sidebar-accent: 224 20% 16%;
+    --sidebar-border: 224 20% 15%;
   }
 }
 
@@ -192,6 +134,6 @@ table::-webkit-scrollbar-button {
     @apply border-border;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground antialiased;
   }
 }

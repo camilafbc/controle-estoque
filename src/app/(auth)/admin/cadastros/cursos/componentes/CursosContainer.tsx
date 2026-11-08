@@ -1,7 +1,7 @@
 "use client";
 
 import { PlusCircle } from "lucide-react";
-import { useRef, useState } from "react";
+import { useRef } from "react";
 import { SubmitHandler } from "react-hook-form";
 import { toast } from "react-toastify";
 
@@ -11,6 +11,8 @@ import MyDialog from "@/components/MyDialog";
 import { SearchInput } from "@/components/SearchInput";
 import { Button } from "@/components/ui/button";
 import { DataTable } from "@/components/ui/data-table/data-table";
+import { useCrudDialog } from "@/hooks/useCrudDialog";
+import { useListFilter } from "@/hooks/useListFilter";
 import {
   useCreateCursoMutation,
   useDeleteCursoMutation,
@@ -32,9 +34,13 @@ export default function CursosContainer() {
   // ref
   const formRef = useRef<FormCursoRef>(null);
   // states
-  const [filterValue, setFilterValue] = useState("");
-  const [openDialog, setOpenDialog] = useState(false);
-  const [editingId, setEditingId] = useState<number | null>(null);
+  const {
+    isOpen: openDialog,
+    editingId,
+    openForCreate,
+    openForEdit,
+    close: closeDialog,
+  } = useCrudDialog<number>();
   // data
   const { data: cursosData, isLoading: cursosLoading } = useCursos();
   const { data: cursoData, isLoading: cursoLoading } = useGetCurso(
@@ -45,15 +51,11 @@ export default function CursosContainer() {
   const updateCurso = useUpdateCursoMutation();
   const deleteCurso = useDeleteCursoMutation();
 
-  const handleAddButton = () => {
-    setEditingId(null);
-    setOpenDialog(true);
-  };
-
-  const handleEdit = (id: number) => {
-    setEditingId(id);
-    setOpenDialog(true);
-  };
+  const { search: filterValue, setSearch: setFilterValue, filteredItems } =
+    useListFilter({
+      items: cursosData,
+      getSearchText: (curso) => curso.nomeCurso,
+    });
 
   const handleDelete = (id: number) => {
     deleteCurso.mutate(id, {
@@ -72,7 +74,7 @@ export default function CursosContainer() {
   };
 
   const handleClose = () => {
-    setOpenDialog(false);
+    closeDialog();
   };
 
   const handleCreateCurso = (curso: Omit<Curso, "idCurso">) => {
@@ -84,7 +86,7 @@ export default function CursosContainer() {
           return;
         }
         toast.success("Curso cadastrado com sucesso!");
-        setOpenDialog(false);
+        closeDialog();
       },
       onError: (error) => {
         toast.error(getErrorMessage(error));
@@ -102,7 +104,7 @@ export default function CursosContainer() {
         }
 
         toast.success("Dados atualizados com sucesso!");
-        setOpenDialog(false);
+        closeDialog();
       },
       onError: (result) => {
         toast.error(getErrorMessage(result.message));
@@ -121,22 +123,18 @@ export default function CursosContainer() {
       : handleCreateCurso(curso);
   };
 
-  const filteredData = cursosData
-    ? cursosData.filter((curso: Curso) =>
-        curso.nomeCurso.toLowerCase().includes(filterValue.toLowerCase()),
-      )
-    : [];
-
   return (
     <>
-      <div className="mb-8 flex flex-col items-start justify-between gap-2 md:flex-row md:items-center">
+      <div className="mb-6 flex flex-col items-start justify-between gap-3 md:flex-row md:items-center">
         <SearchInput
-          placeholder="Buscar curso"
+          placeholder="Buscar por nome do curso"
+          aria-label="Buscar cursos por nome"
           value={filterValue}
           onChange={(event) => setFilterValue(event.target.value)}
+          onClear={() => setFilterValue("")}
         />
         <Button
-          onClick={handleAddButton}
+          onClick={openForCreate}
           className="flex items-center gap-2 hover:bg-orange-500/90"
         >
           <PlusCircle className="size-4" />
@@ -144,19 +142,44 @@ export default function CursosContainer() {
         </Button>
       </div>
       <DataTable
-        columns={columns(handleEdit, handleDelete)}
-        data={filteredData || []}
+        columns={columns(
+          openForEdit,
+          handleDelete,
+          deleteCurso.isPending ? deleteCurso.variables : undefined,
+        )}
+        data={filteredItems}
         isLoading={cursosLoading}
+        filterValue={filterValue}
+        onClearFilter={() => setFilterValue("")}
+        totalRawCount={cursosData?.length}
+        emptyTitle={filterValue ? "Nenhum curso encontrado" : "Nenhum curso cadastrado"}
+        emptyDescription={
+          filterValue
+            ? "Tente buscar por outro nome."
+            : "Cadastre o primeiro curso para começar a organizar as turmas."
+        }
       />
+      {!cursosLoading && cursosData?.length ? (
+        <p className="mt-3 text-sm text-muted-foreground" aria-live="polite">
+          {filteredItems.length} {filteredItems.length === 1 ? "curso encontrado" : "cursos encontrados"}
+        </p>
+      ) : null}
 
       <MyDialog
         size="lg"
         open={openDialog}
-        setIsOpen={setOpenDialog}
+        setIsOpen={(state) => {
+          if (!state) closeDialog();
+        }}
         title={
           cursoData?.nomeCurso
             ? `Curso: ${cursoData.nomeCurso}`
             : "Cadastro de Cursos"
+        }
+        description={
+          cursoData?.nomeCurso
+            ? "Atualize os dados do curso e seu status de disponibilidade."
+            : "Preencha os dados abaixo para adicionar um novo curso."
         }
         footerChildren={
           <div className="flex w-full items-center justify-end gap-2">
