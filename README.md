@@ -4,8 +4,7 @@ Sistema de controle, consumo e movimentação de estoque desenvolvido como solu�
 
 <img width="1794" height="889" alt="image" src="https://github.com/user-attachments/assets/bdc1517c-c302-4385-9beb-ba177eef8d95" />
 
-
-Acesso: 👉 [http://localhost:3000](https://estoque-senac.vercel.app/)
+Acesso: 👉 [https://estoque-senac.vercel.app/](https://estoque-senac.vercel.app/)
 
 ---
 
