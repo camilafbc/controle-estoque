@@ -14,12 +14,12 @@ export const useCreateOperacaoMutation = () => {
       tipoOp: number;
       quantidade: number;
     }) => createOperacao(uuidProduto, tipoOp, quantidade),
-    onSuccess: (data, variables) => {
+    onSuccess: (_, variables) => {
       queryClient.invalidateQueries({
         queryKey: ["operacoes", variables.uuidProduto],
       });
       queryClient.invalidateQueries({
-        queryKey: ["produtos", data.data?.prodCurso],
+        queryKey: ["produtos"],
       });
     },
   });
